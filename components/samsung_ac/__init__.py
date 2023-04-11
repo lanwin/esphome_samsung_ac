@@ -1,8 +1,9 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import uart, sensor, switch
+from esphome.components import uart, sensor, switch, select
 from esphome.const import (
     CONF_ID,
+    CONF_NAME,
     DEVICE_CLASS_TEMPERATURE,
     STATE_CLASS_MEASUREMENT,
     UNIT_CELSIUS,
@@ -10,8 +11,8 @@ from esphome.const import (
 
 CODEOWNERS = ["matthias882", "lanwin"]
 DEPENDENCIES = ["uart"]
-AUTO_LOAD = ["sensor", "switch"]
-MULTI_CONF = True
+AUTO_LOAD = ["sensor", "switch", "select"]
+MULTI_CONF = False
 
 CONF_SAMSUNG_AC_ID = "samsung_ac_id"
 
@@ -21,6 +22,7 @@ Samsung_AC = samsung_ac.class_(
 )
 Samsung_AC_Device = samsung_ac.class_("Samsung_AC_Device")
 Samsung_AC_Switch = samsung_ac.class_("Samsung_AC_Switch", switch.Switch)
+Samsung_AC_Select = samsung_ac.class_("Samsung_AC_Select", select.Select)
 
 CONF_DATALINE_DEBUG = "dataline_debug"
 
@@ -28,6 +30,12 @@ CONF_DEVICE_ID = "samsung_ac_device_id"
 CONF_DEVICE_ADDRESS = "address"
 CONF_DEVICE_ROOM_TEMPERATURE = "room_temperature"
 CONF_DEVICE_POWER = "power"
+
+# not sure why select.select_schema did not work yet
+SELECT_SCHEMA = (
+    select.SELECT_SCHEMA.extend(
+        {cv.GenerateID(): cv.declare_id(Samsung_AC_Select)})
+)
 
 DEVICE_SCHEMA = (
     cv.Schema(
@@ -40,8 +48,10 @@ DEVICE_SCHEMA = (
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
-            cv.Optional(CONF_DEVICE_POWER): switch.switch_schema(Samsung_AC_Switch)
-        })
+            cv.Optional(CONF_DEVICE_POWER): switch.switch_schema(Samsung_AC_Switch),
+            cv.Optional("test"): SELECT_SCHEMA
+        }
+    )
 )
 
 CONF_DEVICES = "devices"
@@ -74,6 +84,11 @@ async def to_code(config):
             conf = device[CONF_DEVICE_ROOM_TEMPERATURE]
             sens = await sensor.new_sensor(conf)
             cg.add(var_dev.set_room_temperature_sensor(sens))
+
+        if "test" in device:
+            conf = device["test"]
+            sel = await select.new_select(conf, options=["A", "B"])
+            await select.register_select(sel, conf, options=["A", "B"])
 
         cg.add(var.register_device(var_dev))
 

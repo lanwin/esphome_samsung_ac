@@ -5,6 +5,7 @@
 #include "esphome/components/uart/uart.h"
 #include "esphome/components/switch/switch.h"
 #include "esphome/components/sensor/sensor.h"
+#include "esphome/components/select/select.h"
 #include "protocol.h"
 
 namespace esphome
@@ -13,6 +14,12 @@ namespace esphome
   {
     class NasaProtocol;
     class Samsung_AC;
+
+    class Samsung_AC_Select : public esphome::select::Select
+    {
+    public:
+      void control(const std::string &value) override;
+    };
 
     class Samsung_AC_Switch : public esphome::switch_::Switch
     {
