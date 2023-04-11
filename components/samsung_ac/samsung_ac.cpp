@@ -37,20 +37,16 @@ namespace esphome
       std::string devices = "";
       for (auto const &device : devices_)
       {
-        if (devices.length() > 0)
-          devices += ", ";
-        devices += device->address;
+        devices += devices.length() > 0 ? ", " + device->address : device->address;
       }
-      ESP_LOGCONFIG(TAG, "reg devices: %s", devices.c_str());
+      ESP_LOGCONFIG(TAG, "registered devices: %s", devices.c_str());
 
       std::string known = "";
       for (auto const &address : addresses_)
       {
-        if (known.length() > 0)
-          known += ", ";
-        known += address;
+        known += known.length() > 0 ? ", " + address : address;
       }
-      ESP_LOGCONFIG(TAG, "known: %s", known.c_str());
+      ESP_LOGCONFIG(TAG, "known addresses: %s", known.c_str());
     }
 
     void Samsung_AC::register_device(Samsung_AC_Device *device)
@@ -82,8 +78,7 @@ namespace esphome
       }
 
       if (!available())
-        // nothing in uart-input-buffer, end here
-        return;
+        return; // nothing in uart-input-buffer, end here
 
       last_transmission_ = now;
       while (available())
@@ -100,8 +95,8 @@ namespace esphome
           data_.push_back(c);
           if (c != 0x34)
             continue; // endbyte not found
-          receiving_ = false;
 
+          receiving_ = false;
           process_message(data_, this);
         }
       }
