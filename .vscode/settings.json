@@ -44,6 +44,9 @@
     "stdexcept": "cpp",
     "streambuf": "cpp",
     "typeinfo": "cpp",
-    "cstdarg": "cpp"
+    "cstdarg": "cpp",
+    "optional": "cpp",
+    "fstream": "cpp",
+    "sstream": "cpp"
   }
 }
