@@ -22,31 +22,45 @@ public:
     }
 };
 
-void test()
+void test1()
 {
     Address to = Address::parse("20.00.00");
-
     Packet packet;
 
+    packet = Packet::create(to, DataType::Request, MessageNumber::ENUM_in_operation_power, 1);
+    packet.commad.packetNumber = 1;
+    std::cout << packet.to_string() << std::endl;
+    std::cout << bytes_to_hex(packet.encode()) << std::endl;
+
+    packet = Packet::create(to, DataType::Request, MessageNumber::ENUM_in_operation_power, 1);
+    packet.commad.packetNumber = 1;
+    std::cout << packet.to_string() << std::endl;
+    std::cout << bytes_to_hex(packet.encode()) << std::endl;
+
     std::cout << "32001180ff00200000c0130101400001c24734 expected" << std::endl;
+}
 
-    packet = Packet::create(to, DataType::Request, MessageNumber::ENUM_in_operation_power, 1);
-    packet.commad.packetNumber = 1;
+void test2()
+{
+    auto data = hex_to_bytes("32001280ff00200002c013f201420101186e5434");
+    Packet packetT;
+    packetT.decode(data);
+    std::cout << packetT.to_string() << std::endl;
+
+    Packet packet;
+    packet = Packet::create(Address::parse("20.00.02"), DataType::Request, MessageNumber::VAR_in_temp_target_f, 28 * 10.0);
+    packet.commad.packetNumber = 242;
     std::cout << packet.to_string() << std::endl;
     std::cout << bytes_to_hex(packet.encode()) << std::endl;
 
-    packet = Packet::create(to, DataType::Request, MessageNumber::ENUM_in_operation_power, 1);
-    packet.commad.packetNumber = 1;
-    std::cout << packet.to_string() << std::endl;
-    std::cout << bytes_to_hex(packet.encode()) << std::endl;
-
-    // std::cout << HexToBytes(Create(to, Request, 0x4000, 1).Encode()) << std::endl;
-
-    // std::cout << HexToBytes(foo().Encode()) << std::endl;
+    std::cout << "32001280ff00200002c013f201420101186e5434 expected" << std::endl;
 }
 
 int main(int argc, char *argv[])
 {
+    test1();
+    test2();
+    return 0;
     auto data = hex_to_bytes("32001e200001b000ffc01457044202010e420300f2420500eb420600f5111534");
 
     // data = HexToBytes("32001e200001b000ffc01406044202010e420300eb420500e6420600e98ba134");

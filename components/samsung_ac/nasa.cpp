@@ -178,8 +178,8 @@ namespace esphome
                 data.push_back((uint8_t)value);
                 break;
             case Variable:
+                data.push_back((uint8_t)(value >> 8) & 0xff);
                 data.push_back((uint8_t)(value & 0xff));
-                data.push_back((uint8_t)((value >> 8) & 0xff));
                 break;
             case LongVariable:
                 // Todo
@@ -300,6 +300,7 @@ namespace esphome
         std::vector<uint8_t> Packet::encode()
         {
             std::vector<uint8_t> data;
+
             data.push_back(0x32);
             data.push_back(0); // size
             data.push_back(0); // size
@@ -322,6 +323,7 @@ namespace esphome
             data.push_back((uint8_t)((unsigned int)checksum & (unsigned int)0xFF));
 
             data.push_back(0x34);
+
             return data;
         };
 
