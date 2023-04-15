@@ -72,7 +72,8 @@ namespace esphome
         {
             Undefiend = 0,
             ENUM_in_operation_power = 0x4000,
-            VAR_in_temp_room_f = 0x4203
+            VAR_in_temp_room_f = 0x4203,
+            VAR_in_temp_target_f = 0x4201
         };
 
         struct Address
