@@ -164,6 +164,7 @@ namespace esphome
             NasaProtocol() = default;
 
             std::vector<uint8_t> get_power_message(const std::string &address, bool value) override;
+            std::vector<uint8_t> set_target_temp(const std::string &address, float value) override;
         };
 
     } // namespace samsung_ac

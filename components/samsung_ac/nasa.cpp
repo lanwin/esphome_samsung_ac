@@ -36,6 +36,13 @@ namespace esphome
             return bytes;
         }
 
+        int variable_to_signed(int value)
+        {
+            if (value < 65535 /*uint16 max*/)
+                return value;
+            return value - (int)65535 /*uint16 max*/ - 1.0;
+        }
+
         uint16_t crc16(std::vector<uint8_t> &data, int startIndex, int length)
         {
             uint16_t crc = 0;
@@ -182,7 +189,10 @@ namespace esphome
                 data.push_back((uint8_t)(value & 0xff));
                 break;
             case LongVariable:
-                // Todo
+                data.push_back((uint8_t)(value & 0x000000ff));
+                data.push_back((uint8_t)((value & 0x0000ff00) >> 8));
+                data.push_back((uint8_t)((value & 0x00ff0000) >> 16));
+                data.push_back((uint8_t)((value & 0xff000000) >> 24));
                 break;
 
             case Structure:
@@ -324,6 +334,11 @@ namespace esphome
 
             data.push_back(0x34);
 
+            /*
+            for (int i = 0; i < 100; ++i)
+                data.insert(data.begin(), 0x55); // Preamble
+            */
+
             return data;
         };
 
@@ -335,7 +350,9 @@ namespace esphome
 
             for (int i = 0; i < messages.size(); i++)
             {
-                str += "Message: " + messages[i].to_string() + "\n";
+                if (i > 0)
+                    str += "\n";
+                str += "Message: " + messages[i].to_string();
             }
 
             return str;
@@ -343,8 +360,14 @@ namespace esphome
 
         std::vector<uint8_t> NasaProtocol::get_power_message(const std::string &address, bool value)
         {
-            Address to = Address::parse(address);
-            return Packet::create(to, DataType::Request, MessageNumber::ENUM_in_operation_power, value ? 1 : 0).encode();
+            auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::ENUM_in_operation_power, value ? 1 : 0);
+            return packet.encode();
+        }
+
+        std::vector<uint8_t> NasaProtocol::set_target_temp(const std::string &address, float value)
+        {
+            auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::VAR_in_temp_target_f, value * 10.0);
+            return packet.encode();
         }
 
         Packet packet_;
@@ -354,8 +377,20 @@ namespace esphome
             if (packet_.decode(data) == false)
                 return;
 
-            // if (packet_.commad.dataType != DataType::Request)
-            //   return;
+            if (packet_.commad.dataType == DataType::Request)
+            {
+                ESP_LOGW(TAG, "Request %s", packet_.to_string().c_str());
+                return;
+            }
+            if (packet_.commad.dataType == DataType::Write)
+            {
+                ESP_LOGW(TAG, "Write %s", packet_.to_string().c_str());
+                return;
+            }
+            if (packet_.commad.dataType == DataType::Response)
+            {
+                ESP_LOGW(TAG, "Response %s", packet_.to_string().c_str());
+            }
 
             target->register_address(packet_.sa.to_string());
 
@@ -368,20 +403,487 @@ namespace esphome
                 case MessageNumber::VAR_in_temp_room_f: // VAR_in_temp_room_f unit = 'Celsius'
                 {
                     double temp = (double)message.value / (double)10;
-                    ESP_LOGW(TAG, "temp s:%s d:%s %f", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), temp);
+                    ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_room_f %f", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), temp);
                     target->set_room_temperature(packet_.sa.to_string(), temp);
-                    break;
+                    continue;
                 }
-
+                case MessageNumber::VAR_in_temp_target_f: // VAR_in_temp_target_f unit = 'Celsius'
+                {
+                    double temp = (double)message.value / (double)10;
+                    // if (value == 1) value = 'waterOutSetTemp'; //action in xml
+                    ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_target_f %f", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), temp);
+                    target->set_target_temperature(packet_.sa.to_string(), temp);
+                    continue;
+                }
                 case MessageNumber::ENUM_in_operation_power: // ENUM_in_operation_power bool
                 {
-                    ESP_LOGW(TAG, "power s:%s d:%s %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_power %s", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value == 0 ? "off" : "on");
                     target->set_power(packet_.sa.to_string(), message.value != 0);
-                    break;
+                    continue;
                 }
 
                 default:
+                {
+                    if (packet_.sa.to_string() == "20.00.00" ||
+                        packet_.sa.to_string() == "20.00.01" ||
+                        packet_.sa.to_string() == "20.00.03")
+                        continue;
+
+                    /*if (packet_.sa.to_string() != "20.00.02" &&
+                        packet_.da.to_string() != "20.00.02")
+                        continue;*/
+
+                    switch ((uint16_t)message.messageNumber)
+                    {
+                    case 0x4001: // ENUM_in_operation_mode
+                    {
+                        // Todo Map
+                        /*
+                        case 0:
+      return 'Auto';
+    case 1:
+      return 'Cool';
+    case 2:
+      return 'Dry';
+    case 3:
+      return 'Fan';
+    case 4:
+      return 'Heat';
+    case 21:
+      return 'Cool Storage';
+    case 24:
+      return 'Hot Water';
+    default:
+      return 'Unknown';
+                        */
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_mode %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+
+                    case 0x4002: // ENUM_in_operation_mode_real
+                    {
+                        // Todo Map
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_mode_real %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+
+                    case 0x4007: // ENUM_in_fan_mode_real
+                    {
+                        // Todo Map
+                        /*
+                       case 1:
+      return 'Low';
+    case 2:
+      return 'Mid';
+    case 3:
+      return 'Hight';
+    case 4:
+      return 'Turbo';
+    case 10:
+      return 'AutoLow';
+    case 11:
+      return 'AutoMid';
+    case 12:
+      return 'AutoHigh';
+    case 13:
+      return 'UL';
+    case 14:
+      return 'LL';
+    case 15:
+      return 'HH';
+    case 16:
+      return 'Speed';
+    case 17:
+      return 'NaturalLow';
+    case 18:
+      return 'NaturalMid';
+    case 19:
+      return 'NaturalHigh';
+    case 254:
+      return 'Off';
+    default:
+      return 'Unknown';
+                        */
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_mode_real %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+
+                    case 0x4011: // ENUM_IN_LOUVER_HL_SWING
+                    {
+                        // Todo Map
+                        /*
+                       case 0:
+      return 'Off';
+    case 1:
+      return 'On';
+    default:
+      return undefined;
+                        */
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_LOUVER_HL_SWING %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+
+                    case 0x4012: // ENUM_IN_LOUVER_HL_SWING
+                    {
+                        // Todo Map
+
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_LOUVER_HL_SWING %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+
+                    case 0x4038: // ENUM_IN_STATE_HUMIDITY_PERCENT
+                    {
+                        // XML Enum no value but in Code it adds unit
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_STATE_HUMIDITY_PERCENT %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+
+                    case 0x4205: // VAR_in_temp_eva_in_f unit = 'Celsius'
+                    {
+                        double temp = (double)message.value / (double)10;
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_eva_in_f %f", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), temp);
+                        continue;
+                    }
+
+                    case 0x4206: // VAR_in_temp_eva_out_f unit = 'Celsius'
+                    {
+                        double temp = (double)message.value / (double)10;
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_eva_out_f %f", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), temp);
+                        continue;
+                    }
+
+                    case 0x4211: // VAR_in_capacity_request unit = 'kW'
+                    {
+                        double temp = (double)message.value / (double)8.6;
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_in_capacity_request %f", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), temp);
+                        continue;
+                    }
+
+                    case 0x8001: // ENUM_out_operation_odu_mode
+                    {
+                        // Todo Map
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_out_operation_odu_mode %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+
+                    case 0x8003: // ENUM_out_operation_heatcool
+                    {
+                        //['Undefined', 'Cool', 'Heat', 'CoolMain', 'HeatMain'];
+                        // Todo Map
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_out_operation_heatcool %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+
+                    case 0x801a: // ENUM_out_load_4way
+                    {
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_out_load_4way %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+
+                    case 0x8235: // VAR_out_error_code
+                    {
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_out_error_code %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+
+                    case 0x8261: // VAR_OUT_SENSOR_PIPEIN3 unit = 'Celsius'
+                    {
+                        double temp = (double)message.value / (double)10;
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_SENSOR_PIPEIN3 %f", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), temp);
+                        continue;
+                    }
+
+                    case 0x8262: // VAR_OUT_SENSOR_PIPEIN4 unit = 'Celsius'
+                    {
+                        double temp = (double)message.value / (double)10;
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_SENSOR_PIPEIN4 %f", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), temp);
+                        continue;
+                    }
+
+                    case 0x8263: // VAR_OUT_SENSOR_PIPEIN5 unit = 'Celsius'
+                    {
+                        double temp = (double)message.value / (double)10;
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_SENSOR_PIPEIN5 %f", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), temp);
+                        continue;
+                    }
+
+                    case 0x8264: // VAR_OUT_SENSOR_PIPEOUT1 unit = 'Celsius'
+                    {
+                        double temp = (double)message.value / (double)10;
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_SENSOR_PIPEOUT1 %f", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), temp);
+                        continue;
+                    }
+
+                    case 0x8265: // VAR_OUT_SENSOR_PIPEOUT2 unit = 'Celsius'
+                    {
+                        double temp = (double)message.value / (double)10;
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_SENSOR_PIPEOUT2 %f", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), temp);
+                        continue;
+                    }
+
+                    case 0x8266: // VAR_OUT_SENSOR_PIPEOUT3 unit = 'Celsius'
+                    {
+                        double temp = (double)message.value / (double)10;
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_SENSOR_PIPEOUT3 %f", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), temp);
+                        continue;
+                    }
+
+                    case 0x8267: // VAR_OUT_SENSOR_PIPEOUT4 unit = 'Celsius'
+                    {
+                        double temp = (double)message.value / (double)10;
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_SENSOR_PIPEOUT4 %f", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), temp);
+                        continue;
+                    }
+
+                    case 0x8268: // VAR_OUT_SENSOR_PIPEOUT5 unit = 'Celsius'
+                    {
+                        double temp = (double)message.value / (double)10;
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_SENSOR_PIPEOUT5 %f", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), temp);
+                        continue;
+                    }
+
+                    case 0x8274: // VAR_out_control_order_cfreq_comp2
+                    {
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_out_control_order_cfreq_comp2 %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+                    case 0x8275: // VAR_out_control_target_cfreq_comp2
+                    {
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_out_control_target_cfreq_comp2 %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+
+                    case 0x82bc: // VAR_OUT_PROJECT_CODE
+                    {
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_PROJECT_CODE %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+
+                    case 0x82e3: // VAR_OUT_PRODUCT_OPTION_CAPA
+                    {
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_PRODUCT_OPTION_CAPA %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+
+                    case 0x8280: // VAR_out_sensor_top1 unit = 'Celsius'
+                    {
+                        double temp = (double)message.value / (double)10;
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_out_sensor_top1 %f", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), temp);
+                        continue;
+                    }
+
+                    case 0x82db: // VAR_OUT_PHASE_CURRENT
+                    {
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_PHASE_CURRENT %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+
+                    case 0x402:
+                    case 0x409:
+                    case 0x40a:
+                    case 0x40b:
+                    case 0x40c:
+                    case 0x40d:
+                    case 0x40e:
+                    case 0x410:
+                    case 0x411:
+                    case 0x412:
+                    case 0x413:
+                    case 0x414:
+                    case 0x415:
+                    case 0x416:
+                    case 0x601:
+                    case 0x207:
+                    case 0x41b:
+                    case 0x60c:
+                    case 0x24fb:
+                    case 0x4015:
+                    case 0x4016:
+                    case 0x401b:
+                    case 0x4023:
+                    case 0x4024:
+                    case 0x4027:
+                    case 0x4028:
+                    case 0x402d:
+                    case 0x402e:
+                    case 0x4035:
+                    case 0x403e:
+                    case 0x403f:
+                    case 0x4043:
+                    case 0x4045:
+                    case 0x4046:
+                    case 0x4047:
+                    case 0x4048:
+                    case 0x4059:
+                    case 0x4060:
+                    case 0x4074:
+                    case 0x407d:
+                    case 0x407e:
+                    case 0x40ae:
+                    case 0x40af:
+                    case 0x40bc:
+                    case 0x40bd:
+                    case 0x40d5:
+                    case 0x410a:
+                    case 0x410b:
+                    case 0x410c:
+                    case 0x4111:
+                    case 0x4112:
+                    case 0x42df:
+                    case 0x4604:
+                    case 0x80af:
+                    case 0x8204:
+                    case 0x820a:
+                    case 0x8217:
+                    case 0x8218:
+                    case 0x821a:
+                    case 0x8223:
+                    case 0x4212:
+                    case 0x4222:
+                    case 0x4229:
+                    case 0x42e0:
+                    case 0x8229:
+                    case 0x822a:
+                    case 0x822b:
+                    case 0x822c:
+                    case 0x8233:
+                    case 0x8236:
+                    case 0x8237:
+                    case 0x8238:
+                    case 0x8239:
+                    case 0x823b:
+                    case 0x823d:
+                    case 0x42e3:
+                    case 0x42e5:
+                    case 0x440e:
+                    case 0x440f:
+                    case 0x4418:
+                    case 0x441b:
+                    case 0x441f:
+                    case 0x4420:
+                    case 0x4423:
+                    case 0x4424:
+                    case 0x8000:
+                    case 0x8002:
+                    case 0x800d:
+                    case 0x8010:
+                    case 0x8020:
+                    case 0x8030:
+                    case 0x8032:
+                    case 0x8033:
+                    case 0x8043:
+                    case 0x8045:
+                    case 0x8046:
+                    case 0x8048:
+                    case 0x8061:
+                    case 0x8066:
+                    case 0x8077:
+                    case 0x807c:
+                    case 0x807d:
+                    case 0x807e:
+                    case 0x8081:
+                    case 0x808c:
+                    case 0x808e:
+                    case 0x808f:
+                    case 0x809d:
+                    case 0x8047:
+                    case 0x8200:
+                    case 0x8201:
+                    case 0x8202:
+                    case 0x822d:
+                    case 0x8287:
+                    case 0x82a1:
+                    case 0x82b5:
+                    case 0x82b6:
+                    case 0x8411:
+                    case 0x8413:
+                    case 0x8414:
+                    case 0x8608:
+                    case 0x860c:
+                    case 0x860d:
+                    case 0x840a:
+                    case 0x8410:
+                    case 0x823e:
+                    case 0x8247:
+                    case 0x8249:
+                    case 0x824b:
+                    case 0x824c:
+                    case 0x824f:
+                    case 0x8254:
+                    case 0x825f:
+                    case 0x8260:
+                    {
+                        // ESP_LOGW(TAG, "s:%s d:%s Todo %s %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), int_to_hex((int)message.messageNumber).c_str(), message.value);
+                        continue; // Todo
+                    }
+
+                    case 0x8601: // STR_out_install_inverter_and_bootloader_info
+                    case 0x608:  // STR_ad_dbcode_micom_main
+                    case 0x603:  // STR_ad_option_cycle
+                    case 0x602:  // STR_ad_option_install_2
+                    case 0x600:  // STR_ad_option_basic
+                    case 0x202:  // VAR_ad_error_code1
+                    case 0x42d1: // VAR_IN_DUST_SENSOR_PM10_0_VALUE
+                    case 0x42d2: // VAR_IN_DUST_SENSOR_PM2_5_VALUE
+                    case 0x42d3: // VAR_IN_DUST_SENSOR_PM1_0_VALUE
+                    {
+                        // ESP_LOGW(TAG, "s:%s d:%s Ignore %s %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), int_to_hex((int)message.messageNumber).c_str(), message.value);
+                        continue; // Ingore cause not important
+                    }
+
+                    case 0x23:
+                    case 0x61d:
+                    case 0x400a:
+                    case 0x400f:
+                    case 0x42e1:
+                    case 0x42e2:
+                    case 0x42e4:
+                    case 0x22f9:
+                    case 0x22fa:
+                    case 0x22fb:
+                    case 0x22fc:
+                    case 0x22fd:
+                    case 0x22fe:
+                    case 0x22ff:
+                    case 0x80a7:
+                    case 0x80a8:
+                    case 0x80a9:
+                    case 0x80aa:
+                    case 0x80ab:
+                    case 0x80b2:
+                    case 0x4285:
+                    case 0x429d:
+                    case 0x826a:
+                    case 0x22f7:
+                    case 0x82da:
+                    case 0x82d9:
+                    case 0x82ee:
+                    case 0x82ef:
+                    case 0x82e6:
+                    case 0x82e5:
+                    case 0x82dd:
+                    case 0x4202:
+                    case 0x82d4:
+                    case 0x421c:
+                    case 0x8031:
+                    case 0x805e:
+                    case 0x8243:
+                    case 0x803f:
+                    case 0x808d:
+                    case 0x8248:
+                    case 0x823f:
+                    case 0x4204:
+                    case 0x4006:
+                    {
+                        // ESP_LOGW(TAG, "s:%s d:%s NoMap %s %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), int_to_hex((int)message.messageNumber).c_str(), message.value);
+                        continue; // message types witch have no mapping in xml
+                    }
+
+                    default:
+                        ESP_LOGW(TAG, "s:%s d:%s !! unknown %s", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.to_string().c_str());
+                    }
                     continue;
+                }
                 }
             }
 
