@@ -2,6 +2,33 @@
 #include "samsung_ac.h"
 #include <vector>
 
+std::string int_to_hex(int number)
+{
+  char str[3];
+  sprintf(str, "%02x", number);
+  return str;
+}
+
+std::string bytes_to_hex(const std::vector<uint8_t> &data)
+{
+  std::string str;
+  for (int i = 0; i < data.size(); i++)
+  {
+    str += int_to_hex(data[i]);
+  }
+  return str;
+}
+
+std::vector<uint8_t> hex_to_bytes(const std::string &hex)
+{
+  std::vector<uint8_t> bytes;
+  for (unsigned int i = 0; i < hex.length(); i += 2)
+  {
+    bytes.push_back((uint8_t)strtol(hex.substr(i, 2).c_str(), NULL, 16));
+  }
+  return bytes;
+}
+
 namespace esphome
 {
   namespace samsung_ac
@@ -16,6 +43,16 @@ namespace esphome
     void Samsung_AC_Device::set_room_temperature_sensor(esphome::sensor::Sensor *sensor)
     {
       room_temperature = sensor;
+    }
+
+    void Samsung_AC_Device::set_target_temperature_number(Samsung_AC_Number *number)
+    {
+      target_temperature = number;
+      target_temperature->write_state_ = [this](float value)
+      {
+        auto data = protocol->set_target_temp(address, value);
+        samsung_ac->send_bus_message(data);
+      };
     }
 
     void Samsung_AC_Device::set_power_switch(Samsung_AC_Switch *switch_)
@@ -56,7 +93,7 @@ namespace esphome
 
     void Samsung_AC::send_bus_message(std::vector<uint8_t> &data)
     {
-      this->write_array(data);
+      out_.insert(out_.end(), data.begin(), data.end());
     }
 
     void Samsung_AC::dump_config()
@@ -78,7 +115,17 @@ namespace esphome
       }
 
       if (!available())
+      {
+        if (out_.size() > 0)
+        {
+          ESP_LOGW(TAG, "write %s", bytes_to_hex(out_).c_str());
+          this->write_array(out_);
+          this->flush();
+          out_.clear();
+        }
+
         return; // nothing in uart-input-buffer, end here
+      }
 
       last_transmission_ = now;
       while (available())

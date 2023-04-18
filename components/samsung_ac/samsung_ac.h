@@ -6,6 +6,7 @@
 #include "esphome/components/switch/switch.h"
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/select/select.h"
+#include "esphome/components/number/number.h"
 #include "protocol.h"
 
 namespace esphome
@@ -14,6 +15,16 @@ namespace esphome
   {
     class NasaProtocol;
     class Samsung_AC;
+
+    class Samsung_AC_Number : public esphome::number::Number
+    {
+    public:
+      void control(float value) override
+      {
+        write_state_(value);
+      }
+      std::function<void(float)> write_state_;
+    };
 
     class Samsung_AC_Select : public esphome::select::Select
     {
@@ -45,9 +56,11 @@ namespace esphome
 
       std::string address;
       esphome::sensor::Sensor *room_temperature{nullptr};
+      Samsung_AC_Number *target_temperature{nullptr};
       Samsung_AC_Switch *power{nullptr};
 
       void set_room_temperature_sensor(esphome::sensor::Sensor *sensor);
+      void set_target_temperature_number(Samsung_AC_Number *number);
       void set_power_switch(Samsung_AC_Switch *switch_);
 
     protected:
@@ -85,6 +98,14 @@ namespace esphome
         dev->room_temperature->publish_state(value);
       }
 
+      void set_target_temperature(const std::string address, float value) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev == nullptr || dev->target_temperature == nullptr)
+          return;
+        dev->target_temperature->publish_state(value);
+      }
+
       void set_power(const std::string address, bool value) override
       {
         Samsung_AC_Device *dev = find_device(address);
@@ -110,6 +131,7 @@ namespace esphome
       std::vector<Samsung_AC_Device *> devices_;
       std::set<std::string> addresses_;
 
+      std::vector<uint8_t> out_;
       std::vector<uint8_t> data_;
       bool receiving_{false};
       uint32_t last_transmission_{0};
