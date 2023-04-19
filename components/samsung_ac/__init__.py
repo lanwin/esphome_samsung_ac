@@ -1,17 +1,19 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import uart, sensor, switch, select
+from esphome.components import uart, sensor, switch, select, number
 from esphome.const import (
     CONF_ID,
     CONF_NAME,
     DEVICE_CLASS_TEMPERATURE,
     STATE_CLASS_MEASUREMENT,
+    CONF_UNIT_OF_MEASUREMENT,
+    CONF_DEVICE_CLASS,
     UNIT_CELSIUS,
 )
 
 CODEOWNERS = ["matthias882", "lanwin"]
 DEPENDENCIES = ["uart"]
-AUTO_LOAD = ["sensor", "switch", "select"]
+AUTO_LOAD = ["sensor", "switch", "select", "number"]
 MULTI_CONF = False
 
 CONF_SAMSUNG_AC_ID = "samsung_ac_id"
@@ -23,18 +25,25 @@ Samsung_AC = samsung_ac.class_(
 Samsung_AC_Device = samsung_ac.class_("Samsung_AC_Device")
 Samsung_AC_Switch = samsung_ac.class_("Samsung_AC_Switch", switch.Switch)
 Samsung_AC_Select = samsung_ac.class_("Samsung_AC_Select", select.Select)
+Samsung_AC_Number = samsung_ac.class_("Samsung_AC_Number", number.Number)
 
 CONF_DATALINE_DEBUG = "dataline_debug"
 
 CONF_DEVICE_ID = "samsung_ac_device_id"
 CONF_DEVICE_ADDRESS = "address"
 CONF_DEVICE_ROOM_TEMPERATURE = "room_temperature"
+CONF_DEVICE_TARGET_TEMPERATURE = "target_temperature"
 CONF_DEVICE_POWER = "power"
 
 # not sure why select.select_schema did not work yet
 SELECT_SCHEMA = (
     select.SELECT_SCHEMA.extend(
         {cv.GenerateID(): cv.declare_id(Samsung_AC_Select)})
+)
+
+NUMBER_SCHEMA = (
+    number.NUMBER_SCHEMA.extend(
+        {cv.GenerateID(): cv.declare_id(Samsung_AC_Number)})
 )
 
 DEVICE_SCHEMA = (
@@ -48,8 +57,9 @@ DEVICE_SCHEMA = (
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
+            cv.Optional(CONF_DEVICE_TARGET_TEMPERATURE): NUMBER_SCHEMA,
             cv.Optional(CONF_DEVICE_POWER): switch.switch_schema(Samsung_AC_Switch),
-            cv.Optional("test"): SELECT_SCHEMA
+            cv.Optional("test"): SELECT_SCHEMA,
         }
     )
 )
@@ -84,6 +94,16 @@ async def to_code(config):
             conf = device[CONF_DEVICE_ROOM_TEMPERATURE]
             sens = await sensor.new_sensor(conf)
             cg.add(var_dev.set_room_temperature_sensor(sens))
+
+        if CONF_DEVICE_TARGET_TEMPERATURE in device:
+            conf = device[CONF_DEVICE_TARGET_TEMPERATURE]
+            conf[CONF_UNIT_OF_MEASUREMENT] = UNIT_CELSIUS
+            conf[CONF_DEVICE_CLASS] = DEVICE_CLASS_TEMPERATURE
+            num = await number.new_number(conf,
+                                          min_value=16.0,
+                                          max_value=30.0,
+                                          step=1.0)
+            cg.add(var_dev.set_target_temperature_number(num))
 
         if "test" in device:
             conf = device["test"]

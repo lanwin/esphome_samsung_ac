@@ -11,6 +11,7 @@ namespace esphome
         {
         public:
             virtual std::vector<uint8_t> get_power_message(const std::string &address, bool value) = 0;
+            virtual std::vector<uint8_t> set_target_temp(const std::string &address, float value) = 0;
         };
 
         class MessageTarget
@@ -19,6 +20,7 @@ namespace esphome
             virtual void register_address(const std::string address) = 0;
             virtual void set_power(const std::string address, bool value) = 0;
             virtual void set_room_temperature(const std::string address, float value) = 0;
+            virtual void set_target_temperature(const std::string address, float value) = 0;
         };
 
         void process_message(std::vector<uint8_t> &data, MessageTarget *target);
