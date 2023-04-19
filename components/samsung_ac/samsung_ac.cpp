@@ -51,7 +51,7 @@ namespace esphome
       target_temperature = number;
       target_temperature->write_state_ = [this](float value)
       {
-        auto data = protocol->set_target_temp(address, value);
+        auto data = protocol->get_target_temp_message(address, value);
         samsung_ac->send_bus_message(data);
       };
     }

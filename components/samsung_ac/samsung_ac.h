@@ -114,6 +114,14 @@ namespace esphome
         dev->power->publish_state(value);
       }
 
+      void set_mode(const std::string address, Mode mode) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        // if (dev == nullptr || dev->mode == nullptr)
+        // return;
+        // dev->mode->publish_state_(mode);
+      }
+
       void send_bus_message(std::vector<uint8_t> &data);
 
     protected:

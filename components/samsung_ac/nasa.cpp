@@ -338,9 +338,15 @@ namespace esphome
             return packet.encode();
         }
 
-        std::vector<uint8_t> NasaProtocol::set_target_temp(const std::string &address, float value)
+        std::vector<uint8_t> NasaProtocol::get_target_temp_message(const std::string &address, float value)
         {
             auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::VAR_in_temp_target_f, value * 10.0);
+            return packet.encode();
+        }
+
+        std::vector<uint8_t> NasaProtocol::get_mode_message(const std::string &address, Mode value)
+        {
+            auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::ENUM_in_operation_mode, (int)value);
             return packet.encode();
         }
 
@@ -374,14 +380,14 @@ namespace esphome
                 switch (message.messageNumber)
                 {
 
-                case MessageNumber::VAR_in_temp_room_f: // VAR_in_temp_room_f unit = 'Celsius'
+                case MessageNumber::VAR_in_temp_room_f: //  unit = 'Celsius' from XML
                 {
                     double temp = (double)message.value / (double)10;
                     ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_room_f %f", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), temp);
                     target->set_room_temperature(packet_.sa.to_string(), temp);
                     continue;
                 }
-                case MessageNumber::VAR_in_temp_target_f: // VAR_in_temp_target_f unit = 'Celsius'
+                case MessageNumber::VAR_in_temp_target_f: // unit = 'Celsius' from XML
                 {
                     double temp = (double)message.value / (double)10;
                     // if (value == 1) value = 'waterOutSetTemp'; //action in xml
@@ -389,10 +395,19 @@ namespace esphome
                     target->set_target_temperature(packet_.sa.to_string(), temp);
                     continue;
                 }
-                case MessageNumber::ENUM_in_operation_power: // ENUM_in_operation_power bool
+                case MessageNumber::ENUM_in_operation_power:
                 {
                     ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_power %s", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value == 0 ? "off" : "on");
                     target->set_power(packet_.sa.to_string(), message.value != 0);
+                    continue;
+                }
+                case MessageNumber::ENUM_in_operation_mode:
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_mode %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                    Mode mode = Mode::Unknown;
+                    if (message.value >= 0 && message.value <= 4)
+                        mode = (Mode)message.value;
+                    target->set_mode(packet_.sa.to_string(), mode);
                     continue;
                 }
 
@@ -786,6 +801,9 @@ namespace esphome
                     case 0x8254:
                     case 0x825f:
                     case 0x8260:
+                    case 0x2400:
+                    case 0x2401:
+                    case 0x24fc:
                     {
                         // ESP_LOGW(TAG, "s:%s d:%s Todo %s %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), int_to_hex((int)message.messageNumber).c_str(), message.value);
                         continue; // Todo

@@ -72,6 +72,7 @@ namespace esphome
         {
             Undefiend = 0,
             ENUM_in_operation_power = 0x4000,
+            ENUM_in_operation_mode = 0x4001,
             VAR_in_temp_room_f = 0x4203,
             VAR_in_temp_target_f = 0x4201
         };
@@ -164,7 +165,8 @@ namespace esphome
             NasaProtocol() = default;
 
             std::vector<uint8_t> get_power_message(const std::string &address, bool value) override;
-            std::vector<uint8_t> set_target_temp(const std::string &address, float value) override;
+            std::vector<uint8_t> get_target_temp_message(const std::string &address, float value) override;
+            std::vector<uint8_t> get_mode_message(const std::string &address, Mode value) override;
         };
 
     } // namespace samsung_ac
