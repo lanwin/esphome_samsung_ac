@@ -36,11 +36,6 @@ namespace esphome
   {
     static const char *TAG = "samsung_ac";
 
-    void Samsung_AC_Select::control(const std::string &value)
-    {
-      ESP_LOGW(TAG, "control %s", value.c_str());
-    }
-
     void Samsung_AC_Device::set_room_temperature_sensor(esphome::sensor::Sensor *sensor)
     {
       room_temperature = sensor;
@@ -62,6 +57,16 @@ namespace esphome
       power->write_state_ = [this](bool value)
       {
         auto data = protocol->get_power_message(address, value);
+        samsung_ac->send_bus_message(data);
+      };
+    }
+
+    void Samsung_AC_Device::set_mode_select(Samsung_AC_Mode_Select *select)
+    {
+      mode = select;
+      mode->write_state_ = [this](Mode mode_)
+      {
+        auto data = protocol->get_mode_message(address, mode_);
         samsung_ac->send_bus_message(data);
       };
     }

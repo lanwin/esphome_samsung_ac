@@ -24,7 +24,8 @@ Samsung_AC = samsung_ac.class_(
 )
 Samsung_AC_Device = samsung_ac.class_("Samsung_AC_Device")
 Samsung_AC_Switch = samsung_ac.class_("Samsung_AC_Switch", switch.Switch)
-Samsung_AC_Select = samsung_ac.class_("Samsung_AC_Select", select.Select)
+Samsung_AC_Mode_Select = samsung_ac.class_(
+    "Samsung_AC_Mode_Select", select.Select)
 Samsung_AC_Number = samsung_ac.class_("Samsung_AC_Number", number.Number)
 
 CONF_DATALINE_DEBUG = "dataline_debug"
@@ -34,11 +35,12 @@ CONF_DEVICE_ADDRESS = "address"
 CONF_DEVICE_ROOM_TEMPERATURE = "room_temperature"
 CONF_DEVICE_TARGET_TEMPERATURE = "target_temperature"
 CONF_DEVICE_POWER = "power"
+CONF_DEVICE_MODE = "mode"
 
 # not sure why select.select_schema did not work yet
-SELECT_SCHEMA = (
+SELECT_MODE_SCHEMA = (
     select.SELECT_SCHEMA.extend(
-        {cv.GenerateID(): cv.declare_id(Samsung_AC_Select)})
+        {cv.GenerateID(): cv.declare_id(Samsung_AC_Mode_Select)})
 )
 
 NUMBER_SCHEMA = (
@@ -59,7 +61,7 @@ DEVICE_SCHEMA = (
             ),
             cv.Optional(CONF_DEVICE_TARGET_TEMPERATURE): NUMBER_SCHEMA,
             cv.Optional(CONF_DEVICE_POWER): switch.switch_schema(Samsung_AC_Switch),
-            cv.Optional("test"): SELECT_SCHEMA,
+            cv.Optional(CONF_DEVICE_MODE): SELECT_MODE_SCHEMA,
         }
     )
 )
@@ -105,10 +107,12 @@ async def to_code(config):
                                           step=1.0)
             cg.add(var_dev.set_target_temperature_number(num))
 
-        if "test" in device:
-            conf = device["test"]
-            sel = await select.new_select(conf, options=["A", "B"])
-            await select.register_select(sel, conf, options=["A", "B"])
+        if CONF_DEVICE_MODE in device:
+            conf = device[CONF_DEVICE_MODE]
+            values = ["Auto", "Cool", "Dry", "Fan", "Heat"]
+            sel = await select.new_select(conf, options=values)
+            await select.register_select(sel, conf, options=values)
+            cg.add(var_dev.set_mode_select(sel))
 
         cg.add(var.register_device(var_dev))
 

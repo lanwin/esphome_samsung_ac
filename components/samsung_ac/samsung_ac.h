@@ -26,10 +26,55 @@ namespace esphome
       std::function<void(float)> write_state_;
     };
 
-    class Samsung_AC_Select : public esphome::select::Select
+    class Samsung_AC_Mode_Select : public esphome::select::Select
     {
     public:
-      void control(const std::string &value) override;
+      Mode str_to_mode(const std::string &value)
+      {
+        if (value == "Auto")
+          return Mode::Auto;
+        if (value == "Cool")
+          return Mode::Cool;
+        if (value == "Dry")
+          return Mode::Dry;
+        if (value == "Fan")
+          return Mode::Fan;
+        if (value == "Heat")
+          return Mode::Heat;
+        return Mode::Unknown;
+      }
+
+      std::string mode_to_str(Mode mode)
+      {
+        switch (mode)
+        {
+        case Mode::Auto:
+          return "Auto";
+        case Mode::Cool:
+          return "Cool";
+        case Mode::Dry:
+          return "Dry";
+        case Mode::Fan:
+          return "Fan";
+        case Mode::Heat:
+          return "Heat";
+        default:
+          return "";
+        };
+      }
+
+      void publish_state_(Mode mode)
+      {
+        ESP_LOGW("det", "select %s", mode_to_str(mode).c_str());
+        this->publish_state(mode_to_str(mode));
+      }
+
+      void control(const std::string &value) override
+      {
+        write_state_(str_to_mode(value));
+      }
+
+      std::function<void(Mode)> write_state_;
     };
 
     class Samsung_AC_Switch : public esphome::switch_::Switch
@@ -58,10 +103,12 @@ namespace esphome
       esphome::sensor::Sensor *room_temperature{nullptr};
       Samsung_AC_Number *target_temperature{nullptr};
       Samsung_AC_Switch *power{nullptr};
+      Samsung_AC_Mode_Select *mode{nullptr};
 
       void set_room_temperature_sensor(esphome::sensor::Sensor *sensor);
       void set_target_temperature_number(Samsung_AC_Number *number);
       void set_power_switch(Samsung_AC_Switch *switch_);
+      void set_mode_select(Samsung_AC_Mode_Select *select);
 
     protected:
       Protocol *protocol{nullptr};
@@ -117,9 +164,9 @@ namespace esphome
       void set_mode(const std::string address, Mode mode) override
       {
         Samsung_AC_Device *dev = find_device(address);
-        // if (dev == nullptr || dev->mode == nullptr)
-        // return;
-        // dev->mode->publish_state_(mode);
+        if (dev == nullptr || dev->mode == nullptr)
+          return;
+        dev->mode->publish_state_(mode);
       }
 
       void send_bus_message(std::vector<uint8_t> &data);
