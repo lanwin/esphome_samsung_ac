@@ -1,0 +1,32 @@
+esp8266:
+  board: nodemcuv2
+
+web_server:
+  port: 80
+
+uart:
+  tx_pin: TX
+  rx_pin: RX
+  baud_rate: 9600
+  parity: EVEN
+
+external_components:
+- source: https://github.com/lanwin/esphome_samsung_ac@main
+  components: [samsung_ac]
+
+samsung_ac:
+  devices:
+  - address: "20.00.00"
+    room_temperature:
+      name: Test1_temp
+    target_temperature:
+      name: Test1_target
+    power:
+      name: Test1_power
+  - address: "20.00.01"
+    room_temperature:
+      name: Test2_temp
+    target_temperature:
+      name: Test2_target
+    power:
+      name: Test2_power
