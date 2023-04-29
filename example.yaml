@@ -23,10 +23,3 @@ samsung_ac:
       name: Test1_target
     power:
       name: Test1_power
-  - address: "20.00.01"
-    room_temperature:
-      name: Test2_temp
-    target_temperature:
-      name: Test2_target
-    power:
-      name: Test2_power
