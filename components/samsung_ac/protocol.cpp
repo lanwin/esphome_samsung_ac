@@ -1,5 +1,6 @@
 #include "esphome/core/log.h"
 #include "protocol.h"
+#include "util.h"
 #include "nasa.h"
 #include "non_nasa.h"
 
@@ -20,6 +21,7 @@ namespace esphome
                 return;
             }
 
+            ESP_LOGW("TEST", "%s", bytes_to_hex(data).c_str());
             // log error
         }
 
