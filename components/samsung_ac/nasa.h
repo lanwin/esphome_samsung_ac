@@ -156,9 +156,6 @@ namespace esphome
 
         void process_nasa_message(std::vector<uint8_t> data, MessageTarget *target);
 
-        std::string bytes_to_hex(const std::vector<uint8_t> &data);
-        std::vector<uint8_t> hex_to_bytes(const std::string &hex);
-
         class NasaProtocol : public Protocol
         {
         public:
