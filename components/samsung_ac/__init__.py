@@ -1,6 +1,6 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import uart, sensor, switch, select, number
+from esphome.components import uart, sensor, switch, select, number, climate
 from esphome.const import (
     CONF_ID,
     CONF_NAME,
@@ -13,7 +13,7 @@ from esphome.const import (
 
 CODEOWNERS = ["matthias882", "lanwin"]
 DEPENDENCIES = ["uart"]
-AUTO_LOAD = ["sensor", "switch", "select", "number"]
+AUTO_LOAD = ["sensor", "switch", "select", "number", "climate"]
 MULTI_CONF = False
 
 CONF_SAMSUNG_AC_ID = "samsung_ac_id"
@@ -27,6 +27,7 @@ Samsung_AC_Switch = samsung_ac.class_("Samsung_AC_Switch", switch.Switch)
 Samsung_AC_Mode_Select = samsung_ac.class_(
     "Samsung_AC_Mode_Select", select.Select)
 Samsung_AC_Number = samsung_ac.class_("Samsung_AC_Number", number.Number)
+Samsung_AC_Climate = samsung_ac.class_("Samsung_AC_Climate", climate.Climate)
 
 CONF_DATALINE_DEBUG = "dataline_debug"
 
@@ -36,6 +37,7 @@ CONF_DEVICE_ROOM_TEMPERATURE = "room_temperature"
 CONF_DEVICE_TARGET_TEMPERATURE = "target_temperature"
 CONF_DEVICE_POWER = "power"
 CONF_DEVICE_MODE = "mode"
+CONF_DEVICE_CLIMATE = "climate"
 
 # not sure why select.select_schema did not work yet
 SELECT_MODE_SCHEMA = (
@@ -46,6 +48,11 @@ SELECT_MODE_SCHEMA = (
 NUMBER_SCHEMA = (
     number.NUMBER_SCHEMA.extend(
         {cv.GenerateID(): cv.declare_id(Samsung_AC_Number)})
+)
+
+CLIMATE_SCHEMA = (
+    climate.CLIMATE_SCHEMA.extend(
+        {cv.GenerateID(): cv.declare_id(Samsung_AC_Climate)})
 )
 
 DEVICE_SCHEMA = (
@@ -62,6 +69,7 @@ DEVICE_SCHEMA = (
             cv.Optional(CONF_DEVICE_TARGET_TEMPERATURE): NUMBER_SCHEMA,
             cv.Optional(CONF_DEVICE_POWER): switch.switch_schema(Samsung_AC_Switch),
             cv.Optional(CONF_DEVICE_MODE): SELECT_MODE_SCHEMA,
+            cv.Optional(CONF_DEVICE_CLIMATE): CLIMATE_SCHEMA,
         }
     )
 )
@@ -113,6 +121,12 @@ async def to_code(config):
             sel = await select.new_select(conf, options=values)
             await select.register_select(sel, conf, options=values)
             cg.add(var_dev.set_mode_select(sel))
+
+        if CONF_DEVICE_CLIMATE in device:
+            conf = device[CONF_DEVICE_CLIMATE]
+            var_cli = cg.new_Pvariable(conf[CONF_ID])
+            await climate.register_climate(var_cli, conf)
+            cg.add(var_dev.set_climate(var_cli))
 
         cg.add(var.register_device(var_dev))
 

@@ -3,72 +3,94 @@
 #include "util.h"
 #include <vector>
 
-std::string int_to_hex(int number)
-{
-  char str[3];
-  sprintf(str, "%02x", number);
-  return str;
-}
-
-std::string bytes_to_hex(const std::vector<uint8_t> &data)
-{
-  std::string str;
-  for (int i = 0; i < data.size(); i++)
-  {
-    str += int_to_hex(data[i]);
-  }
-  return str;
-}
-
-std::vector<uint8_t> hex_to_bytes(const std::string &hex)
-{
-  std::vector<uint8_t> bytes;
-  for (unsigned int i = 0; i < hex.length(); i += 2)
-  {
-    bytes.push_back((uint8_t)strtol(hex.substr(i, 2).c_str(), NULL, 16));
-  }
-  return bytes;
-}
-
 namespace esphome
 {
   namespace samsung_ac
   {
     static const char *TAG = "samsung_ac";
 
-    void Samsung_AC_Device::set_room_temperature_sensor(esphome::sensor::Sensor *sensor)
+    climate::ClimateTraits Samsung_AC_Climate::traits()
     {
-      room_temperature = sensor;
+      auto traits = climate::ClimateTraits();
+      traits.set_supports_current_temperature(true);
+
+      traits.set_visual_temperature_step(1);
+      traits.set_visual_min_temperature(16);
+      traits.set_visual_max_temperature(30);
+
+      std::set<climate::ClimateMode> modes;
+      modes.insert(climate::CLIMATE_MODE_OFF);
+      modes.insert(climate::CLIMATE_MODE_AUTO);
+      modes.insert(climate::CLIMATE_MODE_COOL);
+      modes.insert(climate::CLIMATE_MODE_DRY);
+      modes.insert(climate::CLIMATE_MODE_FAN_ONLY);
+      modes.insert(climate::CLIMATE_MODE_HEAT);
+      traits.set_supported_modes(modes);
+
+      std::set<climate::ClimateFanMode> fan;
+      fan.insert(climate::ClimateFanMode::CLIMATE_FAN_AUTO);
+
+      traits.set_supported_fan_modes(fan);
+
+      return traits;
     }
 
-    void Samsung_AC_Device::set_target_temperature_number(Samsung_AC_Number *number)
+    Mode climatemode_to_mode(climate::ClimateMode mode)
     {
-      target_temperature = number;
-      target_temperature->write_state_ = [this](float value)
+      switch (mode)
       {
-        auto data = protocol->get_target_temp_message(address, value);
-        samsung_ac->send_bus_message(data);
-      };
+      case climate::ClimateMode::CLIMATE_MODE_COOL:
+        return Mode::Cool;
+      case climate::ClimateMode::CLIMATE_MODE_HEAT:
+        return Mode::Heat;
+      case climate::ClimateMode::CLIMATE_MODE_FAN_ONLY:
+        return Mode::Fan;
+      case climate::ClimateMode::CLIMATE_MODE_DRY:
+        return Mode::Dry;
+      case climate::ClimateMode::CLIMATE_MODE_AUTO:
+        return Mode::Auto;
+      default:
+        return Mode::Unknown;
+      }
     }
 
-    void Samsung_AC_Device::set_power_switch(Samsung_AC_Switch *switch_)
+    void Samsung_AC_Climate::control(const climate::ClimateCall &call)
     {
-      power = switch_;
-      power->write_state_ = [this](bool value)
+      auto targetTempOpt = call.get_target_temperature();
+      if (targetTempOpt.has_value())
+        device->write_target_temperature(targetTempOpt.value());
+
+      auto modeOpt = call.get_mode();
+      if (modeOpt.has_value())
       {
-        auto data = protocol->get_power_message(address, value);
-        samsung_ac->send_bus_message(data);
-      };
+        if (modeOpt.value() == climate::ClimateMode::CLIMATE_MODE_OFF)
+        {
+          device->write_power(false);
+        }
+        else
+        {
+          device->write_mode(climatemode_to_mode(modeOpt.value()));
+          device->write_power(true);
+        }
+      }
     }
 
-    void Samsung_AC_Device::set_mode_select(Samsung_AC_Mode_Select *select)
+    void Samsung_AC_Device::write_target_temperature(float value)
     {
-      mode = select;
-      mode->write_state_ = [this](Mode mode_)
-      {
-        auto data = protocol->get_mode_message(address, mode_);
-        samsung_ac->send_bus_message(data);
-      };
+      auto data = protocol->get_target_temp_message(address, value);
+      samsung_ac->send_bus_message(data);
+    }
+
+    void Samsung_AC_Device::write_mode(Mode value)
+    {
+      auto data = protocol->get_mode_message(address, value);
+      samsung_ac->send_bus_message(data);
+    }
+
+    void Samsung_AC_Device::write_power(bool value)
+    {
+      auto data = protocol->get_power_message(address, value);
+      samsung_ac->send_bus_message(data);
     }
 
     void Samsung_AC::setup() {}
@@ -106,7 +128,7 @@ namespace esphome
     {
       ESP_LOGCONFIG(TAG, "Samsung_AC:");
       ESP_LOGCONFIG(TAG, "dataline debug enabled?: %s", this->dataline_debug_ ? "true" : "false");
-      this->check_uart_settings(2400, 1, esphome::uart::UART_CONFIG_PARITY_EVEN, 8);
+      this->check_uart_settings(2400, 1, uart::UART_CONFIG_PARITY_EVEN, 8);
     }
 
     void Samsung_AC::loop()
