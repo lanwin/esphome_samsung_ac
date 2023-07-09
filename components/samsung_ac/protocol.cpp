@@ -1,6 +1,7 @@
 #include "esphome/core/log.h"
 #include "protocol.h"
 #include "nasa.h"
+#include "non_nasa.h"
 
 namespace esphome
 {
@@ -10,9 +11,10 @@ namespace esphome
         {
             if (data.size() == 14)
             {
-                // process_non_nasa_message(data, target);
+                process_non_nasa_message(data, target);
+                return;
             }
-            else if (data.size() >= 16 && data.size() < 1500)
+            if (data.size() >= 16 && data.size() < 1500)
             {
                 process_nasa_message(data, target);
                 return;
