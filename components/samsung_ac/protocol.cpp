@@ -21,8 +21,7 @@ namespace esphome
                 return;
             }
 
-            ESP_LOGW("TEST", "%s", bytes_to_hex(data).c_str());
-            // log error
+            ESP_LOGW("Unknown message type", "%s", bytes_to_hex(data).c_str());
         }
 
         Protocol *nasaProtocol = new NasaProtocol();
