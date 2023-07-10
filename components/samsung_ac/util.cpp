@@ -1,10 +1,9 @@
-#include "util.h";
+#include "util.h"
 
 namespace esphome
 {
     namespace samsung_ac
     {
-
         std::string int_to_hex(int number)
         {
             char str[3];
