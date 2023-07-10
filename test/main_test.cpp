@@ -58,6 +58,10 @@ int main(int argc, char *argv[])
     process_message(data, &target);
     data = hex_to_bytes("32c8f0860100000000000008b734");
     process_message(data, &target);
+    data = hex_to_bytes("3200c84020000000408900402134");
+    process_message(data, &target);
+    data = hex_to_bytes("3200c8204d51500001100051e434");
+    process_message(data, &target);
 };
 
 // g++ *.cpp -o test.exe && test.exe

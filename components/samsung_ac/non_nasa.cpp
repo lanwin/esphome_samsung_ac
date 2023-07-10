@@ -37,7 +37,9 @@ namespace esphome
             case 0x53:
             case 0x54:
             case 0x64:
-                ESP_LOGW("command", "%02X %02X %02X", src, dest, cmd, bytes_to_hex(data).c_str());
+            case 0x20:
+            case 0x40:
+                ESP_LOGW("command", "%02X %02X %02X %s", src, dest, cmd, bytes_to_hex(data).c_str());
                 break;
 
             default:
