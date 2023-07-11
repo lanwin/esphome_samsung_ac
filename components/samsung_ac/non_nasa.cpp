@@ -47,6 +47,7 @@ namespace esphome
 
                 target->set_target_temperature(src, target_temp);
                 target->set_room_temperature(src, room_temp);
+                target->set_power(src, power);
 
                 switch (fanspeed)
                 {
