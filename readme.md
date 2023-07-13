@@ -1,4 +1,4 @@
-# ESPHome Samsung AC (NASA)
+# ESPHome Samsung AC
 
 This project provides an ESPHome component for Samsung air conditioners. It allows you to watch and control your devices via a home
 automation system. And is designed to be attached to the F1,F2 communication bus between the devices.
