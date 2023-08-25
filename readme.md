@@ -3,7 +3,9 @@
 This project provides an ESPHome component for Samsung air conditioners. It allows you to watch and control your devices via a home
 automation system. And is designed to be attached to the F1,F2 communication bus between the devices.
 
-Currently this project works with the NASA AC's only. But the code is ready to integrate also the older Non NASA AC's.
+Current state:
+* NASA devices can be controlled and monitored
+* NonNASA devices can be partially monitored
 
 # Current Features:
 * View Room temperature
