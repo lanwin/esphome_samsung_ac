@@ -17,6 +17,13 @@ external_components:
 samsung_ac:
   devices:
   - address: "20.00.00"
+    # Each property below are optional - choose what you want to use.
+      
+    # You could use the ESPHome/Homeassist climate control
+    climate:
+      name: "My Room"
+      
+    # And/or use seperate controls/sensors
     room_temperature:
       name: Test1_temp
     target_temperature:
