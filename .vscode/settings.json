@@ -50,7 +50,8 @@
     "sstream": "cpp",
     "cstring": "cpp",
     "map": "cpp",
-    "cinttypes": "cpp"
+    "cinttypes": "cpp",
+    "bitset": "cpp"
   },
   "[python]": {
     "editor.defaultFormatter": "ms-python.autopep8"
