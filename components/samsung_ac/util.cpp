@@ -30,5 +30,10 @@ namespace esphome
             }
             return bytes;
         }
+
+        void print_bits_8(uint8_t value)
+        {
+            std::cout << std::bitset<8>(value) << std::endl;
+        }
     } // namespace samsung_ac
 } // namespace esphome

@@ -4,11 +4,12 @@
 #include "util.h"
 #include "nasa.h"
 
+static const char *TAG = "samsung_nasa";
+
 namespace esphome
 {
     namespace samsung_ac
     {
-        static const char *TAG = "samsung_nasa";
 
         int variable_to_signed(int value)
         {
