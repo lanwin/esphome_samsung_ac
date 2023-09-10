@@ -32,13 +32,13 @@ If you have problems receiving data, first check your wiring. I had a lot of pro
 * After reboot check your log it should be write out yellow received data packets
 * Wait a few seconds and watch for purple log messages like this: known addresses: 10.00.00, 20.00.00, 20.00.01, 20.00.02, 20.00.03 
 * That are your device addresses - Skip the 10. cause this is the outdoor unit
-* copy the address block for each unit with is listed and change names to the names of the rooms. 
+* copy the address block for each unit witch is listed and change names to the names of the rooms. 
 * Remove properties you dont need.
 
 ## NASA vs Non NASA 
 
 It took me a while to figure out what the difference is. NASA is the new wire protocol which Samsung uses for their AC systems. 
-The old units are using the so-called Non NASA protocol. The protocols were some aspects like the start and end byte. But the 
+The old units are using the so-called Non NASA protocol. The protocols share some aspects like the start and end byte. But the 
 newer NASA protocol is more complex and allows more data to be transferred and more units to communicate.
 
 DannyDeGaspari provides and exelant explanation of the Non NASA protocol here https://github.com/DannyDeGaspari/Samsung-HVAC-buscontrol
