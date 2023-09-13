@@ -115,6 +115,40 @@ namespace esphome
             return true;
         }
 
+        std::vector<uint8_t> NonNasaPacket::encode()
+        {
+            std::vector<uint8_t> data;
+
+            for (int i = 0; i < 14; i++)
+            {
+                data.push_back(0);
+            }
+
+            data[0] = 0x32;
+            data[1] = (uint8_t)hex_to_int(src);
+            data[2] = (uint8_t)hex_to_int(dst);
+
+            data[3] = 0x20; // cmd
+
+            data[4] = command.target_temp + 55;
+            data[5] = command.room_temp + 55;
+            data[6] = command.pipe_in + 55;
+
+            data[7] = (uint8_t)command.wind_direction << 3;
+            data[7] += (uint8_t)command.fanspeed;
+            data[8] = (uint8_t)command.mode;
+            data[8] += command.power ? 0b10000000 : 0;
+
+            data[9] = (uint8_t)hex_to_int("1c");
+
+            data[11] = command.pipe_out + 55;
+
+            data[12] = build_checksum(data);
+            data[13] = 0x34;
+
+            return data;
+        }
+
         void process_non_nasa_message(std::vector<uint8_t> data, MessageTarget *target)
         {
             NonNasaPacket packet;

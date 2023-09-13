@@ -110,6 +110,7 @@ void test_decoding()
     auto p = test_decode("3200c8204b504e000110004ee234");
     assert(p.command.power == false);
     assert(p.command.target_temp == 20);
+    assert(p.command.room_temp == 25);
     assert(p.command.pipe_in == 23);
     assert(p.command.pipe_out == 23);
     assert(p.command.fanspeed == NonNasaFanspeed::Auto);
@@ -119,6 +120,7 @@ void test_decoding()
     p = test_decode("3200c8204b4f4efd8110004e8034");
     assert(p.command.power == true);
     assert(p.command.target_temp == 20);
+    assert(p.command.room_temp == 24);
     assert(p.command.pipe_in == 23);
     assert(p.command.pipe_out == 23);
     assert(p.command.fanspeed == NonNasaFanspeed::High);
@@ -128,6 +130,7 @@ void test_decoding()
     p = test_decode("3200c8204b4f4efc8110004e8134");
     assert(p.command.power == true);
     assert(p.command.target_temp == 20);
+    assert(p.command.room_temp == 24);
     assert(p.command.pipe_in == 23);
     assert(p.command.pipe_out == 23);
     assert(p.command.fanspeed == NonNasaFanspeed::Medium);
@@ -137,6 +140,7 @@ void test_decoding()
     p = test_decode("3200c8204b4f4efa8110004e8734");
     assert(p.command.power == true);
     assert(p.command.target_temp == 20);
+    assert(p.command.room_temp == 24);
     assert(p.command.pipe_in == 23);
     assert(p.command.pipe_out == 23);
     assert(p.command.fanspeed == NonNasaFanspeed::Low);
@@ -146,6 +150,7 @@ void test_decoding()
     p = test_decode("3200c8204f4f4ef8a21c004eae34");
     assert(p.command.power == true);
     assert(p.command.target_temp == 24);
+    assert(p.command.room_temp == 24);
     assert(p.command.pipe_in == 23);
     assert(p.command.pipe_out == 23);
     assert(p.command.fanspeed == NonNasaFanspeed::Auto);
@@ -155,6 +160,7 @@ void test_decoding()
     p = test_decode("3200c8204f4f4efd821c004e8b34");
     assert(p.command.power == true);
     assert(p.command.target_temp == 24);
+    assert(p.command.room_temp == 24);
     assert(p.command.pipe_in == 23);
     assert(p.command.pipe_out == 23);
     assert(p.command.fanspeed == NonNasaFanspeed::High);
@@ -164,6 +170,7 @@ void test_decoding()
     p = test_decode("3200c8204f4f4efd821c004e8b34");
     assert(p.command.power == true);
     assert(p.command.target_temp == 24);
+    assert(p.command.room_temp == 24);
     assert(p.command.pipe_in == 23);
     assert(p.command.pipe_out == 23);
     assert(p.command.fanspeed == NonNasaFanspeed::High);
@@ -173,6 +180,20 @@ void test_decoding()
 
 void test_encoding()
 {
+    NonNasaPacket p;
+    p.dst = "c8";
+    p.command.power = true;
+    p.command.target_temp = 24;
+    p.command.room_temp = 24;
+    p.command.pipe_in = 23;
+    p.command.pipe_out = 23;
+    p.command.fanspeed = NonNasaFanspeed::High;
+    p.command.mode = NonNasaMode::Cool;
+    p.command.wind_direction = NonNasaWindDirection::Stop;
+    auto data = bytes_to_hex(p.encode());
+    std::cout << "expected: 3200c8204f4f4efd821c004e8b34" << std::endl;
+    std::cout << "actual:   " << data << std::endl;
+    assert(data == "3200c8204f4f4efd821c004e8b34");
 }
 
 void test_target()

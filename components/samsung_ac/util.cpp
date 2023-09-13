@@ -11,6 +11,11 @@ namespace esphome
             return str;
         }
 
+        int hex_to_int(const std::string &hex)
+        {
+            return (int)strtol(hex.c_str(), NULL, 16);
+        }
+
         std::string bytes_to_hex(const std::vector<uint8_t> &data)
         {
             std::string str;

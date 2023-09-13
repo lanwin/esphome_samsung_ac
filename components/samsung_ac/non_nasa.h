@@ -58,6 +58,8 @@ namespace esphome
 
             NonNasaCommand20 command;
 
+            std::vector<uint8_t> encode();
+
             bool decode(std::vector<uint8_t> &data);
             std::string to_string();
         };
