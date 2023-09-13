@@ -65,5 +65,15 @@ namespace esphome
         };
 
         void process_non_nasa_message(std::vector<uint8_t> data, MessageTarget *target);
+
+        class NonNasaProtocol : public Protocol
+        {
+        public:
+            NonNasaProtocol() = default;
+
+            std::vector<uint8_t> get_power_message(const std::string &address, bool value) override;
+            std::vector<uint8_t> get_target_temp_message(const std::string &address, float value) override;
+            std::vector<uint8_t> get_mode_message(const std::string &address, Mode value) override;
+        };
     } // namespace samsung_ac
 } // namespace esphome

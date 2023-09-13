@@ -25,13 +25,14 @@ namespace esphome
         }
 
         Protocol *nasaProtocol = new NasaProtocol();
+        Protocol *nonNasaProtocol = new NonNasaProtocol();
 
         Protocol *get_protocol(const std::string &address)
         {
-            // if(address.size()==2)return nonNasaProtocol;
+            if (address.size() == 2)
+                return nonNasaProtocol;
 
             return nasaProtocol;
         }
-
     } // namespace samsung_ac
 } // namespace esphome

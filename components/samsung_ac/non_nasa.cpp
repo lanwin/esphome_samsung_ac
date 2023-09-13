@@ -149,6 +149,34 @@ namespace esphome
             return data;
         }
 
+        std::vector<uint8_t> NonNasaProtocol::get_power_message(const std::string &address, bool value)
+        {
+            NonNasaPacket packet;
+            packet.src = "00";
+            packet.dst = address;
+            packet.command.fanspeed = NonNasaFanspeed::Auto;
+            packet.command.mode = NonNasaMode::Auto;
+            packet.command.pipe_in = 20;
+            packet.command.pipe_out = 20;
+            packet.command.power = value ? 1 : 0;
+            packet.command.room_temp = 20;
+            packet.command.target_temp = 18;
+            packet.command.wind_direction = NonNasaWindDirection::Stop;
+            return packet.encode();
+        }
+
+        std::vector<uint8_t> NonNasaProtocol::get_target_temp_message(const std::string &address, float value)
+        {
+            NonNasaPacket packet;
+            return packet.encode();
+        }
+
+        std::vector<uint8_t> NonNasaProtocol::get_mode_message(const std::string &address, Mode value)
+        {
+            NonNasaPacket packet;
+            return packet.encode();
+        }
+
         void process_non_nasa_message(std::vector<uint8_t> data, MessageTarget *target)
         {
             NonNasaPacket packet;
