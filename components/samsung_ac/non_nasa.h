@@ -64,6 +64,19 @@ namespace esphome
             std::string to_string();
         };
 
+        struct NonNasaRequest
+        {
+            std::string dst;
+
+            uint8_t target_temp = 0;
+            NonNasaFanspeed fanspeed = NonNasaFanspeed::Auto;
+            NonNasaMode mode = NonNasaMode::Heat;
+            bool power = false;
+
+            std::vector<uint8_t> encode();
+            std::string to_string();
+        };
+
         void process_non_nasa_message(std::vector<uint8_t> data, MessageTarget *target);
 
         class NonNasaProtocol : public Protocol

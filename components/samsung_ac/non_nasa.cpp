@@ -150,39 +150,34 @@ namespace esphome
             return data;
         }
 
-        std::vector<uint8_t> NonNasaProtocol::get_power_message(const std::string &address, bool value)
+        std::vector<uint8_t> NonNasaRequest::encode()
         {
             std::vector<uint8_t> data{
-                0x32,
-                0xD0,
-                0,
-                0xB0,
-                0x1F,
-                0x04,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0x34};
+                0x32,                     // 00 start
+                0xD0,                     // 01 src
+                (uint8_t)hex_to_int(dst), // 02 dst
+                0xB0,                     // 03 cmd
+                0x1F,                     // 04
+                0x04,                     // 05
+                0,                        // 06 temp + fanmode
+                0,                        // 07 operation mode
+                0,                        // 08 power + individual mode
+                0,                        // 09
+                0,                        // 10
+                0,                        // 11
+                0,                        // 12 crc
+                0x34                      // 13 end
+            };
 
-            data[2] = (uint8_t)hex_to_int(address);
-            data[10] = 0; //?
-
-            data[7] = (uint8_t)0; // operation mode auto
-
-            float target_temp = 20;
-
-            uint8_t num2 = std::round(((float)target_temp - 13.0) / 1.8);
-            uint8_t num3 = num2 & 31U;
+            uint8_t temp = std::round(((float)target_temp - 13.0) / 1.8);
+            uint8_t num3 = temp & 31U;
             uint8_t num4 = 0; // fan mode auto
 
             data[6] = (uint8_t)((uint8_t)num3 | (uint8_t)num4);
-            data[8] = value ? (uint8_t)192 : (uint8_t)240;
+            data[7] = (uint8_t)0; // operation mode auto
+            data[8] = power ? (uint8_t)192 : (uint8_t)240;
 
-            if (value)
+            if (power)
             {
                 ESP_LOGV(TAG, "value == true");
             }
@@ -197,12 +192,12 @@ namespace esphome
             if (individual)
             {
                 data[8] = (uint8_t)(data[8] | 6U);
-                data[9] = (uint8_t)33;
+                data[9] = (uint8_t)0x21;
             }
             else
             {
                 data[8] = (uint8_t)(data[8] | 4U);
-                data[9] = (uint8_t)33;
+                data[9] = (uint8_t)0x21;
             }
 
             uint8_t num5 = (uint8_t)0;
@@ -211,6 +206,14 @@ namespace esphome
             data[12] = num5;
 
             return data;
+        }
+
+        std::vector<uint8_t> NonNasaProtocol::get_power_message(const std::string &address, bool value)
+        {
+            NonNasaRequest r;
+            r.power = value;
+            r.target_temp = 22;
+            return r.encode();
         }
 
         std::vector<uint8_t> NonNasaProtocol::get_target_temp_message(const std::string &address, float value)
