@@ -1,4 +1,5 @@
 #include <queue>
+#include <cmath>
 #include <iostream>
 #include "esphome/core/log.h"
 #include "util.h"
@@ -151,18 +152,54 @@ namespace esphome
 
         std::vector<uint8_t> NonNasaProtocol::get_power_message(const std::string &address, bool value)
         {
-            NonNasaPacket packet;
-            packet.src = "00";
-            packet.dst = address;
-            packet.command.fanspeed = NonNasaFanspeed::Auto;
-            packet.command.mode = NonNasaMode::Auto;
-            packet.command.pipe_in = 20;
-            packet.command.pipe_out = 20;
-            packet.command.power = value ? 1 : 0;
-            packet.command.room_temp = 20;
-            packet.command.target_temp = 18;
-            packet.command.wind_direction = NonNasaWindDirection::Stop;
-            return packet.encode();
+            std::vector<uint8_t> data{
+                0x32,
+                0xD0,
+                0,
+                0xB0,
+                0x1F,
+                0x04,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0x34};
+
+            data[2] = (uint8_t)hex_to_int(address);
+            data[10] = 0; //?
+
+            data[7] = (uint8_t)0; // operation mode auto
+
+            float target_temp = 18;
+
+            uint8_t num2 = std::round(((float)target_temp - 13.0) / 1.8);
+            uint8_t num3 = num2 & 31U;
+            uint8_t num4 = 0; // fan mode auto
+
+            data[6] = (uint8_t)((uint8_t)num3 | (uint8_t)num4);
+            data[8] = !value ? (uint8_t)192 : (uint8_t)240;
+
+            bool individual = false;
+            if (individual)
+            {
+                data[8] = (uint8_t)((uint8_t)data[8] | 6U);
+                data[9] = (uint8_t)33;
+            }
+            else
+            {
+                data[8] = (uint8_t)((uint8_t)data[8] | 4U);
+                data[9] = (uint8_t)33;
+            }
+
+            uint8_t num5 = (uint8_t)0;
+            for (int index2 = 1; index2 <= 11; ++index2)
+                num5 ^= data[index2];
+            data[12] = num5;
+
+            return data;
         }
 
         std::vector<uint8_t> NonNasaProtocol::get_target_temp_message(const std::string &address, float value)
