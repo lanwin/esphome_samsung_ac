@@ -182,15 +182,17 @@ namespace esphome
             data[6] = (uint8_t)((uint8_t)num3 | (uint8_t)num4);
             data[8] = value ? (uint8_t)192 : (uint8_t)240;
 
-            bool individual = true;
+            // individual seems to deactivate the locale remotes with message "CENTRAL".
+            // seems to be like a building management system.
+            bool individual = false;
             if (individual)
             {
-                data[8] = (uint8_t)((uint8_t)data[8] | 6U);
+                data[8] = (uint8_t)(data[8] | 6U);
                 data[9] = (uint8_t)33;
             }
             else
             {
-                data[8] = (uint8_t)((uint8_t)data[8] | 4U);
+                data[8] = (uint8_t)(data[8] | 4U);
                 data[9] = (uint8_t)33;
             }
 
