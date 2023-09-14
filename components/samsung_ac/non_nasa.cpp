@@ -182,6 +182,15 @@ namespace esphome
             data[6] = (uint8_t)((uint8_t)num3 | (uint8_t)num4);
             data[8] = value ? (uint8_t)192 : (uint8_t)240;
 
+            if (value)
+            {
+                ESP_LOGV(TAG, "value == true");
+            }
+            else
+            {
+                ESP_LOGV(TAG, "value == false");
+            }
+
             // individual seems to deactivate the locale remotes with message "CENTRAL".
             // seems to be like a building management system.
             bool individual = false;
