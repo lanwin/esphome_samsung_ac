@@ -173,7 +173,7 @@ namespace esphome
 
             data[7] = (uint8_t)0; // operation mode auto
 
-            float target_temp = 18;
+            float target_temp = 20;
 
             uint8_t num2 = std::round(((float)target_temp - 13.0) / 1.8);
             uint8_t num3 = num2 & 31U;
