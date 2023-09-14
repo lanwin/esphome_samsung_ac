@@ -180,9 +180,9 @@ namespace esphome
             uint8_t num4 = 0; // fan mode auto
 
             data[6] = (uint8_t)((uint8_t)num3 | (uint8_t)num4);
-            data[8] = !value ? (uint8_t)192 : (uint8_t)240;
+            data[8] = value ? (uint8_t)192 : (uint8_t)240;
 
-            bool individual = false;
+            bool individual = true;
             if (individual)
             {
                 data[8] = (uint8_t)((uint8_t)data[8] | 6U);
