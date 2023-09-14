@@ -21,7 +21,7 @@ namespace esphome
                 return;
             }
 
-            ESP_LOGW("Unknown message type", "%s", bytes_to_hex(data).c_str());
+            ESP_LOGW("samsung_ac", "Unknown message type %s", bytes_to_hex(data).c_str());
         }
 
         Protocol *nasaProtocol = new NasaProtocol();
