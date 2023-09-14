@@ -127,6 +127,7 @@ namespace esphome
         power = switch_;
         power->write_state_ = [this](bool value)
         {
+          ESP_LOGV(TAG, "set power %d", value ? 1 : 0);
           write_power(value);
         };
       }
@@ -282,11 +283,7 @@ namespace esphome
 
       void set_power(const std::string address, bool value) override
       {
-        ESP_LOGW(TAG, "set_power %02X", value ? 1 : 0);
         Samsung_AC_Device *dev = find_device(address);
-
-        ESP_LOGW(TAG, "dev found %s", address.c_str());
-
         if (dev != nullptr)
           dev->publish_power(value);
       }
