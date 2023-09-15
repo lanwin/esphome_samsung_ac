@@ -11,22 +11,22 @@ uart:
   parity: EVEN
 
 external_components:
-- source: https://github.com/lanwin/esphome_samsung_ac@main
-  components: [samsung_ac]
+  - source: https://github.com/lanwin/esphome_samsung_ac@main
+    components: [samsung_ac]
 
 samsung_ac:
   devices:
-  - address: "20.00.00"
-    # Each property below are optional - choose what you want to use.
-      
-    # You could use the ESPHome/Homeassist climate control
-    climate:
-      name: "My Room"
-      
-    # And/or use seperate controls/sensors
-    room_temperature:
-      name: Test1_temp
-    target_temperature:
-      name: Test1_target
-    power:
-      name: Test1_power
+    - address: "20.00.00" # for non NASA it sould be like "c4"
+      # Each property below are optional - choose what you want to use.
+
+      # You could use the ESPHome/Homeassist climate control
+      climate:
+        name: "My Room"
+
+      # And/or use seperate controls/sensors
+      room_temperature:
+        name: Test1_temp
+      target_temperature:
+        name: Test1_target
+      power:
+        name: Test1_power
