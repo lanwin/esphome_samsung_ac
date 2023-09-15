@@ -211,11 +211,7 @@ namespace esphome
                 data[9] = (uint8_t)0x21;
             }
 
-            uint8_t num5 = (uint8_t)0;
-            for (int index2 = 1; index2 <= 11; ++index2)
-                num5 ^= data[index2];
-            data[12] = num5;
-
+            data[12] = build_checksum(data);
             return data;
         }
 

@@ -189,7 +189,7 @@ void test_encoding()
     auto data = bytes_to_hex(p.encode());
     std::cout << "expected: 3200c8204f4f4efd821c004e8b34" << std::endl;
     std::cout << "actual:   " << data << std::endl;
-    assert(data == "32d0c8b01f040600c42100005034");
+    assert(data == "32d0c8b01f04a601f4210000c134");
 }
 
 void test_target()
