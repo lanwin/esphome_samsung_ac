@@ -152,7 +152,7 @@ namespace esphome
 
             data[6] = (uint8_t)((uint8_t)num3 | (uint8_t)num4);
             data[7] = (uint8_t)0; // operation mode auto
-            data[8] = power ? (uint8_t)192 : (uint8_t)240;
+            data[8] = !power ? (uint8_t)192 : (uint8_t)240;
 
             // individual seems to deactivate the locale remotes with message "CENTRAL".
             // seems to be like a building management system.
