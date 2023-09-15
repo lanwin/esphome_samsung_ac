@@ -189,6 +189,8 @@ namespace esphome
                 0x34                      // 13 end
             };
 
+            target_temp += 55;
+
             // uint8_t temp = std::round(((float)target_temp - 13.0) / 1.8);
             uint16_t temp = std::round(((float)target_temp - 13.0) / 1.8);
             temp = temp & 31U;
@@ -197,7 +199,9 @@ namespace esphome
             // seems to be like a building management system.
             bool individual = false;
 
-            data[6] = (uint8_t)((uint8_t)temp | (uint8_t)encode_request_fanspeed(fanspeed));
+            data[6] = (uint8_t)(temp | encode_request_fanspeed(fanspeed));
+
+            std::cout << std::to_string(data[6]) << std::endl;
             data[7] = (uint8_t)encode_request_mode(mode);
             data[8] = !power ? (uint8_t)192 : (uint8_t)240;
             data[8] |= (individual ? 6U : 4U);

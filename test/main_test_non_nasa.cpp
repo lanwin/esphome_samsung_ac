@@ -184,7 +184,7 @@ void test_encoding()
     p.dst = "c8";
     p.power = true;
     p.target_temp = 24;
-    p.fanspeed = NonNasaFanspeed::High;
+    p.fanspeed = NonNasaFanspeed::Auto;
     p.mode = NonNasaMode::Cool;
     auto data = bytes_to_hex(p.encode());
     std::cout << "expected: 3200c8204f4f4efd821c004e8b34" << std::endl;
