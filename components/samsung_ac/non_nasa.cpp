@@ -189,19 +189,16 @@ namespace esphome
                 0x34                      // 13 end
             };
 
-            uint8_t temp = target_temp;
-
             // uint8_t temp = std::round(((float)target_temp - 13.0) / 1.8);
             // uint16_t temp = std::round(((float)target_temp - 13.0) / 1.8);
-            temp = temp & 31U;
+            uint8_t temp = target_temp & 31U;
 
             // individual seems to deactivate the locale remotes with message "CENTRAL".
             // seems to be like a building management system.
             bool individual = false;
 
-            data[6] = (uint8_t)(temp | encode_request_fanspeed(fanspeed));
-
-            std::cout << std::to_string(data[6]) << std::endl;
+            uint8_t t = 0; // encode_request_fanspeed(fanspeed)
+            data[6] = temp | t;
             data[7] = (uint8_t)encode_request_mode(mode);
             data[8] = !power ? (uint8_t)192 : (uint8_t)240;
             data[8] |= (individual ? 6U : 4U);
@@ -220,7 +217,7 @@ namespace esphome
         std::vector<uint8_t> NonNasaProtocol::get_target_temp_message(const std::string &address, float value)
         {
             auto request = packet.toRequest();
-            request.power = value;
+            request.target_temp = value;
             return request.encode();
         }
 
