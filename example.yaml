@@ -30,3 +30,5 @@ samsung_ac:
         name: Test1_target
       power:
         name: Test1_power
+      mode:
+        name: Test1_mode
