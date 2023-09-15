@@ -10,7 +10,6 @@ namespace esphome
 {
     namespace samsung_ac
     {
-
         int variable_to_signed(int value)
         {
             if (value < 65535 /*uint16 max*/)

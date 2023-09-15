@@ -106,12 +106,21 @@ namespace esphome
       }
       ESP_LOGCONFIG(TAG, "registered devices: %s", devices.c_str());
 
-      std::string known = "";
+      std::string knownIndoor = "";
+      std::string knownOutdoor = "";
       for (auto const &address : addresses_)
       {
-        known += known.length() > 0 ? ", " + address : address;
+        if (device == "00" || devices.rfind("10.", 0) == 0)
+        {
+          knownOutdoor += knownOutdoor.length() > 0 ? ", " + address : address;
+        }
+        else
+        {
+          knownIndoor += knownIndoor.length() > 0 ? ", " + address : address;
+        }
       }
-      ESP_LOGCONFIG(TAG, "known addresses: %s", known.c_str());
+      ESP_LOGCONFIG(TAG, "known indoor devices: %s", knownIndoor.c_str());
+      ESP_LOGCONFIG(TAG, "known outdoor devices: %s", knownOutdoor.c_str());
     }
 
     void Samsung_AC::register_device(Samsung_AC_Device *device)
