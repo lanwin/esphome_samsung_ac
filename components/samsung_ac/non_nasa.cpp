@@ -163,15 +163,6 @@ namespace esphome
 
         std::vector<uint8_t> NonNasaRequest::encode()
         {
-            if (power)
-            {
-                ESP_LOGW(TAG, "value == true");
-            }
-            else
-            {
-                ESP_LOGW(TAG, "value == false");
-            }
-
             std::vector<uint8_t> data{
                 0x32,                     // 00 start
                 0xD0,                     // 01 src
@@ -189,21 +180,17 @@ namespace esphome
                 0x34                      // 13 end
             };
 
-            // uint8_t temp = std::round(((float)target_temp - 13.0) / 1.8);
-            // uint16_t temp = std::round(((float)target_temp - 13.0) / 1.8);
-            uint8_t temp = target_temp & 31U;
-
             // individual seems to deactivate the locale remotes with message "CENTRAL".
             // seems to be like a building management system.
             bool individual = false;
 
-            uint8_t t = 0; // encode_request_fanspeed(fanspeed)
-            data[6] = temp | t;
+            data[6] = (target_temp & 31U) | encode_request_fanspeed(fanspeed);
             data[7] = (uint8_t)encode_request_mode(mode);
-            data[8] = !power ? (uint8_t)192 : (uint8_t)240;
+            data[8] = !power ? (uint8_t)0xC0 : (uint8_t)0xF0;
             data[8] |= (individual ? 6U : 4U);
             data[9] = (uint8_t)0x21;
             data[12] = build_checksum(data);
+
             return data;
         }
 
