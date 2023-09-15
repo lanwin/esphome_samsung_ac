@@ -189,10 +189,10 @@ namespace esphome
                 0x34                      // 13 end
             };
 
-            target_temp += 55;
+            uint8_t temp = target_temp;
 
             // uint8_t temp = std::round(((float)target_temp - 13.0) / 1.8);
-            uint16_t temp = std::round(((float)target_temp - 13.0) / 1.8);
+            // uint16_t temp = std::round(((float)target_temp - 13.0) / 1.8);
             temp = temp & 31U;
 
             // individual seems to deactivate the locale remotes with message "CENTRAL".
