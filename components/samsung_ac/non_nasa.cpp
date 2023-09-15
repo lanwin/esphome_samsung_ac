@@ -118,6 +118,49 @@ namespace esphome
             return request;
         }
 
+        uint8_t encode_request_mode(NonNasaMode value)
+        {
+            switch (value)
+            {
+            case NonNasaMode::Auto:
+                return 0;
+            case NonNasaMode::Cool:
+                return 1;
+            case NonNasaMode::Dry:
+                return 2;
+            case NonNasaMode::Fan:
+                return 3;
+            case NonNasaMode::Heat:
+                return 4;
+                // NORMALVENT: 7
+                // EXCHANGEVENT: 15
+                // AIRFRESH: 23
+                // SLEEP: 31
+                // AUTOVENT: 79
+
+            default:
+                return 0; // Auto
+            }
+        }
+
+        uint8_t encode_request_fanspeed(NonNasaFanspeed value)
+        {
+            switch (value)
+            {
+            case NonNasaFanspeed::Auto:
+                return 0;
+            case NonNasaFanspeed::Low:
+                return 64;
+            case NonNasaFanspeed::Medium:
+                return 128;
+            case NonNasaFanspeed::Fresh:
+            case NonNasaFanspeed::High:
+                return 160;
+            default:
+                return 0; // Auto
+            }
+        }
+
         std::vector<uint8_t> NonNasaRequest::encode()
         {
             if (power)
@@ -146,12 +189,12 @@ namespace esphome
                 0x34                      // 13 end
             };
 
-            uint8_t temp = std::round(((float)target_temp - 13.0) / 1.8);
-            uint8_t num3 = temp & 31U;
-            uint8_t num4 = 0; // fan mode auto
+            // uint8_t temp = std::round(((float)target_temp - 13.0) / 1.8);
+            uint16_t temp = std::round(((float)target_temp - 13.0) / 1.8);
+            temp = temp & 31U;
 
-            data[6] = (uint8_t)((uint8_t)num3 | (uint8_t)num4);
-            data[7] = (uint8_t)0; // operation mode auto
+            data[6] = (uint8_t)((uint8_t)temp | (uint8_t)encode_request_fanspeed(fanspeed));
+            data[7] = (uint8_t)encode_request_mode(mode);
             data[8] = !power ? (uint8_t)192 : (uint8_t)240;
 
             // individual seems to deactivate the locale remotes with message "CENTRAL".
