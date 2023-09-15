@@ -263,32 +263,32 @@ namespace esphome
         addresses_.insert(address);
       }
 
-      void register_device(Samsung_AC_Device *device);
-
       void set_dataline_debug(bool dataline_debug) { dataline_debug_ = dataline_debug; };
 
-      void set_room_temperature(const std::string address, float value) override
+      void /*MessageTarget::*/ register_device(Samsung_AC_Device *device);
+
+      void /*MessageTarget::*/ set_room_temperature(const std::string address, float value) override
       {
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
           dev->publish_room_temperature(value);
       }
 
-      void set_target_temperature(const std::string address, float value) override
+      void /*MessageTarget::*/ set_target_temperature(const std::string address, float value) override
       {
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
           dev->publish_target_temperature(value);
       }
 
-      void set_power(const std::string address, bool value) override
+      void /*MessageTarget::*/ set_power(const std::string address, bool value) override
       {
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
           dev->publish_power(value);
       }
 
-      void set_mode(const std::string address, Mode mode) override
+      void /*MessageTarget::*/ set_mode(const std::string address, Mode mode) override
       {
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
