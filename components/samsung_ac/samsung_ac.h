@@ -265,7 +265,10 @@ namespace esphome
 
       void set_dataline_debug(bool dataline_debug) { dataline_debug_ = dataline_debug; };
 
-      void /*MessageTarget::*/ register_device(Samsung_AC_Device *device);
+      void /*MessageTarget::*/ register_device(Samsung_AC_Device *device)
+      {
+        devices_.push_back(device);
+      }
 
       void /*MessageTarget::*/ set_room_temperature(const std::string address, float value) override
       {

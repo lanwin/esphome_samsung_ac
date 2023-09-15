@@ -123,11 +123,6 @@ namespace esphome
       ESP_LOGCONFIG(TAG, "known outdoor devices: %s", knownOutdoor.c_str());
     }
 
-    void Samsung_AC::register_device(Samsung_AC_Device *device)
-    {
-      devices_.push_back(device);
-    }
-
     void Samsung_AC::send_bus_message(std::vector<uint8_t> &data)
     {
       out_.insert(out_.end(), data.begin(), data.end());
