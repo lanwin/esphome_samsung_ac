@@ -193,24 +193,15 @@ namespace esphome
             uint16_t temp = std::round(((float)target_temp - 13.0) / 1.8);
             temp = temp & 31U;
 
-            data[6] = (uint8_t)((uint8_t)temp | (uint8_t)encode_request_fanspeed(fanspeed));
-            data[7] = (uint8_t)encode_request_mode(mode);
-            data[8] = !power ? (uint8_t)192 : (uint8_t)240;
-
             // individual seems to deactivate the locale remotes with message "CENTRAL".
             // seems to be like a building management system.
             bool individual = false;
-            if (individual)
-            {
-                data[8] = (uint8_t)(data[8] | 6U);
-                data[9] = (uint8_t)0x21;
-            }
-            else
-            {
-                data[8] = (uint8_t)(data[8] | 4U);
-                data[9] = (uint8_t)0x21;
-            }
 
+            data[6] = (uint8_t)((uint8_t)temp | (uint8_t)encode_request_fanspeed(fanspeed));
+            data[7] = (uint8_t)encode_request_mode(mode);
+            data[8] = !power ? (uint8_t)192 : (uint8_t)240;
+            data[8] |= (individual ? 6U : 4U);
+            data[9] = (uint8_t)0x21;
             data[12] = build_checksum(data);
             return data;
         }
