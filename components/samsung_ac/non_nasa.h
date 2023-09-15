@@ -35,6 +35,19 @@ namespace esphome
             Stop = 31
         };
 
+        struct NonNasaRequest
+        {
+            std::string dst;
+
+            uint8_t target_temp = 0;
+            NonNasaFanspeed fanspeed = NonNasaFanspeed::Auto;
+            NonNasaMode mode = NonNasaMode::Heat;
+            bool power = false;
+
+            std::vector<uint8_t> encode();
+            std::string to_string();
+        };
+
         struct NonNasaDataPacket // cmd 20
         {
             std::string src;
@@ -54,19 +67,6 @@ namespace esphome
             bool decode(std::vector<uint8_t> &data);
             std::string to_string();
             NonNasaRequest toRequest();
-        };
-
-        struct NonNasaRequest
-        {
-            std::string dst;
-
-            uint8_t target_temp = 0;
-            NonNasaFanspeed fanspeed = NonNasaFanspeed::Auto;
-            NonNasaMode mode = NonNasaMode::Heat;
-            bool power = false;
-
-            std::vector<uint8_t> encode();
-            std::string to_string();
         };
 
         void process_non_nasa_message(std::vector<uint8_t> data, MessageTarget *target);
