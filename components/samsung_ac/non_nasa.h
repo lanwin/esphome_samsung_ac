@@ -35,8 +35,11 @@ namespace esphome
             Stop = 31
         };
 
-        struct NonNasaCommand20
+        struct NonNasaDataPacket // cmd 20
         {
+            std::string src;
+            std::string dst;
+
             uint8_t target_temp = 0;
             uint8_t room_temp = 0;
             uint8_t pipe_in = 0;
@@ -48,20 +51,9 @@ namespace esphome
 
             bool power = false;
 
-            std::string to_string();
-        };
-
-        struct NonNasaPacket
-        {
-            std::string src;
-            std::string dst;
-
-            NonNasaCommand20 command;
-
-            std::vector<uint8_t> encode();
-
             bool decode(std::vector<uint8_t> &data);
             std::string to_string();
+            NonNasaRequest toRequest();
         };
 
         struct NonNasaRequest

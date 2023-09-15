@@ -11,6 +11,8 @@ namespace esphome
 {
     namespace samsung_ac
     {
+        NonNasaDataPacket packet;
+
         uint8_t build_checksum(std::vector<uint8_t> &data)
         {
             uint8_t sum = data[1];
@@ -21,10 +23,12 @@ namespace esphome
             return sum;
         }
 
-        std::string NonNasaCommand20::to_string()
+        std::string NonNasaDataPacket::to_string()
         {
             std::string str;
             str += "{";
+            str += "src:" + src + ";";
+            str += "dst:" + dst + ";";
             str += "target_temp:" + std::to_string(target_temp) + ";";
             str += "room_temp:" + std::to_string(room_temp) + ";";
             str += "pipe_in:" + std::to_string(pipe_in) + ";";
@@ -37,19 +41,7 @@ namespace esphome
             return str;
         }
 
-        std::string NonNasaPacket::to_string()
-        {
-            std::string str;
-            str += "{";
-            str += "src:" + src + ";";
-            str += "dst:" + dst + ";";
-            str += "cmd:" + std::to_string(20) + ";";
-            str += "command:" + command.to_string() + ";";
-            str += "}";
-            return str;
-        }
-
-        bool NonNasaPacket::decode(std::vector<uint8_t> &data)
+        bool NonNasaDataPacket::decode(std::vector<uint8_t> &data)
         {
             ESP_LOGW(TAG, "decode %s", bytes_to_hex(data).c_str());
 
@@ -79,23 +71,23 @@ namespace esphome
 
             src = int_to_hex(data[1]);
             dst = int_to_hex(data[2]);
-            uint8_t cmd = data[3];
 
+            uint8_t cmd = data[3];
             switch (cmd)
             {
             case 0x20: // temperatures
             {
-                command.target_temp = data[4] - 55;
-                command.room_temp = data[5] - 55;
-                command.pipe_in = data[6] - 55;
-                command.wind_direction = (NonNasaWindDirection)((data[7]) >> 3);
-                command.fanspeed = (NonNasaFanspeed)((data[7] & 0b00000111));
-                command.mode = (NonNasaMode)(data[8] & 0b00111111);
-                command.power = data[8] & 0b10000000;
-                command.pipe_out = data[11] - 55;
+                target_temp = data[4] - 55;
+                room_temp = data[5] - 55;
+                pipe_in = data[6] - 55;
+                wind_direction = (NonNasaWindDirection)((data[7]) >> 3);
+                fanspeed = (NonNasaFanspeed)((data[7] & 0b00000111));
+                mode = (NonNasaMode)(data[8] & 0b00111111);
+                power = data[8] & 0b10000000;
+                pipe_out = data[11] - 55;
 
-                if (command.wind_direction == (NonNasaWindDirection)0)
-                    command.wind_direction = NonNasaWindDirection::Stop;
+                if (wind_direction == (NonNasaWindDirection)0)
+                    wind_direction = NonNasaWindDirection::Stop;
 
                 break;
             }
@@ -116,42 +108,27 @@ namespace esphome
             return true;
         }
 
-        std::vector<uint8_t> NonNasaPacket::encode()
+        NonNasaRequest NonNasaDataPacket::toRequest()
         {
-            std::vector<uint8_t> data;
-
-            for (int i = 0; i < 14; i++)
-            {
-                data.push_back(0);
-            }
-
-            data[0] = 0x32;
-            data[1] = (uint8_t)hex_to_int(src);
-            data[2] = (uint8_t)hex_to_int(dst);
-
-            data[3] = 0x20; // cmd
-
-            data[4] = command.target_temp + 55;
-            data[5] = command.room_temp + 55;
-            data[6] = command.pipe_in + 55;
-
-            data[7] = (uint8_t)command.wind_direction << 3;
-            data[7] += (uint8_t)command.fanspeed;
-            data[8] = (uint8_t)command.mode;
-            data[8] += command.power ? 0b10000000 : 0;
-
-            data[9] = (uint8_t)hex_to_int("1c");
-
-            data[11] = command.pipe_out + 55;
-
-            data[12] = build_checksum(data);
-            data[13] = 0x34;
-
-            return data;
+            NonNasaRequest request;
+            request.power = power;
+            request.target_temp = target_temp;
+            request.fanspeed = fanspeed;
+            request.mode = mode;
+            return request;
         }
 
         std::vector<uint8_t> NonNasaRequest::encode()
         {
+            if (power)
+            {
+                ESP_LOGW(TAG, "value == true");
+            }
+            else
+            {
+                ESP_LOGW(TAG, "value == false");
+            }
+
             std::vector<uint8_t> data{
                 0x32,                     // 00 start
                 0xD0,                     // 01 src
@@ -177,15 +154,6 @@ namespace esphome
             data[7] = (uint8_t)0; // operation mode auto
             data[8] = power ? (uint8_t)192 : (uint8_t)240;
 
-            if (power)
-            {
-                ESP_LOGV(TAG, "value == true");
-            }
-            else
-            {
-                ESP_LOGV(TAG, "value == false");
-            }
-
             // individual seems to deactivate the locale remotes with message "CENTRAL".
             // seems to be like a building management system.
             bool individual = false;
@@ -210,34 +178,74 @@ namespace esphome
 
         std::vector<uint8_t> NonNasaProtocol::get_power_message(const std::string &address, bool value)
         {
-            NonNasaRequest r;
-            r.power = value;
-            r.target_temp = 22;
-            return r.encode();
+            auto request = packet.toRequest();
+            request.power = value;
+            return request.encode();
         }
 
         std::vector<uint8_t> NonNasaProtocol::get_target_temp_message(const std::string &address, float value)
         {
-            NonNasaPacket packet;
-            return packet.encode();
+            auto request = packet.toRequest();
+            request.power = value;
+            return request.encode();
+        }
+
+        NonNasaMode mode_to_nonnasa_mode(Mode value)
+        {
+            switch (value)
+            {
+            case Mode::Auto:
+                return NonNasaMode::Auto;
+            case Mode::Cool:
+                return NonNasaMode::Cool;
+            case Mode::Dry:
+                return NonNasaMode::Dry;
+            case Mode::Fan:
+                return NonNasaMode::Fan;
+            case Mode::Heat:
+                return NonNasaMode::Heat;
+            default:
+                return NonNasaMode::Auto;
+            }
         }
 
         std::vector<uint8_t> NonNasaProtocol::get_mode_message(const std::string &address, Mode value)
         {
-            NonNasaPacket packet;
-            return packet.encode();
+            auto request = packet.toRequest();
+            request.mode = mode_to_nonnasa_mode(value);
+            return request.encode();
+        }
+
+        Mode nonnasa_mode_to_mode(NonNasaMode value)
+        {
+            switch (value)
+            {
+            case NonNasaMode::Auto:
+            case NonNasaMode::Auto_Heat:
+                return Mode::Auto;
+            case NonNasaMode::Cool:
+                return Mode::Cool;
+            case NonNasaMode::Dry:
+                return Mode::Dry;
+            case NonNasaMode::Fan:
+                return Mode::Fan;
+            case NonNasaMode::Heat:
+                return Mode::Heat;
+            default:
+                return Mode::Auto;
+            }
         }
 
         void process_non_nasa_message(std::vector<uint8_t> data, MessageTarget *target)
         {
-            NonNasaPacket packet;
             if (!packet.decode(data))
                 return;
 
             target->register_address(packet.src);
-            target->set_target_temperature(packet.src, packet.command.target_temp);
-            target->set_room_temperature(packet.src, packet.command.room_temp);
-            target->set_power(packet.src, packet.command.power);
+            target->set_target_temperature(packet.src, packet.target_temp);
+            target->set_room_temperature(packet.src, packet.room_temp);
+            target->set_power(packet.src, packet.power);
+            target->set_mode(packet.src, nonnasa_mode_to_mode(packet.mode));
         }
     } // namespace samsung_ac
 } // namespace esphome
