@@ -110,7 +110,7 @@ namespace esphome
       std::string knownOutdoor = "";
       for (auto const &address : addresses_)
       {
-        if (device == "00" || devices.rfind("10.", 0) == 0)
+        if (device == "00" || address.rfind("10.", 0) == 0)
         {
           knownOutdoor += knownOutdoor.length() > 0 ? ", " + address : address;
         }
