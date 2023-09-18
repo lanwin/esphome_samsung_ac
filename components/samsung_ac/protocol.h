@@ -17,6 +17,16 @@ namespace esphome
             Heat = 4,
         };
 
+        enum class FanMode
+        {
+            Unknown = -1,
+            Auto = 0,
+            Low = 1,
+            Mid = 2,
+            Hight = 3,
+            Turbo = 4
+        };
+
         class Protocol
         {
         public:

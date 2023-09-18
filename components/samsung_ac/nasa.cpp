@@ -373,6 +373,25 @@ namespace esphome
             }
         }
 
+        FanMode fan_vent_mode_to_fanmode(int value)
+        {
+            switch (value)
+            {
+            case 0:
+                return FanMode::Auto;
+            case 1:
+                return FanMode::Low;
+            case 2:
+                return FanMode::Mid;
+            case 3:
+                return FanMode::Hight;
+            case 4:
+                return FanMode::Turbo;
+            default:
+                return FanMode::Unknown;
+            }
+        }
+
         void process_nasa_message(std::vector<uint8_t> data, MessageTarget *target)
         {
             if (packet_.decode(data) == false)
@@ -428,6 +447,12 @@ namespace esphome
                     target->set_mode(packet_.sa.to_string(), operation_mode_to_mode(message.value));
                     continue;
                 }
+                case MessageNumber::ENUM_in_fan_vent_mode:
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_vent_mode %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                    // fan_vent_mode_to_fanmode()
+                    continue;
+                }
 
                 default:
                 {
@@ -435,10 +460,6 @@ namespace esphome
                         packet_.sa.to_string() == "20.00.01" ||
                         packet_.sa.to_string() == "20.00.03")
                         continue;
-
-                    /*if (packet_.sa.to_string() != "20.00.02" &&
-                        packet_.da.to_string() != "20.00.02")
-                        continue;*/
 
                     switch ((uint16_t)message.messageNumber)
                     {
@@ -871,11 +892,6 @@ namespace esphome
                 }
                 }
             }
-
-            // ESP_LOGW(TAG, "%s", bytes_to_hex(data).c_str());
-            // ESP_LOGW(TAG, "p s:%s d:%s t:%d m:%d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), (uint8_t)packet_.commad.dataType, packet_.messages.size());
-            // ESP_LOGW(TAG, "%s", packet_.ToString().c_str());
-            //   std::cout << packet.ToString() << std::endl;
         }
 
     } // namespace samsung_ac
