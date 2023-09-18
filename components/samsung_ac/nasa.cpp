@@ -352,6 +352,27 @@ namespace esphome
 
         Packet packet_;
 
+        Mode operation_mode_to_mode(int value)
+        {
+            switch (value)
+            {
+            case 0:
+                return Mode::Auto;
+            case 1:
+                return Mode::Cool;
+            case 2:
+                return Mode::Dry;
+            case 3:
+                return Mode::Fan;
+            case 4:
+                return Mode::Heat;
+                // case 21:  Cool Storage
+                // case 24: Hot Water
+            default:
+                return Mode::Unknown;
+            }
+        }
+
         void process_nasa_message(std::vector<uint8_t> data, MessageTarget *target)
         {
             if (packet_.decode(data) == false)
@@ -404,10 +425,7 @@ namespace esphome
                 case MessageNumber::ENUM_in_operation_mode:
                 {
                     ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_mode %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
-                    Mode mode = Mode::Unknown;
-                    if (message.value >= 0 && message.value <= 4)
-                        mode = (Mode)message.value;
-                    target->set_mode(packet_.sa.to_string(), mode);
+                    target->set_mode(packet_.sa.to_string(), operation_mode_to_mode(message.value));
                     continue;
                 }
 
@@ -424,31 +442,6 @@ namespace esphome
 
                     switch ((uint16_t)message.messageNumber)
                     {
-                    case 0x4001: // ENUM_in_operation_mode
-                    {
-                        // Todo Map
-                        /*
-                        case 0:
-      return 'Auto';
-    case 1:
-      return 'Cool';
-    case 2:
-      return 'Dry';
-    case 3:
-      return 'Fan';
-    case 4:
-      return 'Heat';
-    case 21:
-      return 'Cool Storage';
-    case 24:
-      return 'Hot Water';
-    default:
-      return 'Unknown';
-                        */
-                        ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_mode %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
-                        continue;
-                    }
-
                     case 0x4002: // ENUM_in_operation_mode_real
                     {
                         // Todo Map
