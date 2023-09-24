@@ -51,7 +51,8 @@
     "cstring": "cpp",
     "map": "cpp",
     "cinttypes": "cpp",
-    "bitset": "cpp"
+    "bitset": "cpp",
+    "ctime": "cpp"
   },
   "[python]": {
     "editor.defaultFormatter": "ms-python.autopep8"
