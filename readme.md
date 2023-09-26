@@ -1,31 +1,29 @@
 # ESPHome Samsung AC
 
-This project provides an ESPHome component for Samsung air conditioners. It allows you to watch and control your devices via a home
+This project provides an *ESPHome* component for *Samsung air conditioners*. It allows you to watch and control your devices via a home
 automation system. And is designed to be attached to the F1,F2 communication bus between the devices.
 
-Current state:
-
-- NASA devices can be controlled and monitored
-- NonNASA devices can be partially monitored
+Samsung changed there software protocol the devices usesing to communicate. The older devices use the Non NASA protocol where the newer
+devices use the NASA protocol. This project supports both. For details look at the *NASA vs Non NASA* section below.
 
 # Current Features:
 
-- View Room temperature
-- Change target Room temperature
+- Monitor room temperature
+- Change target temperature
 - Change AC mode
 
 ## Hardware installation
 
 You need:
 
-- An ESP device like NodeMCU
-- An TTL to RS485 converter (UART) - look at Amazon or Ebay
+- Any ESP devices ESPHome supports (like NodeMCU)
+- An "TTL to RS485" converter (UART) - look at Amazon or Ebay
 - (optional - use power directly from AC) An Mini step down power converter 12v to 9v
 
 ### Instructions
 
-- Wire the A+ port of the TTL to RS485 to F1 of your Samsung AC and B+ to F2.
-- Wire the GND port of TTL to RS485 to G from ESP. TXD to TX, RXD to RX, VCC to 3c.
+- Wire the A+ port of the "TTL to RS485" to F1 of your "Samsung AC" and B+ to F2.
+- Wire the GND port of "TTL to RS485" to G of the ESP. TXD to TX, RXD to RX, VCC to 3c.
 - (Optional) Wire V1 from AC to the +IN from step down converter and V2 to -IN. Then Wire +OUT to VIN of ESP and -OUT to G of ESP.
 
 If you have problems receiving data, first check your wiring. I had a lot of problems with loose pin connectors.
