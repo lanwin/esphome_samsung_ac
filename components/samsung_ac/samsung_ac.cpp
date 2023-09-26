@@ -132,7 +132,7 @@ namespace esphome
     {
       ESP_LOGCONFIG(TAG, "Samsung_AC:");
       ESP_LOGCONFIG(TAG, "dataline debug enabled?: %s", this->dataline_debug_ ? "true" : "false");
-      this->check_uart_settings(2400, 1, uart::UART_CONFIG_PARITY_EVEN, 8);
+      this->check_uart_settings(9600, 1, uart::UART_CONFIG_PARITY_EVEN, 8);
     }
 
     void Samsung_AC::loop()
