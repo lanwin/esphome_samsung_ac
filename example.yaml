@@ -11,7 +11,7 @@ uart:
   parity: EVEN
 
 external_components:
-  - source: https://github.com/lanwin/esphome_samsung_ac@main
+  - source: github://lanwin/esphome_samsung_ac@main
     components: [samsung_ac]
 
 samsung_ac:
