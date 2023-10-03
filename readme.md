@@ -30,12 +30,12 @@ If you have problems receiving data, first check your wiring. I had a lot of pro
 
 ## Software installation
 
-- Create a now ESPHome Device and add the stuff from example.yaml (check our ESP chip and change if needed).
+- Create a now ESPHome device and add the stuff from example.yaml (check our ESP chip and change if needed).
 - Deploy and boot it.
 - After reboot check your log. It should write out yellow received data packets.
 - Wait a few seconds and watch for purple log messages like this: "known indoor devices: 20.00.00, 20.00.01, 20.00.02, 20.00.03"
 - That are your indoor device addresses.
-- copy the address block in your .yaml file for each unit witch is listed and change names to the names of the rooms.
+- copy the address block in your .yaml file for each unit which is listed and change names to the names of the rooms.
 - Remove properties you dont need.
 
 ## NASA vs Non NASA
