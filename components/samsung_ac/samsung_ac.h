@@ -117,9 +117,9 @@ namespace esphome
       Samsung_AC_Mode_Select *mode{nullptr};
       Samsung_AC_Climate *climate{nullptr};
 
-      void set_room_temperature_sensor(sensor::Sensor *value)
+      void set_room_temperature_sensor(sensor::Sensor *sensor)
       {
-        room_temperature = value;
+        room_temperature = sensor;
       }
 
       void set_power_switch(Samsung_AC_Switch *switch_)
@@ -141,9 +141,9 @@ namespace esphome
         };
       }
 
-      void set_target_temperature_number(Samsung_AC_Number *value)
+      void set_target_temperature_number(Samsung_AC_Number *number)
       {
-        target_temperature = value;
+        target_temperature = number;
         target_temperature->write_state_ = [this](float value)
         {
           write_target_temperature(value);
