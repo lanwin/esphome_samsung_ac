@@ -24,7 +24,8 @@ namespace esphome
             Low = 1,
             Mid = 2,
             Hight = 3,
-            Turbo = 4
+            Turbo = 4,
+            Off = 5
         };
 
         class Protocol
@@ -48,6 +49,8 @@ namespace esphome
         void process_message(std::vector<uint8_t> &data, MessageTarget *target);
 
         Protocol *get_protocol(const std::string &address);
+
+        bool is_nasa_address(const std::string &address);
 
     } // namespace samsung_ac
 } // namespace esphome

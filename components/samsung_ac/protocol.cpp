@@ -24,12 +24,17 @@ namespace esphome
             ESP_LOGW("samsung_ac", "Unknown message type %s", bytes_to_hex(data).c_str());
         }
 
+        bool is_nasa_address(const std::string &address)
+        {
+            return address.size() != 2;
+        }
+
         Protocol *nasaProtocol = new NasaProtocol();
         Protocol *nonNasaProtocol = new NonNasaProtocol();
 
         Protocol *get_protocol(const std::string &address)
         {
-            if (address.size() == 2)
+            if (!is_nasa_address(address))
                 return nonNasaProtocol;
 
             return nasaProtocol;
