@@ -373,12 +373,10 @@ namespace esphome
             }
         }
 
-        FanMode fan_vent_mode_to_fanmode(int value)
+        FanMode fan_mode_real_to_fanmode(int value)
         {
             switch (value)
             {
-            case 0:
-                return FanMode::Auto;
             case 1:
                 return FanMode::Low;
             case 2:
@@ -387,6 +385,19 @@ namespace esphome
                 return FanMode::Hight;
             case 4:
                 return FanMode::Turbo;
+            case 10: // AutoLow
+            case 11: // AutoMid
+            case 12: // AutoHigh
+            case 13: // UL    - Windfree?
+            case 14: // LL    - Auto?
+            case 15: // HH
+                return FanMode::Auto;
+            case 254:
+                return FanMode::Off;
+            case 16: // Speed
+            case 17: // NaturalLow
+            case 18: // NaturalMid
+            case 19: // NaturalHigh
             default:
                 return FanMode::Unknown;
             }
@@ -533,11 +544,11 @@ namespace esphome
                         // Todo Map
                         /*
                        case 0:
-      return 'Off';
-    case 1:
-      return 'On';
-    default:
-      return undefined;
+          return 'Off';
+          case 1:
+          return 'On';
+          default:
+          return undefined;
                         */
                         ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_LOUVER_HL_SWING %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
