@@ -40,8 +40,6 @@ The easiest way to set up the AC unit controller is through the "Plug and Play" 
 
 ![Plug and Play Wiring Diagram](https://github.com/lanwin/esphome_samsung_ac/assets/32042186/42a6757d-bfcf-4a29-be87-cf1b204e248a)
 
-1. Connect the controller using the same wires as you would use for the official SAMSUNG WiFi Kit. It will be powered directly from the 12V supply of the AC unit.
-
 ### DIY
 
 If you prefer a more customized approach, you can build the AC unit controller yourself. Here's what you'll need:
