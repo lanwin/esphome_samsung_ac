@@ -73,7 +73,7 @@ Feel free to modify the hardware setup based on your specific requirements and h
 Follow these steps to install and configure the software for your AC unit controller:
 
 1. **Create a New ESPHome Device:**
-   - Begin by creating a new ESPHome device in your Home Assistant instance.
+   - Begin by creating a new ESPHome device in your Home Assistant instance or ESPHome comand line tool.
    - Use the configuration from the provided `example.yaml` file as a template. Make sure to verify that the ESP chip model matches your hardware. For M5STACK devices, set the `board` to 'm5stack-atom' in the configuration.
 
    ```yaml
