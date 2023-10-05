@@ -9,8 +9,9 @@ devices use the NASA protocol. This project supports both. For details look at t
 # Current Features:
 
 - Monitor room temperature
+- Monitor humidity (NASA)
 - Change target temperature
-- Change AC mode
+- Change AC mode 
 
 ## Hardware installation
 
