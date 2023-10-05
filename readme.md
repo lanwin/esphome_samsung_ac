@@ -22,7 +22,7 @@ The current implementation offers the following features:
 
 ## Hardware installation
 
-This guide provides instructions for setting up an AC unit controller for your Home Assistant using ESPHome and compatible hardware. You can choose between a "Plug and Play" approach or a "DIY" approach based on your preferences and skill level.
+This section provides instructions for setting up AC unit controller for your Home Assistant using ESPHome and compatible hardware. You can choose between a "Plug and Play" approach or a "DIY" approach based on your preferences and skill level.
 
 ### Plug and Play
 
