@@ -435,6 +435,13 @@ namespace esphome
                     target->set_target_temperature(packet_.sa.to_string(), temp);
                     continue;
                 }
+                case MessageNumber::ENUM_in_state_humidity_percent:
+                {
+                    // XML Enum no value but in Code it adds unit
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_state_humidity_percent %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                    target->set_room_humidity(packet_.sa.to_string(), message.value);
+                    continue;
+                }
                 case MessageNumber::ENUM_in_operation_power:
                 {
                     ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_power %s", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value == 0 ? "off" : "on");
@@ -450,16 +457,67 @@ namespace esphome
                 case MessageNumber::ENUM_in_fan_vent_mode:
                 {
                     ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_vent_mode %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
-                    // fan_vent_mode_to_fanmode()
+                    // fan_vent_mode_to_fanmode();
+                    continue;
+                }
+
+                case MessageNumber::ENUM_in_fan_mode_real:
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_mode_real %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                    fan_mode_real_to_fanmode(message.value);
                     continue;
                 }
 
                 default:
                 {
+
                     if (packet_.sa.to_string() == "20.00.00" ||
                         packet_.sa.to_string() == "20.00.01" ||
                         packet_.sa.to_string() == "20.00.03")
                         continue;
+
+                    if (((uint16_t)message.messageNumber) == 0x4003)
+                    {
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_OPERATION_VENT_POWER %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+                    if (((uint16_t)message.messageNumber) == 0x4004)
+                    {
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_OPERATION_VENT_MODE %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+                    if (((uint16_t)message.messageNumber) == 0x4011)
+                    {
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_LOUVER_HL_SWING %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+                    if (((uint16_t)message.messageNumber) == 0x4012)
+                    {
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_in_louver_hl_part_swing %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+                    if (((uint16_t)message.messageNumber) == 0x4060)
+                    {
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_ALTERNATIVE_MODE %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+                    if (((uint16_t)message.messageNumber) == 0x406E)
+                    {
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_QUIET_MODE %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+                    if (((uint16_t)message.messageNumber) == 0x4119)
+                    {
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_OPERATION_POWER_ZONE1 %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+                    if (((uint16_t)message.messageNumber) == 0x411E)
+                    {
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_OPERATION_POWER_ZONE2 %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+
+                    continue;
 
                     switch ((uint16_t)message.messageNumber)
                     {
@@ -467,47 +525,6 @@ namespace esphome
                     {
                         // Todo Map
                         ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_mode_real %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
-                        continue;
-                    }
-
-                    case 0x4007: // ENUM_in_fan_mode_real
-                    {
-                        // Todo Map
-                        /*
-                       case 1:
-      return 'Low';
-    case 2:
-      return 'Mid';
-    case 3:
-      return 'Hight';
-    case 4:
-      return 'Turbo';
-    case 10:
-      return 'AutoLow';
-    case 11:
-      return 'AutoMid';
-    case 12:
-      return 'AutoHigh';
-    case 13:
-      return 'UL';
-    case 14:
-      return 'LL';
-    case 15:
-      return 'HH';
-    case 16:
-      return 'Speed';
-    case 17:
-      return 'NaturalLow';
-    case 18:
-      return 'NaturalMid';
-    case 19:
-      return 'NaturalHigh';
-    case 254:
-      return 'Off';
-    default:
-      return 'Unknown';
-                        */
-                        ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_mode_real %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
 
@@ -531,13 +548,6 @@ namespace esphome
                         // Todo Map
 
                         ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_LOUVER_HL_SWING %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
-                        continue;
-                    }
-
-                    case 0x4038: // ENUM_IN_STATE_HUMIDITY_PERCENT
-                    {
-                        // XML Enum no value but in Code it adds unit
-                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_STATE_HUMIDITY_PERCENT %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
 

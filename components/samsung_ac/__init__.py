@@ -3,12 +3,13 @@ import esphome.config_validation as cv
 from esphome.components import uart, sensor, switch, select, number, climate
 from esphome.const import (
     CONF_ID,
-    CONF_NAME,
     DEVICE_CLASS_TEMPERATURE,
     STATE_CLASS_MEASUREMENT,
+    DEVICE_CLASS_HUMIDITY,
     CONF_UNIT_OF_MEASUREMENT,
     CONF_DEVICE_CLASS,
     UNIT_CELSIUS,
+    UNIT_PERCENT,
 )
 
 CODEOWNERS = ["matthias882", "lanwin"]
@@ -34,6 +35,7 @@ CONF_DATALINE_DEBUG = "dataline_debug"
 CONF_DEVICE_ID = "samsung_ac_device_id"
 CONF_DEVICE_ADDRESS = "address"
 CONF_DEVICE_ROOM_TEMPERATURE = "room_temperature"
+CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
 CONF_DEVICE_TARGET_TEMPERATURE = "target_temperature"
 CONF_DEVICE_POWER = "power"
 CONF_DEVICE_MODE = "mode"
@@ -64,6 +66,12 @@ DEVICE_SCHEMA = (
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=1,
                 device_class=DEVICE_CLASS_TEMPERATURE,
+                state_class=STATE_CLASS_MEASUREMENT,
+            ),
+            cv.Optional(CONF_DEVICE_ROOM_HUMIDITY): sensor.sensor_schema(
+                unit_of_measurement=UNIT_PERCENT,
+                accuracy_decimals=0,
+                device_class=DEVICE_CLASS_HUMIDITY,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
             cv.Optional(CONF_DEVICE_TARGET_TEMPERATURE): NUMBER_SCHEMA,
@@ -104,6 +112,11 @@ async def to_code(config):
             conf = device[CONF_DEVICE_ROOM_TEMPERATURE]
             sens = await sensor.new_sensor(conf)
             cg.add(var_dev.set_room_temperature_sensor(sens))
+
+        if CONF_DEVICE_ROOM_HUMIDITY in device:
+            conf = device[CONF_DEVICE_ROOM_HUMIDITY]
+            sens = await sensor.new_sensor(conf)
+            cg.add(var_dev.set_room_humidity_sensor(sens))
 
         if CONF_DEVICE_TARGET_TEMPERATURE in device:
             conf = device[CONF_DEVICE_TARGET_TEMPERATURE]

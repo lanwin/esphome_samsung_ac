@@ -112,6 +112,7 @@ namespace esphome
 
       std::string address;
       sensor::Sensor *room_temperature{nullptr};
+      sensor::Sensor *room_humidity{nullptr};
       Samsung_AC_Number *target_temperature{nullptr};
       Samsung_AC_Switch *power{nullptr};
       Samsung_AC_Mode_Select *mode{nullptr};
@@ -120,6 +121,11 @@ namespace esphome
       void set_room_temperature_sensor(sensor::Sensor *sensor)
       {
         room_temperature = sensor;
+      }
+
+      void set_room_humidity_sensor(sensor::Sensor *sensor)
+      {
+        room_humidity = sensor;
       }
 
       void set_power_switch(Samsung_AC_Switch *switch_)
@@ -199,6 +205,12 @@ namespace esphome
         }
       }
 
+      void publish_room_humidity(float value)
+      {
+        if (room_humidity != nullptr)
+          room_humidity->publish_state(value);
+      }
+
       void write_target_temperature(float value);
       void write_mode(Mode value);
       void write_power(bool value);
@@ -275,6 +287,13 @@ namespace esphome
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
           dev->publish_room_temperature(value);
+      }
+
+      void /*MessageTarget::*/ set_room_humidity(const std::string address, float value) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->publish_room_humidity(value);
       }
 
       void /*MessageTarget::*/ set_target_temperature(const std::string address, float value) override

@@ -32,3 +32,7 @@ samsung_ac:
         name: Test1_power
       mode:
         name: Test1_mode
+
+      # Only supported on NASA devices
+      room_humidity:
+        name: Test1_humidity

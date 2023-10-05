@@ -74,6 +74,8 @@ namespace esphome
             ENUM_in_operation_power = 0x4000,
             ENUM_in_operation_mode = 0x4001,
             ENUM_in_fan_vent_mode = 0x4008,
+            ENUM_in_fan_mode_real = 0x4007,
+            ENUM_in_state_humidity_percent = 0x4038,
             VAR_in_temp_room_f = 0x4203,
             VAR_in_temp_target_f = 0x4201,
         };
