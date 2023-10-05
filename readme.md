@@ -74,12 +74,17 @@ Follow these steps to install and configure the software for your AC unit contro
 
 1. **Create a New ESPHome Device:**
    - Begin by creating a new ESPHome device in your Home Assistant instance or ESPHome comand line tool.
-   - Use the configuration from the provided `example.yaml` file as a template. Make sure to verify that the ESP chip model matches your hardware. For M5STACK devices, set the `board` to 'm5stack-atom' in the configuration.
+   - Use the configuration from the provided `example.yaml` file as a template. Make sure to verify that the ESP chip model matches your hardware. For M5STACK devices, set the `board` to 'm5stack-atom' and RX, TX pins for UART to GPIO19 and GPIO22 in the configuration.
 
    ```yaml
    esp32:
      board: m5stack-atom
    # ... (other configurations)
+   uart:
+     tx_pin: GPIO19
+     rx_pin: GPIO22
+     baud_rate: 9600
+     parity: EVEN
    ```
 
 1. **Deploy and Boot:**
