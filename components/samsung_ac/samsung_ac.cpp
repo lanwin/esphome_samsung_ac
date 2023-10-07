@@ -45,7 +45,8 @@ namespace esphome
       ESP_LOGCONFIG(TAG, "Discovered devices:");
       ESP_LOGCONFIG(TAG, "  Outdoor: %s", (knownOutdoor.length() == 0 ? "-" : knownOutdoor.c_str()));
       ESP_LOGCONFIG(TAG, "  Indoor:  %s", (knownIndoor.length() == 0 ? "-" : knownIndoor.c_str()));
-      ESP_LOGCONFIG(TAG, "  Other:   %s", (knownOther.length() == 0 ? "-" : knownOther.c_str()));
+      if (knownOther.length() > 0)
+        ESP_LOGCONFIG(TAG, "  Other:   %s", knownOther.c_str());
     }
 
     void Samsung_AC::send_bus_message(std::vector<uint8_t> &data)
