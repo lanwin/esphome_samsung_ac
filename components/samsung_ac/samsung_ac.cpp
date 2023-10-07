@@ -22,23 +22,30 @@ namespace esphome
       {
         devices += devices.length() > 0 ? ", " + device->address : device->address;
       }
-      ESP_LOGCONFIG(TAG, "registered devices: %s", devices.c_str());
+      ESP_LOGCONFIG(TAG, "Configured devices: %s", devices.c_str());
 
       std::string knownIndoor = "";
       std::string knownOutdoor = "";
+      std::string knownOther = "";
       for (auto const &address : addresses_)
       {
         if (address == "00" || address.rfind("10.", 0) == 0)
         {
           knownOutdoor += knownOutdoor.length() > 0 ? ", " + address : address;
         }
-        else
+        else if (!is_nasa_address(address) || address.rfind("20.", 0) == 0)
         {
           knownIndoor += knownIndoor.length() > 0 ? ", " + address : address;
         }
+        else
+        {
+          knownOther += knownOther.length() > 0 ? ", " + address : address;
+        }
       }
-      ESP_LOGCONFIG(TAG, "known indoor devices: %s", knownIndoor.c_str());
-      ESP_LOGCONFIG(TAG, "known outdoor devices: %s", knownOutdoor.c_str());
+      ESP_LOGCONFIG(TAG, "Discovered devices:");
+      ESP_LOGCONFIG(TAG, "  Outdoor: %s", (knownOutdoor.length() == 0 ? "-" : knownOutdoor.c_str()));
+      ESP_LOGCONFIG(TAG, "  Indoor:  %s", (knownIndoor.length() == 0 ? "-" : knownIndoor.c_str()));
+      ESP_LOGCONFIG(TAG, "  Other:   %s", (knownOther.length() == 0 ? "-" : knownOther.c_str()));
     }
 
     void Samsung_AC::send_bus_message(std::vector<uint8_t> &data)
