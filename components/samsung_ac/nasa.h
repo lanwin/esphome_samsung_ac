@@ -10,33 +10,33 @@ namespace esphome
     {
         enum class AddressClass : uint8_t
         {
-            Outdoor = 16,                      // 0x00000010
-            HTU = 17,                          // 0x00000011
-            Indoor = 32,                       // 0x00000020
-            ERV = 48,                          // 0x00000030
-            Diffuser = 53,                     // 0x00000035
-            MCU = 56,                          // 0x00000038
-            RMC = 64,                          // 0x00000040
-            WiredRemote = 80,                  // 0x00000050
-            PIM = 88,                          // 0x00000058
-            SIM = 89,                          // 0x00000059
-            Peak = 90,                         // 0x0000005A
-            PowerDivider = 91,                 // 0x0000005B
-            OnOffController = 96,              // 0x00000060
-            WiFiKit = 98,                      // 0x00000062
-            CentralController = 101,           // 0x00000065
-            DMS = 106,                         // 0x0000006A
-            JIGTester = 128,                   // 0x00000080
-            BroadcastSelfLayer = 176,          // 0x000000B0
-            BroadcastControlLayer = 177,       // 0x000000B1
-            BroadcastSetLayer = 178,           // 0x000000B2
-            BoradcastCS = 179,                 // 0x000000B3
-            BroadcastControlAndSetLayer = 179, // 0x000000B3
-            BroadcastModuleLayer = 180,        // 0x000000B4
-            BoradcastCSM = 183,                // 0x000000B7
-            BroadcastLocalLayer = 184,         // 0x000000B8
-            BroadcastCSML = 191,               // 0x000000BF
-            Undefiend = 255,                   // 0x000000FF
+            Outdoor = 0x10,
+            HTU = 0x11,
+            Indoor = 0x20,
+            ERV = 0x30,
+            Diffuser = 0x35,
+            MCU = 0x38,
+            RMC = 0x40,
+            WiredRemote = 0x50,
+            PIM = 0x58,
+            SIM = 0x59,
+            Peak = 0x5A,
+            PowerDivider = 0x5B,
+            OnOffController = 0x60,
+            WiFiKit = 0x62,
+            CentralController = 0x65,
+            DMS = 0x6A,
+            JIGTester = 0x80,
+            BroadcastSelfLayer = 0xB0,
+            BroadcastControlLayer = 0xB1,
+            BroadcastSetLayer = 0xB2,
+            BoradcastCS = 0xB3,
+            BroadcastControlAndSetLayer = 0xB3,
+            BroadcastModuleLayer = 0xB4,
+            BoradcastCSM = 0xB7,
+            BroadcastLocalLayer = 0xB8,
+            BroadcastCSML = 0xBF,
+            Undefiend = 0xFF,
         };
 
         enum class PacketType : uint8_t
