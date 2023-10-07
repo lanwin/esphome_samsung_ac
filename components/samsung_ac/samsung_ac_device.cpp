@@ -12,7 +12,11 @@ namespace esphome
     climate::ClimateTraits Samsung_AC_Climate::traits()
     {
       auto traits = climate::ClimateTraits();
-      traits.set_supports_current_temperature(true);
+
+      if (this->mode != climate::CLIMATE_MODE_OFF && this->mode != climate::CLIMATE_MODE_FAN_ONLY)
+      {
+        traits.set_supports_current_temperature(true);
+      }
 
       traits.set_visual_temperature_step(1);
       traits.set_visual_min_temperature(16);
@@ -28,17 +32,24 @@ namespace esphome
       traits.set_supported_modes(modes);
 
       std::set<climate::ClimateFanMode> fan;
-      // fan.insert(climate::ClimateFanMode::CLIMATE_FAN_OFF);
       fan.insert(climate::ClimateFanMode::CLIMATE_FAN_HIGH);
       fan.insert(climate::ClimateFanMode::CLIMATE_FAN_MIDDLE);
       fan.insert(climate::ClimateFanMode::CLIMATE_FAN_LOW);
-      // fan.insert(climate::ClimateFanMode::CLIMATE_FAN_QUIET);
-      fan.insert(climate::ClimateFanMode::CLIMATE_FAN_AUTO);
-      if (is_nasa_address(device->address))
+
+      if (this->mode != climate::CLIMATE_MODE_FAN_ONLY)
+      {
+        fan.insert(climate::ClimateFanMode::CLIMATE_FAN_AUTO);
+      }
+
+      if (this->mode == climate::CLIMATE_MODE_COOL && is_nasa_address(device->address))
       {
         // fan.insert(climate::ClimateFanMode::CLIMATE_FAN_DIFFUSE);
       }
-      traits.set_supported_fan_modes(fan);
+
+      if (this->mode != climate::CLIMATE_MODE_OFF)
+      {
+        traits.set_supported_fan_modes(fan);
+      }
 
       return traits;
     }
