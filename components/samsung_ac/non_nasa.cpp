@@ -254,6 +254,23 @@ namespace esphome
             }
         }
 
+        FanMode nonnasa_fanspeed_to_fanmode(NonNasaFanspeed fanspeed)
+        {
+            switch (fanspeed)
+            {
+            case NonNasaFanspeed::Fresh:
+            case NonNasaFanspeed::High:
+                return FanMode::Hight;
+            case NonNasaFanspeed::Medium:
+                return FanMode::Mid;
+            case NonNasaFanspeed::Low:
+                return FanMode::Low;
+            default:
+            case NonNasaFanspeed::Auto:
+                return FanMode::Auto;
+            }
+        }
+
         void process_non_nasa_message(std::vector<uint8_t> data, MessageTarget *target)
         {
             if (!packet.decode(data))
@@ -264,6 +281,7 @@ namespace esphome
             target->set_room_temperature(packet.src, packet.room_temp);
             target->set_power(packet.src, packet.power);
             target->set_mode(packet.src, nonnasa_mode_to_mode(packet.mode));
+            target->set_fanmode(packet.src, nonnasa_fanspeed_to_fanmode(packet.fanspeed));
         }
     } // namespace samsung_ac
 } // namespace esphome
