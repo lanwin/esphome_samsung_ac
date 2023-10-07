@@ -74,7 +74,6 @@ namespace esphome
 
       void publish_state_(Mode mode)
       {
-        ESP_LOGW("det", "select %s", mode_to_str(mode).c_str());
         this->publish_state(mode_to_str(mode));
       }
 
@@ -192,6 +191,15 @@ namespace esphome
           calc_and_publish_mode();
       }
 
+      void publish_fanmode(FanMode value)
+      {
+        if (climate != nullptr)
+        {
+          climate->fan_mode = fanmode_to_climatefanmode(value);
+          climate->publish_state();
+        }
+      }
+
       void publish_room_temperature(float value)
       {
         if (room_temperature != nullptr)
@@ -233,6 +241,22 @@ namespace esphome
           return climate::ClimateMode::CLIMATE_MODE_HEAT;
         default:
           return nullopt;
+        }
+      }
+
+      climate::ClimateFanMode fanmode_to_climatefanmode(FanMode fanmode)
+      {
+        switch (fanmode)
+        {
+        case FanMode::Low:
+          return climate::ClimateFanMode::CLIMATE_FAN_LOW;
+        case FanMode::Mid:
+          return climate::ClimateFanMode::CLIMATE_FAN_MIDDLE;
+        case FanMode::Hight:
+          return climate::ClimateFanMode::CLIMATE_FAN_HIGH;
+        default:
+        case FanMode::Auto:
+          return climate::ClimateFanMode::CLIMATE_FAN_AUTO;
         }
       }
 

@@ -377,14 +377,13 @@ namespace esphome
         {
             switch (value)
             {
-            case 1:
+            case 1: // Low
                 return FanMode::Low;
-            case 2:
+            case 2: // Mid
                 return FanMode::Mid;
-            case 3:
+            case 3: // Hight
+            case 4: // Turbo
                 return FanMode::Hight;
-            case 4:
-                return FanMode::Turbo;
             case 10: // AutoLow
             case 11: // AutoMid
             case 12: // AutoHigh
@@ -471,14 +470,12 @@ namespace esphome
                     // fan_vent_mode_to_fanmode();
                     continue;
                 }
-
                 case MessageNumber::ENUM_in_fan_mode_real:
                 {
                     ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_mode_real %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
-                    fan_mode_real_to_fanmode(message.value);
+                    target->set_fanmode(packet_.sa.to_string(), fan_mode_real_to_fanmode(message.value));
                     continue;
                 }
-
                 default:
                 {
 

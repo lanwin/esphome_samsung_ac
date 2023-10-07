@@ -24,7 +24,7 @@ namespace esphome
             Low = 1,
             Mid = 2,
             Hight = 3,
-            Turbo = 4,
+            // Turbo = 4,
             Off = 5
         };
 
@@ -45,6 +45,7 @@ namespace esphome
             virtual void set_room_humidity(const std::string address, float value) = 0;
             virtual void set_target_temperature(const std::string address, float value) = 0;
             virtual void set_mode(const std::string address, Mode mode) = 0;
+            virtual void set_fanmode(const std::string address, FanMode fanmode) = 0;
         };
 
         void process_message(std::vector<uint8_t> &data, MessageTarget *target);

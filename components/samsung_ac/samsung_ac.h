@@ -74,6 +74,13 @@ namespace esphome
           dev->publish_mode(mode);
       }
 
+      void /*MessageTarget::*/ set_fanmode(const std::string address, FanMode fanmode) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->publish_fanmode(fanmode);
+      }
+
       void send_bus_message(std::vector<uint8_t> &data);
 
     protected:

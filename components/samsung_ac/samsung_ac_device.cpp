@@ -28,8 +28,16 @@ namespace esphome
       traits.set_supported_modes(modes);
 
       std::set<climate::ClimateFanMode> fan;
+      // fan.insert(climate::ClimateFanMode::CLIMATE_FAN_OFF);
+      fan.insert(climate::ClimateFanMode::CLIMATE_FAN_HIGH);
+      fan.insert(climate::ClimateFanMode::CLIMATE_FAN_MIDDLE);
+      fan.insert(climate::ClimateFanMode::CLIMATE_FAN_LOW);
+      // fan.insert(climate::ClimateFanMode::CLIMATE_FAN_QUIET);
       fan.insert(climate::ClimateFanMode::CLIMATE_FAN_AUTO);
-
+      if (is_nasa_address(device->address))
+      {
+        // fan.insert(climate::ClimateFanMode::CLIMATE_FAN_DIFFUSE);
+      }
       traits.set_supported_fan_modes(fan);
 
       return traits;
@@ -69,8 +77,8 @@ namespace esphome
         }
         else
         {
-          device->write_mode(climatemode_to_mode(modeOpt.value()));
           device->write_power(true);
+          device->write_mode(climatemode_to_mode(modeOpt.value()));
         }
       }
     }

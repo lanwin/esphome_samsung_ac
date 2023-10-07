@@ -58,7 +58,6 @@ namespace esphome
       const uint32_t now = millis();
       if (receiving_ && (now - last_transmission_ >= 500))
       {
-        // last transmission too long ago. Reset RX index.
         ESP_LOGW(TAG, "Last transmission too long ago. Reset RX index.");
         data_.clear();
         receiving_ = false;
@@ -100,6 +99,5 @@ namespace esphome
     }
 
     float Samsung_AC::get_setup_priority() const { return setup_priority::DATA; }
-
   } // namespace samsung_ac
 } // namespace esphome
