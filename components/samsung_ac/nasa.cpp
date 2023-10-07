@@ -350,6 +350,30 @@ namespace esphome
             return packet.encode();
         }
 
+        int fanmode_to_nasa_fanmode(FanMode mode)
+        {
+            // This stuff did not exists in XML only in Remcode.dll
+            switch (mode)
+            {
+            case FanMode::Low:
+                return 1;
+            case FanMode::Mid:
+                return 2;
+            case FanMode::Hight:
+                return 3;
+            case FanMode::Auto:
+            default:
+                return 0;
+            }
+        }
+
+        std::vector<uint8_t> NasaProtocol::get_fanmode_message(const std::string &address, FanMode value)
+        {
+            auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::ENUM_in_fan_mode, fanmode_to_nasa_fanmode(value));
+            ESP_LOGW(TAG, "test %s", packet.to_string().c_str());
+            return packet.encode();
+        }
+
         Packet packet_;
 
         Mode operation_mode_to_mode(int value)
@@ -464,12 +488,6 @@ namespace esphome
                     target->set_mode(packet_.sa.to_string(), operation_mode_to_mode(message.value));
                     continue;
                 }
-                case MessageNumber::ENUM_in_fan_vent_mode:
-                {
-                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_vent_mode %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
-                    // fan_vent_mode_to_fanmode();
-                    continue;
-                }
                 case MessageNumber::ENUM_in_fan_mode_real:
                 {
                     ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_mode_real %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
@@ -533,6 +551,13 @@ namespace esphome
                     {
                         // Todo Map
                         ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_mode_real %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        continue;
+                    }
+
+                    case 0x4008: // ENUM_in_fan_vent_mode
+                    {
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_vent_mode %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        // fan_vent_mode_to_fanmode();
                         continue;
                     }
 

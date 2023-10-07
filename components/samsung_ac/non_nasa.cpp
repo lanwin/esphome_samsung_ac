@@ -234,6 +234,29 @@ namespace esphome
             return request.encode();
         }
 
+        NonNasaFanspeed fanmode_to_nonnasa_fanspeed(FanMode value)
+        {
+            switch (value)
+            {
+            case FanMode::Hight:
+                return NonNasaFanspeed::High;
+            case FanMode::Mid:
+                return NonNasaFanspeed::Medium;
+            case FanMode::Low:
+                return NonNasaFanspeed::Low;
+            case FanMode::Auto:
+            default:
+                return NonNasaFanspeed::Auto;
+            }
+        }
+
+        std::vector<uint8_t> NonNasaProtocol::get_fanmode_message(const std::string &address, FanMode value)
+        {
+            auto request = packet.toRequest();
+            request.fanspeed = fanmode_to_nonnasa_fanspeed(value);
+            return request.encode();
+        }
+
         Mode nonnasa_mode_to_mode(NonNasaMode value)
         {
             switch (value)

@@ -62,6 +62,22 @@ namespace esphome
       }
     }
 
+    FanMode climatefanmode_to_fanmode(climate::ClimateFanMode fanmode)
+    {
+      switch (fanmode)
+      {
+      case climate::ClimateFanMode::CLIMATE_FAN_LOW:
+        return FanMode::Low;
+      case climate::ClimateFanMode::CLIMATE_FAN_MIDDLE:
+        return FanMode::Mid;
+      case climate::ClimateFanMode::CLIMATE_FAN_HIGH:
+        return FanMode::Hight;
+      case climate::ClimateFanMode::CLIMATE_FAN_AUTO:
+      default:
+        return FanMode::Auto;
+      }
+    }
+
     void Samsung_AC_Climate::control(const climate::ClimateCall &call)
     {
       auto targetTempOpt = call.get_target_temperature();
@@ -81,6 +97,12 @@ namespace esphome
           device->write_mode(climatemode_to_mode(modeOpt.value()));
         }
       }
+
+      auto fanmodeOpt = call.get_fan_mode();
+      if (fanmodeOpt.has_value())
+      {
+        device->write_fanmode(climatefanmode_to_fanmode(fanmodeOpt.value()));
+      }
     }
 
     void Samsung_AC_Device::write_target_temperature(float value)
@@ -92,6 +114,12 @@ namespace esphome
     void Samsung_AC_Device::write_mode(Mode value)
     {
       auto data = protocol->get_mode_message(address, value);
+      samsung_ac->send_bus_message(data);
+    }
+
+    void Samsung_AC_Device::write_fanmode(FanMode value)
+    {
+      auto data = protocol->get_fanmode_message(address, value);
       samsung_ac->send_bus_message(data);
     }
 

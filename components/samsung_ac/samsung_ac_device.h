@@ -219,6 +219,7 @@ namespace esphome
 
       void write_target_temperature(float value);
       void write_mode(Mode value);
+      void write_fanmode(FanMode value);
       void write_power(bool value);
 
     protected:

@@ -73,7 +73,7 @@ namespace esphome
             Undefiend = 0,
             ENUM_in_operation_power = 0x4000,
             ENUM_in_operation_mode = 0x4001,
-            ENUM_in_fan_vent_mode = 0x4008,
+            ENUM_in_fan_mode = 0x4006, // Did not exists in xml...only in Remocon.dll code
             ENUM_in_fan_mode_real = 0x4007,
             ENUM_in_state_humidity_percent = 0x4038,
             VAR_in_temp_room_f = 0x4203,
@@ -167,6 +167,7 @@ namespace esphome
             std::vector<uint8_t> get_power_message(const std::string &address, bool value) override;
             std::vector<uint8_t> get_target_temp_message(const std::string &address, float value) override;
             std::vector<uint8_t> get_mode_message(const std::string &address, Mode value) override;
+            std::vector<uint8_t> get_fanmode_message(const std::string &address, FanMode value) override;
         };
 
     } // namespace samsung_ac
