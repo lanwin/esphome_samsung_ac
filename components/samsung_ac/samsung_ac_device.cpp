@@ -13,10 +13,7 @@ namespace esphome
     {
       auto traits = climate::ClimateTraits();
 
-      if (this->mode != climate::CLIMATE_MODE_OFF && this->mode != climate::CLIMATE_MODE_FAN_ONLY)
-      {
-        traits.set_supports_current_temperature(true);
-      }
+      traits.set_supports_current_temperature(true);
 
       traits.set_visual_temperature_step(1);
       traits.set_visual_min_temperature(16);
@@ -41,15 +38,12 @@ namespace esphome
         fan.insert(climate::ClimateFanMode::CLIMATE_FAN_AUTO);
       }
 
-      if (this->mode == climate::CLIMATE_MODE_COOL && is_nasa_address(device->address))
+      if (is_nasa_address(device->address))
       {
         // fan.insert(climate::ClimateFanMode::CLIMATE_FAN_DIFFUSE);
       }
 
-      if (this->mode != climate::CLIMATE_MODE_OFF)
-      {
-        traits.set_supported_fan_modes(fan);
-      }
+      traits.set_supported_fan_modes(fan);
 
       return traits;
     }
@@ -91,6 +85,8 @@ namespace esphome
 
     void Samsung_AC_Climate::control(const climate::ClimateCall &call)
     {
+      traits();
+
       auto targetTempOpt = call.get_target_temperature();
       if (targetTempOpt.has_value())
         device->write_target_temperature(targetTempOpt.value());
