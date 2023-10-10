@@ -29,8 +29,8 @@ This section provides instructions for setting up AC unit controller for your Ho
 The easiest way to set up the AC unit controller is through the "Plug and Play" method. Follow these steps:
 
 1. Purchase the following components:
-   - [M5STACK ATOM Lite](https://a.aliexpress.com/_mO88aeK)
-   - [M5STACK RS485](https://a.aliexpress.com/_mLhOZQA)
+   - **M5STACK ATOM Lite** - [Aliexpress](https://a.aliexpress.com/_mO88aeK), [documentation](https://docs.m5stack.com/en/core/ATOM%20Lite)
+   - **M5STACK ATOM RS-485 Kit** - [Aliexpress](https://a.aliexpress.com/_mLhOZQA), [documentation](https://docs.m5stack.com/en/atom/atomic485)
 
 1. Connect the components as follows:
    - Connect F1 on the AC unit to A on the M5STACK controller.
