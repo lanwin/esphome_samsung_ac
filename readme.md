@@ -11,6 +11,8 @@ For detailed information on the differences between the NASA and Non NASA protoc
 
 The current implementation offers the following features:
 
+- **Mutlisplit Support:** One ESP can control all indoor units connected to the outdoor unit.
+
 - **Temperature Monitoring:** You can monitor the room temperature.
 
 - **Humidity Monitoring (NASA Protocol):** For systems using the NASA protocol, the controller allows you to monitor humidity levels, providing additional environmental insights.
