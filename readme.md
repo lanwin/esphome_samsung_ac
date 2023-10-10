@@ -33,8 +33,8 @@ The easiest way to set up the AC unit controller is through the "Plug and Play" 
    - [M5STACK RS485](https://a.aliexpress.com/_mLhOZQA)
 
 1. Connect the components as follows:
-   - Connect F1 on the AC unit to B on the M5STACK controller.
-   - Connect F2 on the AC unit to A on the M5STACK controller.
+   - Connect F1 on the AC unit to A on the M5STACK controller.
+   - Connect F2 on the AC unit to B on the M5STACK controller.
    - Connect V1 on the AC unit to DC on the M5STACK controller.
    - Connect V2 on the AC unit to G on the M5STACK controller.
 
