@@ -97,7 +97,7 @@ Follow these steps to install and configure the software for your AC unit contro
    - Monitor the log output of your ESPHome device. You should see yellow log messages indicating the reception of data packets.
   
 1. **Identify Indoor Device Addresses:**
-   - Wait for a few seconds and watch for purple log messages in the format: "known indoor devices: 20.00.00, 20.00.01, 20.00.02, 20.00.03".
+   - Wait for a few seconds and watch for purple log messages in the format: "known indoor devices: 20.00.00, 20.00.01, 20.00.02, 20.00.03" for NASA and "known indoor devices: c8" for NonNASA.
    - These are the addresses of your indoor devices.
   
 1. **Update Your YAML File:**
