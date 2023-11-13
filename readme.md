@@ -11,6 +11,8 @@ For detailed information on the differences between the NASA and Non NASA protoc
 
 The current implementation offers the following features:
 
+- **Mutlisplit Support:** One ESP can control all indoor units connected to the outdoor unit.
+
 - **Temperature Monitoring:** You can monitor the room temperature.
 
 - **Humidity Monitoring (NASA Protocol):** For systems using the NASA protocol, the controller allows you to monitor humidity levels, providing additional environmental insights.
@@ -29,12 +31,12 @@ This section provides instructions for setting up AC unit controller for your Ho
 The easiest way to set up the AC unit controller is through the "Plug and Play" method. Follow these steps:
 
 1. Purchase the following components:
-   - [M5STACK ATOM Lite](https://a.aliexpress.com/_mO88aeK)
-   - [M5STACK RS485](https://a.aliexpress.com/_mLhOZQA)
+   - **M5STACK ATOM Lite** - [Aliexpress](https://a.aliexpress.com/_mO88aeK), [M5STACK store](https://shop.m5stack.com/products/atom-lite-esp32-development-kit), [documentation](https://docs.m5stack.com/en/core/ATOM%20Lite)
+   - **M5STACK ATOM RS-485 Kit** - [Aliexpress](https://a.aliexpress.com/_mLhOZQA), [M5STACK store](https://shop.m5stack.com/products/atom-rs485-kit?variant=34787900194980), [documentation](https://docs.m5stack.com/en/atom/atomic485)
 
 1. Connect the components as follows:
-   - Connect F1 on the AC unit to B on the M5STACK controller.
-   - Connect F2 on the AC unit to A on the M5STACK controller.
+   - Connect F1 on the AC unit to A on the M5STACK controller.
+   - Connect F2 on the AC unit to B on the M5STACK controller.
    - Connect V1 on the AC unit to DC on the M5STACK controller.
    - Connect V2 on the AC unit to G on the M5STACK controller.
 
@@ -95,7 +97,7 @@ Follow these steps to install and configure the software for your AC unit contro
    - Monitor the log output of your ESPHome device. You should see yellow log messages indicating the reception of data packets.
   
 1. **Identify Indoor Device Addresses:**
-   - Wait for a few seconds and watch for purple log messages in the format: "known indoor devices: 20.00.00, 20.00.01, 20.00.02, 20.00.03".
+   - Wait for a few seconds and watch for purple log messages in the format: "known indoor devices: 20.00.00, 20.00.01, 20.00.02, 20.00.03" for NASA and "known indoor devices: c8" for NonNASA.
    - These are the addresses of your indoor devices.
   
 1. **Update Your YAML File:**
