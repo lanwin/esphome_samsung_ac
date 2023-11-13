@@ -1,8 +1,10 @@
 #include <queue>
 #include <iostream>
 #include "esphome/core/log.h"
+#include "esphome/core/util.h"
 #include "util.h"
 #include "nasa.h"
+#include "esphome/components/mqtt/mqtt_client.h"
 
 static const char *TAG = "samsung_nasa";
 
@@ -451,6 +453,23 @@ namespace esphome
             for (int i = 0; i < packet_.messages.size(); i++)
             {
                 MessageSet &message = packet_.messages[i];
+
+#ifdef USE_MQTT
+                if (mqtt_is_connected())
+                {
+                    if (message.type == MessageSetType::Enum || message.type == MessageSetType::Variable || message.type == MessageSetType::LongVariable)
+                    {
+                        std::string topic = "test/nasa/" + int_to_hex((int)message.messageNumber);
+                        // std::string value = std::to_string(message.value);
+
+                        char buffer[24];
+                        sprintf(buffer, "%d", message.value);
+
+                        esphome::mqtt::global_mqtt_client->publish(topic, buffer, 0, false);
+                    }
+                }
+#endif
+
                 switch (message.messageNumber)
                 {
 
