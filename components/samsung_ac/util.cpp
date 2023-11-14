@@ -4,10 +4,10 @@ namespace esphome
 {
     namespace samsung_ac
     {
-        std::string int_to_hex(int number)
+        std::string long_to_hex(long number)
         {
-            char str[3];
-            sprintf(str, "%02x", number);
+            char str[10];
+            sprintf(str, "%02lx", number);
             return str;
         }
 
@@ -21,7 +21,7 @@ namespace esphome
             std::string str;
             for (int i = 0; i < data.size(); i++)
             {
-                str += int_to_hex(data[i]);
+                str += long_to_hex(data[i]);
             }
             return str;
         }

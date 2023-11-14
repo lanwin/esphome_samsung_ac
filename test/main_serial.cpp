@@ -39,24 +39,7 @@ void process_data(std::vector<uint8_t> &data)
 
     cout << packet.to_string() << endl;
 }
-/*
-std::string int_to_hex(int number)
-{
-    char str[3];
-    sprintf(str, "%02x", number);
-    return str;
-}
 
-std::string bytes_to_hex(const std::vector<uint8_t> &data)
-{
-    std::string str;
-    for (int i = 0; i < data.size(); i++)
-    {
-        str += int_to_hex(data[i]);
-    }
-    return str;
-}
-*/
 int main(int argc, char *argv[])
 {
     HANDLE hComm = CreateFileA("COM5", GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);

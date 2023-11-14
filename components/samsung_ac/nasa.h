@@ -123,7 +123,7 @@ namespace esphome
             MessageSetType type = Enum;
             union
             {
-                int value;
+                long value;
                 Buffer structure;
             };
             uint16_t size = 2;

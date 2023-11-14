@@ -36,7 +36,7 @@ namespace esphome
             str += "power:" + std::to_string(power ? 1 : 0) + ";";
             str += "wind_direction:" + std::to_string((uint8_t)wind_direction) + ";";
             str += "fanspeed:" + std::to_string((uint8_t)fanspeed) + ";";
-            str += "mode:" + int_to_hex((uint8_t)mode) + ";";
+            str += "mode:" + long_to_hex((uint8_t)mode) + ";";
             str += "}";
             return str;
         }
@@ -69,8 +69,8 @@ namespace esphome
                 return false;
             }
 
-            src = int_to_hex(data[1]);
-            dst = int_to_hex(data[2]);
+            src = long_to_hex(data[1]);
+            dst = long_to_hex(data[2]);
 
             uint8_t cmd = data[3];
             switch (cmd)

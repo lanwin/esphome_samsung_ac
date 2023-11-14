@@ -189,13 +189,13 @@ namespace esphome
             switch (type)
             {
             case Enum:
-                return "Enum " + int_to_hex((uint16_t)messageNumber) + " " + std::to_string(value);
+                return "Enum " + long_to_hex((uint16_t)messageNumber) + " " + std::to_string(value);
             case Variable:
-                return "Variable " + int_to_hex((uint16_t)messageNumber) + " " + std::to_string(value);
+                return "Variable " + long_to_hex((uint16_t)messageNumber) + " " + std::to_string(value);
             case LongVariable:
-                return "LongVariable " + int_to_hex((uint16_t)messageNumber) + " " + std::to_string(value);
+                return "LongVariable " + long_to_hex((uint16_t)messageNumber) + " " + std::to_string(value);
             case Structure:
-                return "Structure #" + int_to_hex((uint16_t)messageNumber) + " " + std::to_string(structure.size);
+                return "Structure #" + long_to_hex((uint16_t)messageNumber) + " " + std::to_string(structure.size);
             default:
                 return "Unknown";
             }
@@ -459,15 +459,18 @@ namespace esphome
 #ifdef USE_MQTT
                 if (mqtt_is_connected())
                 {
-                    if (message.type == MessageSetType::Enum || message.type == MessageSetType::Variable || message.type == MessageSetType::LongVariable)
+
+                    if (message.type == MessageSetType::Enum)
                     {
-                        std::string topic = "test/nasa/" + int_to_hex((int)message.messageNumber);
-                        // std::string value = std::to_string(message.value);
-
-                        char buffer[24];
-                        sprintf(buffer, "%d", message.value);
-
-                        esphome::mqtt::global_mqtt_client->publish(topic, buffer, 0, false);
+                        esphome::mqtt::global_mqtt_client->publish("test/nasa/enum/" + long_to_hex((uint16_t)message.messageNumber), std::to_string(message.value), 0, false);
+                    }
+                    else if (message.type == MessageSetType::Variable)
+                    {
+                        esphome::mqtt::global_mqtt_client->publish("test/nasa/var/" + long_to_hex((uint16_t)message.messageNumber), std::to_string(message.value), 0, false);
+                    }
+                    else if (message.type == MessageSetType::LongVariable)
+                    {
+                        esphome::mqtt::global_mqtt_client->publish("test/nasa/var_long/" + long_to_hex((uint16_t)message.messageNumber), std::to_string(message.value), 0, false);
                     }
                 }
 #endif
@@ -883,7 +886,7 @@ namespace esphome
                     case 0x2401:
                     case 0x24fc:
                     {
-                        // ESP_LOGW(TAG, "s:%s d:%s Todo %s %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), int_to_hex((int)message.messageNumber).c_str(), message.value);
+                        // ESP_LOGW(TAG, "s:%s d:%s Todo %s %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
                         continue; // Todo
                     }
 
@@ -897,7 +900,7 @@ namespace esphome
                     case 0x42d2: // VAR_IN_DUST_SENSOR_PM2_5_VALUE
                     case 0x42d3: // VAR_IN_DUST_SENSOR_PM1_0_VALUE
                     {
-                        // ESP_LOGW(TAG, "s:%s d:%s Ignore %s %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), int_to_hex((int)message.messageNumber).c_str(), message.value);
+                        // ESP_LOGW(TAG, "s:%s d:%s Ignore %s %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
                         continue; // Ingore cause not important
                     }
 
@@ -945,7 +948,7 @@ namespace esphome
                     case 0x4204:
                     case 0x4006:
                     {
-                        // ESP_LOGW(TAG, "s:%s d:%s NoMap %s %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), int_to_hex((int)message.messageNumber).c_str(), message.value);
+                        // ESP_LOGW(TAG, "s:%s d:%s NoMap %s %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
                         continue; // message types witch have no mapping in xml
                     }
 
