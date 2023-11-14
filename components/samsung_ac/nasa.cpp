@@ -4,7 +4,9 @@
 #include "esphome/core/util.h"
 #include "util.h"
 #include "nasa.h"
+#ifdef USE_MQTT
 #include "esphome/components/mqtt/mqtt_client.h"
+#endif
 
 static const char *TAG = "samsung_nasa";
 
