@@ -17,8 +17,18 @@ namespace esphome
     void Samsung_AC::update()
     {
       ESP_LOGW(TAG, "update");
+
+      // Waiting for first update before beginning processing data
+      if (data_processing_init)
+      {
+        ESP_LOGCONFIG(TAG, "Data Processing starting");
+        data_processing_init = false;
+      }
+
       if (data_processing_paused)
-        data_processing_paused = false;
+      {
+        ESP_LOGCONFIG(TAG, "Data Processing is paused !!!!");
+      }
 
       std::string devices = "";
       for (const auto &[address, device] : devices_)
@@ -60,13 +70,12 @@ namespace esphome
     void Samsung_AC::dump_config()
     {
       ESP_LOGCONFIG(TAG, "Samsung_AC:");
-      ESP_LOGCONFIG(TAG, "dataline debug enabled?: %s", this->dataline_debug_ ? "true" : "false");
       this->check_uart_settings(9600, 1, uart::UART_CONFIG_PARITY_EVEN, 8);
     }
 
     void Samsung_AC::loop()
     {
-      if (data_processing_paused)
+      if (data_processing_init || data_processing_paused)
         return;
 
       const uint32_t now = millis();

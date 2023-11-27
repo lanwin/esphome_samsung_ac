@@ -30,7 +30,7 @@ Samsung_AC_Mode_Select = samsung_ac.class_(
 Samsung_AC_Number = samsung_ac.class_("Samsung_AC_Number", number.Number)
 Samsung_AC_Climate = samsung_ac.class_("Samsung_AC_Climate", climate.Climate)
 
-CONF_DATALINE_DEBUG = "dataline_debug"
+CONF_PAUSE_PROCESSING = "pause_processing"
 
 CONF_DEVICE_ID = "samsung_ac_device_id"
 CONF_DEVICE_ADDRESS = "address"
@@ -42,10 +42,7 @@ CONF_DEVICE_MODE = "mode"
 CONF_DEVICE_CLIMATE = "climate"
 
 # not sure why select.select_schema did not work yet
-SELECT_MODE_SCHEMA = (
-    select.SELECT_SCHEMA.extend(
-        {cv.GenerateID(): cv.declare_id(Samsung_AC_Mode_Select)})
-)
+SELECT_MODE_SCHEMA = select.select_schema(Samsung_AC_Mode_Select)
 
 NUMBER_SCHEMA = (
     number.NUMBER_SCHEMA.extend(
@@ -88,7 +85,8 @@ CONFIG_SCHEMA = (
     cv.Schema(
         {
             cv.GenerateID(): cv.declare_id(Samsung_AC),
-            cv.Optional(CONF_DATALINE_DEBUG, default=False): cv.boolean,
+            # cv.Optional(CONF_PAUSE, default=False): cv.boolean,
+            cv.Optional(CONF_PAUSE_PROCESSING): switch.switch_schema(Samsung_AC_Switch),
             cv.Required(CONF_DEVICES): cv.ensure_list(DEVICE_SCHEMA),
         }
     )
@@ -143,6 +141,12 @@ async def to_code(config):
 
         cg.add(var.register_device(var_dev))
 
+    if CONF_PAUSE_PROCESSING in config:
+        conf = config[CONF_PAUSE_PROCESSING]
+        sens = await switch.new_switch(conf)
+        cg.add(var.set_pause_processing_switch(sens))
+
+    # cg.add(var.set_pause(config[CONF_PAUSE]))
+
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
-    cg.add(var.set_dataline_debug(config[CONF_DATALINE_DEBUG]))

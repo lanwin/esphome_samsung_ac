@@ -93,6 +93,7 @@ namespace esphome
     protected:
       void write_state(bool state) override
       {
+        this->publish_state(state);
         write_state_(state);
       }
     };

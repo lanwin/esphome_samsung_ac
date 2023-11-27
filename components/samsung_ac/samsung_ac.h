@@ -33,7 +33,16 @@ namespace esphome
         addresses_.insert(address);
       }
 
-      void set_dataline_debug(bool dataline_debug) { dataline_debug_ = dataline_debug; };
+      // void set_pause(bool value) { pause = value; };
+
+      void set_pause_processing_switch(Samsung_AC_Switch *value)
+      {
+        // value->turn_off();
+        value->write_state_ = [this](bool value)
+        {
+          data_processing_paused = value;
+        };
+      }
 
       void /*MessageTarget::*/ register_device(Samsung_AC_Device *device)
       {
@@ -102,10 +111,10 @@ namespace esphome
       bool receiving_{false};
       uint32_t last_transmission_{0};
 
-      bool data_processing_paused = true;
+      bool data_processing_init = true;
+      bool data_processing_paused = false;
 
       // settings from yaml
-      bool dataline_debug_{false};
     };
 
   } // namespace samsung_ac
