@@ -1,6 +1,7 @@
 #pragma once
 
 #include <set>
+#include <map>
 #include <optional>
 #include "esphome/core/component.h"
 #include "esphome/components/uart/uart.h"
@@ -36,7 +37,7 @@ namespace esphome
 
       void /*MessageTarget::*/ register_device(Samsung_AC_Device *device)
       {
-        devices_.push_back(device);
+        devices_.insert({device->address, device});
       }
 
       void /*MessageTarget::*/ set_room_temperature(const std::string address, float value) override
@@ -86,16 +87,14 @@ namespace esphome
     protected:
       Samsung_AC_Device *find_device(const std::string address)
       {
-        for (int i = 0; i < devices_.size(); i++)
+        if (auto it{devices_.find(address)}; it != devices_.end())
         {
-          Samsung_AC_Device *dev = devices_[i];
-          if (dev->address == address)
-            return dev;
+          return it->second;
         }
         return nullptr;
       }
 
-      std::vector<Samsung_AC_Device *> devices_;
+      std::map<std::string, Samsung_AC_Device *> devices_;
       std::set<std::string> addresses_;
 
       std::vector<uint8_t> out_;

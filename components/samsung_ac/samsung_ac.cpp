@@ -21,9 +21,9 @@ namespace esphome
         data_processing_paused = false;
 
       std::string devices = "";
-      for (auto const &device : devices_)
+      for (const auto &[address, device] : devices_)
       {
-        devices += devices.length() > 0 ? ", " + device->address : device->address;
+        devices += devices.length() > 0 ? ", " + address : address;
       }
       ESP_LOGCONFIG(TAG, "Configured devices: %s", devices.c_str());
 
