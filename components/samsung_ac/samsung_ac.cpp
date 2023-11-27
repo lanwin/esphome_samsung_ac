@@ -11,11 +11,14 @@ namespace esphome
 
     void Samsung_AC::setup()
     {
+      ESP_LOGW(TAG, "setup");
     }
 
     void Samsung_AC::update()
     {
       ESP_LOGW(TAG, "update");
+      if (data_processing_paused)
+        data_processing_paused = false;
 
       std::string devices = "";
       for (auto const &device : devices_)
@@ -63,6 +66,9 @@ namespace esphome
 
     void Samsung_AC::loop()
     {
+      if (data_processing_paused)
+        return;
+
       const uint32_t now = millis();
       if (receiving_ && (now - last_transmission_ >= 500))
       {

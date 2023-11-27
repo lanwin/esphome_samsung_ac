@@ -103,6 +103,8 @@ namespace esphome
       bool receiving_{false};
       uint32_t last_transmission_{0};
 
+      bool data_processing_paused = true;
+
       // settings from yaml
       bool dataline_debug_{false};
     };
