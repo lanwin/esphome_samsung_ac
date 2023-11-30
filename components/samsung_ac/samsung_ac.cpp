@@ -1,5 +1,6 @@
 #include "esphome/core/log.h"
 #include "samsung_ac.h"
+#include "debug_mqtt.h"
 #include "util.h"
 #include <vector>
 
@@ -17,6 +18,8 @@ namespace esphome
     void Samsung_AC::update()
     {
       ESP_LOGW(TAG, "update");
+
+      debug_mqtt_connect(debug_mqtt_host, debug_mqtt_port, debug_mqtt_username, debug_mqtt_password);
 
       // Waiting for first update before beginning processing data
       if (data_processing_init)

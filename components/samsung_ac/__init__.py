@@ -11,6 +11,7 @@ from esphome.const import (
     UNIT_CELSIUS,
     UNIT_PERCENT,
 )
+from esphome.core import CORE
 
 CODEOWNERS = ["matthias882", "lanwin"]
 DEPENDENCIES = ["uart"]
@@ -30,17 +31,6 @@ Samsung_AC_Mode_Select = samsung_ac.class_(
 Samsung_AC_Number = samsung_ac.class_("Samsung_AC_Number", number.Number)
 Samsung_AC_Climate = samsung_ac.class_("Samsung_AC_Climate", climate.Climate)
 
-CONF_PAUSE_PROCESSING = "pause_processing"
-
-CONF_DEVICE_ID = "samsung_ac_device_id"
-CONF_DEVICE_ADDRESS = "address"
-CONF_DEVICE_ROOM_TEMPERATURE = "room_temperature"
-CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
-CONF_DEVICE_TARGET_TEMPERATURE = "target_temperature"
-CONF_DEVICE_POWER = "power"
-CONF_DEVICE_MODE = "mode"
-CONF_DEVICE_CLIMATE = "climate"
-
 # not sure why select.select_schema did not work yet
 SELECT_MODE_SCHEMA = select.select_schema(Samsung_AC_Mode_Select)
 
@@ -53,6 +43,15 @@ CLIMATE_SCHEMA = (
     climate.CLIMATE_SCHEMA.extend(
         {cv.GenerateID(): cv.declare_id(Samsung_AC_Climate)})
 )
+
+CONF_DEVICE_ID = "samsung_ac_device_id"
+CONF_DEVICE_ADDRESS = "address"
+CONF_DEVICE_ROOM_TEMPERATURE = "room_temperature"
+CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
+CONF_DEVICE_TARGET_TEMPERATURE = "target_temperature"
+CONF_DEVICE_POWER = "power"
+CONF_DEVICE_MODE = "mode"
+CONF_DEVICE_CLIMATE = "climate"
 
 DEVICE_SCHEMA = (
     cv.Schema(
@@ -80,6 +79,13 @@ DEVICE_SCHEMA = (
 )
 
 CONF_DEVICES = "devices"
+CONF_PAUSE_PROCESSING = "pause_processing"
+
+CONF_DEBUG_MQTT_HOST = "debug_mqtt_host"
+CONF_DEBUG_MQTT_PORT = "debug_mqtt_port"
+CONF_DEBUG_MQTT_USERNAME = "debug_mqtt_username"
+CONF_DEBUG_MQTT_PASSWORD = "debug_mqtt_password"
+
 
 CONFIG_SCHEMA = (
     cv.Schema(
@@ -87,6 +93,10 @@ CONFIG_SCHEMA = (
             cv.GenerateID(): cv.declare_id(Samsung_AC),
             # cv.Optional(CONF_PAUSE, default=False): cv.boolean,
             cv.Optional(CONF_PAUSE_PROCESSING): switch.switch_schema(Samsung_AC_Switch),
+            cv.Optional(CONF_DEBUG_MQTT_HOST, default=""): cv.string,
+            cv.Optional(CONF_DEBUG_MQTT_PORT, default=1883): cv.int_,
+            cv.Optional(CONF_DEBUG_MQTT_USERNAME, default=""): cv.string,
+            cv.Optional(CONF_DEBUG_MQTT_PASSWORD, default=""): cv.string,
             cv.Required(CONF_DEVICES): cv.ensure_list(DEVICE_SCHEMA),
         }
     )
@@ -96,6 +106,10 @@ CONFIG_SCHEMA = (
 
 
 async def to_code(config):
+    # For Debug_MQTT
+    if CORE.is_esp8266 or CORE.is_libretiny:
+        cg.add_library("heman/AsyncMqttClient-esphome", "2.0.0")
+
     var = cg.new_Pvariable(config[CONF_ID])
     for device_index, device in enumerate(config[CONF_DEVICES]):
         var_dev = cg.new_Pvariable(
@@ -146,7 +160,8 @@ async def to_code(config):
         sens = await switch.new_switch(conf)
         cg.add(var.set_pause_processing_switch(sens))
 
-    # cg.add(var.set_pause(config[CONF_PAUSE]))
+    cg.add(var.set_debug_mqtt(config[CONF_DEBUG_MQTT_HOST], config[CONF_DEBUG_MQTT_PORT],
+           config[CONF_DEBUG_MQTT_USERNAME], config[CONF_DEBUG_MQTT_PASSWORD]))
 
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)

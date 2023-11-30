@@ -33,7 +33,13 @@ namespace esphome
         addresses_.insert(address);
       }
 
-      // void set_pause(bool value) { pause = value; };
+      void set_debug_mqtt(std::string host, int port, std::string username, std::string password)
+      {
+        debug_mqtt_host = host;
+        debug_mqtt_port = port;
+        debug_mqtt_username = username;
+        debug_mqtt_password = password;
+      }
 
       void set_pause_processing_switch(Samsung_AC_Switch *value)
       {
@@ -115,6 +121,10 @@ namespace esphome
       bool data_processing_paused = false;
 
       // settings from yaml
+      std::string debug_mqtt_host = "";
+      uint16_t debug_mqtt_port = 1883;
+      std::string debug_mqtt_username = "";
+      std::string debug_mqtt_password = "";
     };
 
   } // namespace samsung_ac

@@ -4,9 +4,7 @@
 #include "esphome/core/util.h"
 #include "util.h"
 #include "nasa.h"
-#ifdef USE_MQTT
-#include "esphome/components/mqtt/mqtt_client.h"
-#endif
+#include "debug_mqtt.h"
 
 static const char *TAG = "samsung_nasa";
 
@@ -456,24 +454,21 @@ namespace esphome
             {
                 MessageSet &message = packet_.messages[i];
 
-#ifdef USE_MQTT
-                if (mqtt_is_connected())
+                if (debug_mqtt_connected())
                 {
-
                     if (message.type == MessageSetType::Enum)
                     {
-                        esphome::mqtt::global_mqtt_client->publish("test/nasa/enum/" + long_to_hex((uint16_t)message.messageNumber), std::to_string(message.value), 0, false);
+                        debug_mqtt_publish("samsung_ac/nasa/enum/" + long_to_hex((uint16_t)message.messageNumber), std::to_string(message.value));
                     }
                     else if (message.type == MessageSetType::Variable)
                     {
-                        esphome::mqtt::global_mqtt_client->publish("test/nasa/var/" + long_to_hex((uint16_t)message.messageNumber), std::to_string(message.value), 0, false);
+                        debug_mqtt_publish("samsung_ac/nasa/var/" + long_to_hex((uint16_t)message.messageNumber), std::to_string(message.value));
                     }
                     else if (message.type == MessageSetType::LongVariable)
                     {
-                        esphome::mqtt::global_mqtt_client->publish("test/nasa/var_long/" + long_to_hex((uint16_t)message.messageNumber), std::to_string(message.value), 0, false);
+                        debug_mqtt_publish("samsung_ac/nasa/var_long/" + long_to_hex((uint16_t)message.messageNumber), std::to_string(message.value));
                     }
                 }
-#endif
 
                 switch (message.messageNumber)
                 {
