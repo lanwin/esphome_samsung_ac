@@ -30,7 +30,6 @@ namespace esphome
             BroadcastSelfLayer = 0xB0,
             BroadcastControlLayer = 0xB1,
             BroadcastSetLayer = 0xB2,
-            BoradcastCS = 0xB3,
             BroadcastControlAndSetLayer = 0xB3,
             BroadcastModuleLayer = 0xB4,
             BoradcastCSM = 0xB7,
