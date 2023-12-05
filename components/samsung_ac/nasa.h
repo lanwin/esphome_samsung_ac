@@ -35,7 +35,7 @@ namespace esphome
             BroadcastCSM = 0xB7,
             BroadcastLocalLayer = 0xB8,
             BroadcastCSML = 0xBF,
-            Undefiend = 0xFF,
+            Undefined = 0xFF,
         };
 
         enum class PacketType : uint8_t
