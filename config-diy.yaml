@@ -1,5 +1,5 @@
 esp8266:
-  board: nodemcuv2
+  board: nodemcuv2 # !!!CHANGE ME!!!
 
 web_server:
   port: 80
@@ -19,7 +19,7 @@ samsung_ac:
   debug_log_messages_raw: false # logs the raw message bytes from all messages - only for debugging
 
   devices:
-    - address: "20.00.00" # for non NASA it sould be like "c4"
+    - address: "20.00.00" # !!!CHANGE ME!!!
       # Each property below are optional - choose what you want to use.
 
       # You could use the ESPHome/Homeassist climate control

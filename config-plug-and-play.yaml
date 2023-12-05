@@ -1,0 +1,125 @@
+# Device name
+substitutions:
+  name: esp-samsung-ac
+
+
+
+# BASIC CONFIGURATION
+
+esphome:
+  name: ${name}
+
+# Select board in this case M5STACK
+esp32:
+  board: m5stack-atom
+
+# Create web interface where you can controll the AC from your web browser
+web_server:
+  port: 80
+
+# Enable logging
+logger:
+
+# Enable native API for communication with Home Assistant, this can be removed if you do not plan to use it with Home Assistant
+api:
+
+# Enable OTA firmware update, you will be able to upload the firmware over WiFi without connecting the device by cables
+ota:
+
+# Setup your WiFi password
+wifi:
+  ssid: "My WiFi Name" # !!!CHANGE ME!!!
+  password: "My WiFi Password" # !!!CHANGE ME!!!
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${name}.o"
+
+captive_portal:
+
+
+
+# SAMSUNG AC CONFIGURATION
+
+# Specify pins used by the board to comunicate with AC
+uart:
+  tx_pin: GPIO19
+  rx_pin: GPIO22
+  baud_rate: 9600
+  parity: EVEN
+
+# Import custom component from GitHub
+external_components:
+  - source: github://lanwin/esphome_samsung_ac@main
+    components: [samsung_ac]
+
+# Configuration of AC component
+samsung_ac:
+  devices:
+    # AC UNIT 1 - add first indoor unit
+    # unit address, for non-NASA devices the format will be like "c4", the address can be found in logs on start
+    - address: "20.00.00" # !!!CHANGE ME!!!
+    
+    # Each property below is optional (climate, room_temperature etc.) - you can delete those which are not needed
+      # Creates climate in Home Assistant
+      climate:
+        name: "AC Unit 1"
+
+      # Create separate controls/sensors, this is not necessary for the ones already included in climate above,
+      # feel free to remove them if not needed
+      room_temperature:
+        name: "AC Unit 1 - room temperature"
+      # Only supported on NASA devices for now
+      room_humidity:
+        name: "AC Unit 1 - humidity"
+      target_temperature:
+        name: "AC Unit 1 - target temperature"
+      power:
+        name: "AC Unit 1 - power switch"
+      mode:
+        name: "AC Unit 1 - mode"
+    
+
+    # AC UNIT 2 - add second indoor unit, remove this section if you have only one unit, add similar section if you have multiple units
+    # unit address, for non-NASA devices the format will be like "c4", the address can be found in logs on start
+    - address: "20.00.01" # !!!CHANGE ME!!!
+    
+    # Each property below is optional (climate, room_temperature etc.) - you can delete those which are not needed
+      # Creates climate in HA
+      climate:
+        name: "AC Unit 2"
+
+      # Create separate controls/sensors, this is not necessary for the ones already included in climate above,
+      # feel free to remove them if not needed
+      room_temperature:
+        name: "AC Unit 2 - room temperature"
+      # Only supported on NASA devices for now
+      room_humidity:
+        name: "AC Unit 2 - humidity"
+      target_temperature:
+        name: "AC Unit 2 - target temperature"
+      power:
+        name: "AC Unit 2 - power switch"
+      mode:
+        name: "AC Unit 2 - mode"
+
+
+
+# DEVICE INFO
+
+# Show IP address in Home Assistant
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "${name} IP address"
+      icon: mdi:ip-network
+
+sensor:
+  # Shows WiFi signal strength in Home Assistant
+  - platform: wifi_signal
+    name: "${name} signal"
+    update_interval: 10s
+  
+  # Shows run time in Home Assistant
+  - platform: uptime
+    name: "${name} uptime"

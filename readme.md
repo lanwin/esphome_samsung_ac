@@ -7,6 +7,7 @@ Samsung has employed different software protocols for their AC devices over the 
 For detailed information on the differences between the NASA and Non NASA protocols, please refer to the "NASA vs Non NASA" section below.
 
 
+
 ## Current Features
 
 The current implementation offers the following features:
@@ -20,6 +21,7 @@ The current implementation offers the following features:
 - **Target Temperature Adjustment:** You have the ability to change the target temperature, allowing you to set your desired climate.
 
 - **AC Mode Control:** The controller enables you to change the AC mode, giving you control over cooling, heating, or other operational modes.
+
 
 
 ## Hardware installation
@@ -70,24 +72,15 @@ If you encounter any issues with data reception, double-check your wiring connec
 
 Feel free to modify the hardware setup based on your specific requirements and hardware availability.
 
+
+
 ## Software Installation
 
 Follow these steps to install and configure the software for your AC unit controller:
 
 1. **Create a New ESPHome Device:**
-   - Begin by creating a new ESPHome device in your Home Assistant instance or ESPHome comand line tool.
-   - Use the configuration from the provided `example.yaml` file as a template. Make sure to verify that the ESP chip model matches your hardware. For M5STACK devices, set the `board` to 'm5stack-atom' and RX, TX pins for UART to GPIO19 and GPIO22 in the configuration.
-
-   ```yaml
-   esp32:
-     board: m5stack-atom
-   # ... (other configurations)
-   uart:
-     tx_pin: GPIO19
-     rx_pin: GPIO22
-     baud_rate: 9600
-     parity: EVEN
-   ```
+   - Begin by creating a new ESPHome device in your Home Assistant using ESPHome addon instance or ESPHome command line tool.
+   - Use the configuration from the provided `config-plug-and-play.yaml` or `config-diy.yaml` files. If you have chosen the Plug&Play way, than it is necessary just to modify the WiFi name, WiFi password and AC unit address (see [Identify Indoor Device Addresses](1. **Identify Indoor Device Addresses:**) section below). Search for `# !!!CHANGE ME!!!` in the file, this marks places where the modification from your side is required. When you have decided to go the DIY way, it is expected you are more experienced with ESPHome and `config-diy.yaml` should serve just as example.
 
 1. **Deploy and Boot:**
    - Deploy the configured firmware to your ESP device.
@@ -102,12 +95,9 @@ Follow these steps to install and configure the software for your AC unit contro
   
 1. **Update Your YAML File:**
    - Copy the address block containing the indoor device addresses from the log.
-   - In your ESPHome configuration YAML file, create a section for each indoor unit using the copied addresses.
-   - Assign meaningful names to each unit based on the rooms they control.
-   - Customize the configuration properties as needed for each unit.
-
-1. **Remove Unneeded Properties:**
-   - Review and clean up the configuration by removing any properties that are not relevant or needed for your setup.
+   - In your ESPHome configuration YAML file, modify the address section. It is marked with `# !!!CHANGE ME!!!` comment.
+   - **[OPTIONAL]** You can assign meaningful names to each unit based on the rooms they control.
+   - **[OPTIONAL]** You can also customize the configuration properties as needed for each unit.
 
 
 ## NASA vs Non NASA
