@@ -43,12 +43,12 @@ namespace esphome
 
       void set_debug_log_messages(bool value)
       {
-        debug_log_messages = true;
+        debug_log_messages = value;
       }
 
       void set_debug_log_messages_raw(bool value)
       {
-        debug_log_messages_raw = true;
+        debug_log_messages_raw = value;
       }
 
       void set_pause_processing_switch(Samsung_AC_Switch *value)
