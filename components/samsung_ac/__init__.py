@@ -86,6 +86,8 @@ CONF_DEBUG_MQTT_PORT = "debug_mqtt_port"
 CONF_DEBUG_MQTT_USERNAME = "debug_mqtt_username"
 CONF_DEBUG_MQTT_PASSWORD = "debug_mqtt_password"
 
+CONF_DEBUG_LOG_MESSAGES = "debug_log_messages"
+CONF_DEBUG_LOG_MESSAGES_RAW = "debug_log_messages_raw"
 
 CONFIG_SCHEMA = (
     cv.Schema(
@@ -97,6 +99,8 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_DEBUG_MQTT_PORT, default=1883): cv.int_,
             cv.Optional(CONF_DEBUG_MQTT_USERNAME, default=""): cv.string,
             cv.Optional(CONF_DEBUG_MQTT_PASSWORD, default=""): cv.string,
+            cv.Optional(CONF_DEBUG_LOG_MESSAGES, default=False): cv.boolean,
+            cv.Optional(CONF_DEBUG_LOG_MESSAGES_RAW, default=False): cv.boolean,
             cv.Required(CONF_DEVICES): cv.ensure_list(DEVICE_SCHEMA),
         }
     )
@@ -162,6 +166,13 @@ async def to_code(config):
 
     cg.add(var.set_debug_mqtt(config[CONF_DEBUG_MQTT_HOST], config[CONF_DEBUG_MQTT_PORT],
            config[CONF_DEBUG_MQTT_USERNAME], config[CONF_DEBUG_MQTT_PASSWORD]))
+
+    if (CONF_DEBUG_LOG_MESSAGES in config):
+        cg.add(var.set_debug_log_messages(config[CONF_DEBUG_LOG_MESSAGES]))
+
+    if (CONF_DEBUG_LOG_MESSAGES_RAW in config):
+        cg.add(var.set_debug_log_messages_raw(
+            config[CONF_DEBUG_LOG_MESSAGES_RAW]))
 
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)

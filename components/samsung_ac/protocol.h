@@ -7,6 +7,9 @@ namespace esphome
 {
     namespace samsung_ac
     {
+        extern bool debug_log_messages;
+        extern bool debug_log_messages_raw;
+
         enum class Mode
         {
             Unknown = -1,

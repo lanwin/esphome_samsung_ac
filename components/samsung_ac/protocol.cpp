@@ -8,8 +8,16 @@ namespace esphome
 {
     namespace samsung_ac
     {
+        bool debug_log_messages = false;
+        bool debug_log_messages_raw = false;
+
         void process_message(std::vector<uint8_t> &data, MessageTarget *target)
         {
+            if (debug_log_messages_raw)
+            {
+                ESP_LOGW("samsung_ac", "RAW: %s", bytes_to_hex(data).c_str());
+            }
+
             if (data.size() == 14)
             {
                 process_non_nasa_message(data, target);

@@ -41,6 +41,16 @@ namespace esphome
         debug_mqtt_password = password;
       }
 
+      void set_debug_log_messages(bool value)
+      {
+        debug_log_messages = true;
+      }
+
+      void set_debug_log_messages_raw(bool value)
+      {
+        debug_log_messages_raw = true;
+      }
+
       void set_pause_processing_switch(Samsung_AC_Switch *value)
       {
         // value->turn_off();

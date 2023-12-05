@@ -15,6 +15,9 @@ external_components:
     components: [samsung_ac]
 
 samsung_ac:
+  debug_log_messages: false # logs all messages - only for debugging
+  debug_log_messages_raw: false # logs the raw message bytes from all messages - only for debugging
+
   devices:
     - address: "20.00.00" # for non NASA it sould be like "c4"
       # Each property below are optional - choose what you want to use.

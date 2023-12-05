@@ -299,6 +299,11 @@ namespace esphome
             if (!packet.decode(data))
                 return;
 
+            if (debug_log_messages)
+            {
+                ESP_LOGW(TAG, "MSG: %s", packet.to_string().c_str());
+            }
+
             target->register_address(packet.src);
             target->set_target_temperature(packet.src, packet.target_temp);
             target->set_room_temperature(packet.src, packet.room_temp);

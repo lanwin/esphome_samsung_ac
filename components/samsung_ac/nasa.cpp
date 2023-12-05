@@ -433,6 +433,11 @@ namespace esphome
             if (packet_.decode(data) == false)
                 return;
 
+            if (debug_log_messages)
+            {
+                ESP_LOGW(TAG, "MSG: %s", packet_.to_string().c_str());
+            }
+
             if (packet_.commad.dataType == DataType::Request)
             {
                 ESP_LOGW(TAG, "Request %s", packet_.to_string().c_str());
