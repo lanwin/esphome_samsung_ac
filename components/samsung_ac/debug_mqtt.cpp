@@ -45,7 +45,7 @@ namespace esphome
             if (mqtt_client == nullptr)
                 return false;
 
-            return mqtt_client->publish(topic.c_str(), 100, false, payload.c_str(), payload.length(), false, 0) != 0;
+            return mqtt_client->publish(topic.c_str(), 0, false, payload.c_str()) != 0;
 #else
             return true;
 #endif
