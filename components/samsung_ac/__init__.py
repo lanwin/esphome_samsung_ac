@@ -148,7 +148,6 @@ async def to_code(config):
             conf = device[CONF_DEVICE_MODE]
             values = ["Auto", "Cool", "Dry", "Fan", "Heat"]
             sel = await select.new_select(conf, options=values)
-            await select.register_select(sel, conf, options=values)
             cg.add(var_dev.set_mode_select(sel))
 
         if CONF_DEVICE_CLIMATE in device:
