@@ -72,8 +72,6 @@ namespace esphome
 
     void Samsung_AC::dump_config()
     {
-      ESP_LOGCONFIG(TAG, "Samsung_AC:");
-      this->check_uart_settings(9600, 1, uart::UART_CONFIG_PARITY_EVEN, 8);
     }
 
     void Samsung_AC::loop()
@@ -89,6 +87,7 @@ namespace esphome
         receiving_ = false;
       }
 
+      // If there is no data we use the time to send
       if (!available())
       {
         if (out_.size() > 0)
