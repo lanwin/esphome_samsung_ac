@@ -6,6 +6,7 @@
 AsyncMqttClient *mqtt_client{nullptr};
 #endif
 #ifdef USE_ESP32
+#include <mqtt_client.h>
 esp_mqtt_client_handle_t mqtt_client{nullptr};
 #endif
 
@@ -23,8 +24,9 @@ namespace esphome
 #elif USE_ESP32
             if (mqtt_client == nullptr)
                 return false;
-#else
 
+            return true;
+#else
             return false;
 #endif
         }
@@ -45,13 +47,14 @@ namespace esphome
 #elif USE_ESP32
             if (mqtt_client == nullptr)
             {
-                std::string uri = "mqtt://";
+                esp_mqtt_client_config_t mqtt_cfg = {};
+                mqtt_cfg.host = host.c_str();
+                mqtt_cfg.port = port;
                 if (username.length() > 0)
-                    uri = uri + username + ":" + password + "@";
-                uri = uri + host + ":" + std::to_string(port);
-                const esp_mqtt_client_config_t mqtt_cfg = {
-                    .broker.address.uri = uri.c_str(),
-                };
+                {
+                    mqtt_cfg.username = username.c_str();
+                    mqtt_cfg.password = password.c_str();
+                }
                 mqtt_client = esp_mqtt_client_init(&mqtt_cfg);
                 esp_mqtt_client_start(mqtt_client);
             }
