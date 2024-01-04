@@ -112,7 +112,8 @@ namespace esphome
     protected:
       Samsung_AC_Device *find_device(const std::string address)
       {
-        if (auto it{devices_.find(address)}; it != devices_.end())
+        auto it = devices_.find(address);
+        if (it != devices_.end())
         {
           return it->second;
         }
