@@ -33,6 +33,9 @@ namespace esphome
 
         void debug_mqtt_connect(const std::string &host, const uint16_t port, const std::string &username, const std::string &password)
         {
+            if (host.length() == 0)
+                return;
+
 #ifdef USE_ESP8266
             if (mqtt_client == nullptr)
             {
