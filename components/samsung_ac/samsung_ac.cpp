@@ -45,7 +45,7 @@ namespace esphome
       std::string knownOther = "";
       for (auto const &address : addresses_)
       {
-        if (address == "00" || address.rfind("10.", 0) == 0)
+        if (address == "c8" || address.rfind("10.", 0) == 0)
         {
           knownOutdoor += knownOutdoor.length() > 0 ? ", " + address : address;
         }
