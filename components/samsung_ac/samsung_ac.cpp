@@ -45,17 +45,17 @@ namespace esphome
       std::string knownOther = "";
       for (auto const &address : addresses_)
       {
-        if (address == "c8" || address.rfind("10.", 0) == 0)
+        switch (get_address_type(address))
         {
+        case AddressType::Outdoor:
           knownOutdoor += knownOutdoor.length() > 0 ? ", " + address : address;
-        }
-        else if (!is_nasa_address(address) || address.rfind("20.", 0) == 0)
-        {
+          break;
+        case AddressType::Indoor:
           knownIndoor += knownIndoor.length() > 0 ? ", " + address : address;
-        }
-        else
-        {
+          break;
+        default:
           knownOther += knownOther.length() > 0 ? ", " + address : address;
+          break;
         }
       }
       ESP_LOGCONFIG(TAG, "Discovered devices:");

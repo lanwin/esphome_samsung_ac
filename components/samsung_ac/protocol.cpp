@@ -37,6 +37,17 @@ namespace esphome
             return address.size() != 2;
         }
 
+        AddressType get_address_type(const std::string &address)
+        {
+            if (address == "c8" || address.rfind("10.", 0) == 0)
+                return AddressType::Outdoor;
+
+            if (address == "00" || address == "01" || address == "02" || address == "03" || address.rfind("20.", 0) == 0)
+                return AddressType::Indoor;
+
+            return AddressType::Other;
+        }
+
         Protocol *nasaProtocol = new NasaProtocol();
         Protocol *nonNasaProtocol = new NonNasaProtocol();
 

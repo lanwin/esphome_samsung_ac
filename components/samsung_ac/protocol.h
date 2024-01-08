@@ -58,5 +58,14 @@ namespace esphome
 
         bool is_nasa_address(const std::string &address);
 
+        enum class AddressType
+        {
+            Outdoor = 0,
+            Indoor = 1,
+            Other = 2
+        };
+
+        AddressType get_address_type(const std::string &address);
+
     } // namespace samsung_ac
 } // namespace esphome
