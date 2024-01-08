@@ -496,7 +496,7 @@ namespace esphome
                 case MessageNumber::ENUM_in_state_humidity_percent:
                 {
                     // XML Enum no value but in Code it adds unit
-                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_state_humidity_percent %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_state_humidity_percent %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                     target->set_room_humidity(packet_.sa.to_string(), message.value);
                     continue;
                 }
@@ -508,13 +508,13 @@ namespace esphome
                 }
                 case MessageNumber::ENUM_in_operation_mode:
                 {
-                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_mode %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_mode %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                     target->set_mode(packet_.sa.to_string(), operation_mode_to_mode(message.value));
                     continue;
                 }
                 case MessageNumber::ENUM_in_fan_mode_real:
                 {
-                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_mode_real %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_mode_real %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                     target->set_fanmode(packet_.sa.to_string(), fan_mode_real_to_fanmode(message.value));
                     continue;
                 }
@@ -528,42 +528,42 @@ namespace esphome
 
                     if (((uint16_t)message.messageNumber) == 0x4003)
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_OPERATION_VENT_POWER %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_OPERATION_VENT_POWER %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
                     if (((uint16_t)message.messageNumber) == 0x4004)
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_OPERATION_VENT_MODE %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_OPERATION_VENT_MODE %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
                     if (((uint16_t)message.messageNumber) == 0x4011)
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_LOUVER_HL_SWING %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_LOUVER_HL_SWING %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
                     if (((uint16_t)message.messageNumber) == 0x4012)
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s ENUM_in_louver_hl_part_swing %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_in_louver_hl_part_swing %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
                     if (((uint16_t)message.messageNumber) == 0x4060)
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_ALTERNATIVE_MODE %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_ALTERNATIVE_MODE %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
                     if (((uint16_t)message.messageNumber) == 0x406E)
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_QUIET_MODE %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_QUIET_MODE %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
                     if (((uint16_t)message.messageNumber) == 0x4119)
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_OPERATION_POWER_ZONE1 %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_OPERATION_POWER_ZONE1 %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
                     if (((uint16_t)message.messageNumber) == 0x411E)
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_OPERATION_POWER_ZONE2 %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_OPERATION_POWER_ZONE2 %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
 
@@ -574,13 +574,13 @@ namespace esphome
                     case 0x4002: // ENUM_in_operation_mode_real
                     {
                         // Todo Map
-                        ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_mode_real %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_mode_real %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
 
                     case 0x4008: // ENUM_in_fan_vent_mode
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_vent_mode %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_vent_mode %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         // fan_vent_mode_to_fanmode();
                         continue;
                     }
@@ -596,7 +596,7 @@ namespace esphome
           default:
           return undefined;
                         */
-                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_LOUVER_HL_SWING %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_LOUVER_HL_SWING %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
 
@@ -604,7 +604,7 @@ namespace esphome
                     {
                         // Todo Map
 
-                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_LOUVER_HL_SWING %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_LOUVER_HL_SWING %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
 
@@ -632,7 +632,7 @@ namespace esphome
                     case 0x8001: // ENUM_out_operation_odu_mode
                     {
                         // Todo Map
-                        ESP_LOGW(TAG, "s:%s d:%s ENUM_out_operation_odu_mode %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_out_operation_odu_mode %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
 
@@ -640,19 +640,19 @@ namespace esphome
                     {
                         //['Undefined', 'Cool', 'Heat', 'CoolMain', 'HeatMain'];
                         // Todo Map
-                        ESP_LOGW(TAG, "s:%s d:%s ENUM_out_operation_heatcool %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_out_operation_heatcool %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
 
                     case 0x801a: // ENUM_out_load_4way
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s ENUM_out_load_4way %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s ENUM_out_load_4way %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
 
                     case 0x8235: // VAR_out_error_code
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s VAR_out_error_code %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_out_error_code %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
 
@@ -714,24 +714,24 @@ namespace esphome
 
                     case 0x8274: // VAR_out_control_order_cfreq_comp2
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s VAR_out_control_order_cfreq_comp2 %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_out_control_order_cfreq_comp2 %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
                     case 0x8275: // VAR_out_control_target_cfreq_comp2
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s VAR_out_control_target_cfreq_comp2 %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_out_control_target_cfreq_comp2 %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
 
                     case 0x82bc: // VAR_OUT_PROJECT_CODE
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_PROJECT_CODE %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_PROJECT_CODE %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
 
                     case 0x82e3: // VAR_OUT_PRODUCT_OPTION_CAPA
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_PRODUCT_OPTION_CAPA %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_PRODUCT_OPTION_CAPA %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
 
@@ -744,7 +744,7 @@ namespace esphome
 
                     case 0x82db: // VAR_OUT_PHASE_CURRENT
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_PHASE_CURRENT %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_PHASE_CURRENT %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), message.value);
                         continue;
                     }
 
@@ -886,7 +886,7 @@ namespace esphome
                     case 0x2401:
                     case 0x24fc:
                     {
-                        // ESP_LOGW(TAG, "s:%s d:%s Todo %s %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
+                        // ESP_LOGW(TAG, "s:%s d:%s Todo %s %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
                         continue; // Todo
                     }
 
@@ -900,7 +900,7 @@ namespace esphome
                     case 0x42d2: // VAR_IN_DUST_SENSOR_PM2_5_VALUE
                     case 0x42d3: // VAR_IN_DUST_SENSOR_PM1_0_VALUE
                     {
-                        // ESP_LOGW(TAG, "s:%s d:%s Ignore %s %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
+                        // ESP_LOGW(TAG, "s:%s d:%s Ignore %s %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
                         continue; // Ingore cause not important
                     }
 
@@ -948,7 +948,7 @@ namespace esphome
                     case 0x4204:
                     case 0x4006:
                     {
-                        // ESP_LOGW(TAG, "s:%s d:%s NoMap %s %d", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
+                        // ESP_LOGW(TAG, "s:%s d:%s NoMap %s %li", packet_.sa.to_string().c_str(), packet_.da.to_string().c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
                         continue; // message types witch have no mapping in xml
                     }
 
