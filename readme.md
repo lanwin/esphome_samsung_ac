@@ -24,13 +24,12 @@ The current implementation offers the following features:
 
 ## Hardware installation
 
-This section provides instructions for setting up AC unit controller for your Home Assistant using ESPHome and compatible hardware. You can choose between a "Plug and Play" approach or a "DIY" approach based on your preferences and skill level.
+An ESPHome compatible device and an RS-485 to serial adapter is required to run this project. While its possible to run it on an ESP8266 its better to chose an ESP32 since it handles the incoming message stream better.
 
-### Plug and Play
+### We recommand to use the M5STACK ATOM Lite + M5STACK RS-485 kit
+Its cheap, comes with a tiny case (witch can fit inside an indoor unit) and allow directly to use the 12V comming from the V1/V2 lines witch some AC units provide.
 
-The easiest way to set up the AC unit controller is through the "Plug and Play" method. Follow these steps:
-
-1. Purchase the following components:
+1. Purchase the following components and stack them:
    - **M5STACK ATOM Lite** - [Aliexpress](https://a.aliexpress.com/_mO88aeK), [M5STACK store](https://shop.m5stack.com/products/atom-lite-esp32-development-kit), [documentation](https://docs.m5stack.com/en/core/ATOM%20Lite)
    - **M5STACK ATOM RS-485 Kit** - [Aliexpress](https://a.aliexpress.com/_mLhOZQA), [M5STACK store](https://shop.m5stack.com/products/atom-rs485-kit?variant=34787900194980), [documentation](https://docs.m5stack.com/en/atom/atomic485)
 
@@ -41,34 +40,6 @@ The easiest way to set up the AC unit controller is through the "Plug and Play" 
    - Connect V2 on the AC unit to G on the M5STACK controller.
 
 ![Plug and Play Wiring Diagram](https://github.com/lanwin/esphome_samsung_ac/assets/32042186/42a6757d-bfcf-4a29-be87-cf1b204e248a)
-
-### DIY
-
-If you prefer a more customized approach, you can build the AC unit controller yourself. Here's what you'll need:
-
-- Any ESP devices that ESPHome supports (e.g., NodeMCU)
-- A "TTL to RS485" converter (UART) - available on Amazon or Ebay
-- (Optional - to power directly from AC) A Mini step-down power converter 12V to 9V
-
-Follow these steps to set up the DIY AC unit controller:
-
-1. Wire the components as follows:
-   - Connect the A+ port of the "TTL to RS485" converter to F1 on your "Samsung AC."
-   - Connect the B+ port of the "TTL to RS485" converter to F2 on your "Samsung AC."
-   - Connect the GND port of the "TTL to RS485" converter to the GND of the ESP device.
-   - Wire TXD to TX, RXD to RX, VCC to 3.3V on the ESP device.
-   
-   (Optional) If you want to power the ESP directly from the AC unit:
-   - Wire V1 from the AC unit to the +IN of the step-down converter.
-   - Wire V2 from the AC unit to the -IN of the step-down converter.
-   - Connect +OUT of the step-down converter to VIN of the ESP.
-   - Connect -OUT of the step-down converter to the GND of the ESP.
-
-1. Ensure your wiring is secure to prevent loose connections.
-
-If you encounter any issues with data reception, double-check your wiring connections.
-
-Feel free to modify the hardware setup based on your specific requirements and hardware availability.
 
 ## Software Installation
 
