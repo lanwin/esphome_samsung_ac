@@ -23,7 +23,7 @@ The current implementation offers the following features:
 
 ## Hardware installation
 
-An ESPHome compatible device and an RS-485 to serial adapter is required to run this project. While its possible to run it on an ESP8266 its better to chose an ESP32 since it handles the incoming message stream better.
+An ESPHome compatible device and an RS-485 to serial adapter is required to run this project. While its possible to run it on an ESP8266 its better to chose an ESP32 since it handles the incoming message stream better (cause it has more CPU power and ram).
 
 ### We recommand to use the M5STACK ATOM Lite + M5STACK RS-485 kit
 Its cheap, comes with a tiny case (witch can fit inside an indoor unit) and allow directly to use the 12V comming from the V1/V2 lines witch some AC units provide.
