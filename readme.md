@@ -80,6 +80,22 @@ Follow these steps to install and configure the software for your AC unit contro
 1. **Remove Unneeded Properties:**
    - Review and clean up the configuration by removing any properties that are not relevant or needed for your setup.
 
+## Troubleshooting
+
+* Check your wiring (I had a lot problems cause the wire connection was loose)
+* Check that you really connected to the same pins/cables as our outdoor devices (usally F1/F2). Not to the pins/calbes of a remote control unit.
+* Test if swapping F1/F2 helps
+* Change **baud_rate** from 9600 to 2400 (some older hardware uses a lower baud rate)
+* Add the following to your yaml witch dumps all data witch is received via RS484 to logs. This helps to check if you get any data. This also helps when reporting problems.
+```yaml
+  debug:
+    direction: BOTH
+    dummy_receiver: false
+      after:
+        delimiter: "\n"
+        sequence:
+        - lambda: UARTDebug::log_hex(direction, bytes, ' ');
+```
 
 ## NASA vs Non NASA
 
