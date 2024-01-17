@@ -1,11 +1,10 @@
 # ESPHome Samsung AC
 
-The ESPHome Samsung AC project offers a versatile component for integrating Samsung air conditioners into your home automation system. It provides the ability to monitor and control your AC units effortlessly. This component is designed to connect to the F1 and F2 communication bus between the devices.
+This project offers a [ESPHome](https://esphome.io/index.html) component for integrating Samsung air conditioners into your home automation system. It provides the ability to monitor and control your AC units effortlessly. 
+
+This component is designed to connect to the F1 and F2 communication bus between the indoor and the outdoor devices.
 
 Samsung has employed different software protocols for their AC devices over the years. The older devices utilize the Non NASA protocol, while the newer ones utilize the NASA protocol. This ESPHome component is designed to support both protocols, ensuring compatibility with a wide range of Samsung AC units.
-
-For detailed information on the differences between the NASA and Non NASA protocols, please refer to the "NASA vs Non NASA" section below.
-
 
 ## Current Features
 
@@ -62,7 +61,7 @@ Follow these steps to install and configure the software for your AC unit contro
 
 1. **Deploy and Boot:**
    - Deploy the configured firmware to your ESP device.
-   - After deploying, power on the device.
+   - After deploying, power on the ESP.
 
 1. **Check the Log:**
    - Monitor the log output of your ESPHome device. You should see yellow log messages indicating the reception of data packets.
