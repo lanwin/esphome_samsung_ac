@@ -96,6 +96,12 @@ Follow these steps to install and configure the software for your AC unit contro
         - lambda: UARTDebug::log_hex(direction, bytes, ' ');
 ```
 
+## FAQ
+
+* **Did I need to power cycle my Samsung devices to make it work?** No, but the should be turned on
+* **Did this works also with Samsung heat pumps?** Yes, while it was not desinged in the first place, we have reports that it also works with them.
+* **Did I need a ESP for each indoor device?** When all your indoor devices are connected to the same outdoor device, then you need just one. Otherwise you need one for each outdoor device.
+
 ## NASA vs Non NASA
 
 It took me a while to figure out what the difference is. NASA is the new wire protocol which Samsung uses for their AC systems.
