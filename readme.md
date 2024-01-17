@@ -39,7 +39,7 @@ Its cheap, comes with a tiny case (witch can fit inside an indoor unit) and allo
    - Connect V1 on the AC unit to DC on the M5STACK controller.
    - Connect V2 on the AC unit to G on the M5STACK controller.
 
-![Plug and Play Wiring Diagram](https://github.com/lanwin/esphome_samsung_ac/assets/32042186/42a6757d-bfcf-4a29-be87-cf1b204e248a)
+<img alt='M5STACK Wiring Diagram' src='https://github.com/lanwin/esphome_samsung_ac/assets/32042186/42a6757d-bfcf-4a29-be87-cf1b204e248a' width='400'>
 
 ## Software Installation
 
