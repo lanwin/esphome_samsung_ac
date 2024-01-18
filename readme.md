@@ -102,6 +102,24 @@ Follow these steps to install and configure the software for your AC unit contro
 * **Did this works also with Samsung heat pumps?** Yes, while it was not desinged in the first place for them, we have reports that it also works there.
 * **Did I need a ESP for each indoor device?** When all your indoor devices are connected to the same outdoor device, then you need just one. Otherwise you need one for each outdoor device.
 
+## Development
+
+The following YAML configuration is not included in the example since they are for development purposes. 
+
+```yaml
+samsung_ac:
+  # Sends all NASA package values to MQTT so the can be analysed or monitored.
+  debug_mqtt_host: 10.10.10.10
+  debug_mqtt_port: 1883
+  debug_mqtt_username: user
+  debug_mqtt_password: password
+
+  # Prints the parsed message data to the log
+  debug_log_messages: false
+  # Prints the binary message data (HEX encoded) to the log
+  debug_log_messages_raw: false
+```
+
 ## NASA vs Non NASA
 
 It took me a while to figure out what the difference is. NASA is the new wire protocol which Samsung uses for their AC systems.
