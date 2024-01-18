@@ -89,9 +89,10 @@ Follow these steps to install and configure the software for your AC unit contro
 
 ## FAQ
 
-* **Did I need to power cycle my Samsung devices to make it work?** No, but the should be turned on.
-* **Did this works also with Samsung heat pumps?** Yes, while it was not desinged in the first place for them, we have reports that it also works there.
+* **Did I need to power cycle my Samsung devices to make it work?** No, but they should be turned on.
+* **Did this works also with Samsung heat pumps?** Yes, while it was not desinged in the first place for them, we have reports that it also works.
 * **Did I need a ESP for each indoor device?** When all your indoor devices are connected to the same outdoor device, then you need just one. Otherwise you need one for each outdoor device.
+* **Did I need to turn off my climate devices when I connect the ESP?** No, but we advice you to do so, cause we can not garantee you the it will not harm you Samsung hardware.
 
 ## Development
 
