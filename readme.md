@@ -107,9 +107,9 @@ samsung_ac:
   debug_mqtt_password: password
 
   # Prints the parsed message data to the log
-  debug_log_messages: false
+  debug_log_messages: true
   # Prints the binary message data (HEX encoded) to the log
-  debug_log_messages_raw: false
+  debug_log_messages_raw: true
 ```
 
 ## NASA vs Non NASA
