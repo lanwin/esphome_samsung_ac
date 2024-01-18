@@ -75,6 +75,7 @@ Follow these steps to install and configure the software for your AC unit contro
 * Check that you really connected to the same pins/cables as our outdoor device (usally F1/F2). Not to the pins/calbes of a remote control unit.
 * Test if swapping F1/F2 helps
 * Change **baud_rate** from 9600 to 2400 (some older hardware uses a lower baud rate)
+* For some boards (like NodeMCU) you need to disable serial logging, since it blocks the pins required for the RS484 serial communication. Just add `baud_rate: 0` to the logger section.
 * Add the following to your yaml witch dumps all data witch is received via RS484 to logs. This helps to check if you get any data. This also helps when reporting problems.
 ```yaml
   debug:
