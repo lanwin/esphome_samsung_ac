@@ -46,18 +46,7 @@ Follow these steps to install and configure the software for your AC unit contro
 
 1. **Create a New ESPHome Device:**
    - Begin by creating a new ESPHome device in your Home Assistant instance or ESPHome comand line tool.
-   - Use the configuration from the provided `example.yaml` file as a template. Make sure to verify that the ESP chip model matches your hardware. For M5STACK devices, set the `board` to 'm5stack-atom' and RX, TX pins for UART to GPIO19 and GPIO22 in the configuration.
-
-   ```yaml
-   esp32:
-     board: m5stack-atom
-   # ... (other configurations)
-   uart:
-     tx_pin: GPIO19
-     rx_pin: GPIO22
-     baud_rate: 9600
-     parity: EVEN
-   ```
+   - Use the configuration from [example.yaml](https://github.com/lanwin/esphome_samsung_ac/blob/main/example.yaml) file as a template and copy over the `api` and `ota` sections from the newly created YAML. 
 
 1. **Deploy and Boot:**
    - Deploy the configured firmware to your ESP device.
@@ -67,8 +56,9 @@ Follow these steps to install and configure the software for your AC unit contro
    - Monitor the log output of your ESPHome device. You should see yellow log messages indicating the reception of data packets.
   
 1. **Identify Indoor Device Addresses:**
-   - Wait for a few seconds and watch for purple log messages in the format: "known indoor devices: 20.00.00, 20.00.01, 20.00.02, 20.00.03" for NASA and "known indoor devices: c8" for NonNASA.
+   - Wait for a minute and watch for purple log messages and the "Discovered devices" seciton in the format: "  indoor: 20.00.00, 20.00.01" or "  indoor: 00, 01".
    - These are the addresses of your indoor devices.
+   - If you see only see - look into the Troubleshooting section below.
   
 1. **Update Your YAML File:**
    - Copy the address block containing the indoor device addresses from the log.
