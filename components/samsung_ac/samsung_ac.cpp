@@ -34,9 +34,9 @@ namespace esphome
       }
 
       std::string devices = "";
-      for (const auto &[address, device] : devices_)
+      for (const auto &pair : devices_)
       {
-        devices += devices.length() > 0 ? ", " + address : address;
+        devices += devices.length() > 0 ? ", " + pair.second->address : pair.second->address;
       }
       ESP_LOGCONFIG(TAG, "Configured devices: %s", devices.c_str());
 
