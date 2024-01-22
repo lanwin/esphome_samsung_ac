@@ -80,11 +80,10 @@ namespace esphome
         return;
 
       const uint32_t now = millis();
-      if (receiving_ && (now - last_transmission_ >= 500))
+      if (data_.size() > 0 && (now - last_transmission_ >= 500))
       {
         ESP_LOGW(TAG, "Last transmission too long ago. Reset RX index.");
         data_.clear();
-        receiving_ = false;
       }
 
       // If there is no data we use the time to send
@@ -104,22 +103,25 @@ namespace esphome
       last_transmission_ = now;
       while (available())
       {
-        uint8_t c;
-        read_byte(&c);
-        if (c == 0x32 && !receiving_) // start-byte found
+        if (data_.size() > 1500)
         {
-          receiving_ = true;
+          ESP_LOGW(TAG, "Current message exceeds the size limits.");
           data_.clear();
+          return;
         }
-        if (receiving_)
-        {
-          data_.push_back(c);
-          if (c != 0x34)
-            continue; // endbyte not found
 
-          receiving_ = false;
-          process_message(data_, this);
-        }
+        uint8_t c;
+        if (!read_byte(&c))
+          continue;
+        if (data_.size() == 0 && c != 0x32)
+          continue; // skip until start-byte found
+
+        data_.push_back(c);
+        if (c != 0x34)
+          continue; // endbyte not found
+
+        process_message(data_, this);
+        data_.clear();
       }
     }
 

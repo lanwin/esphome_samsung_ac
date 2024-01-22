@@ -125,7 +125,6 @@ namespace esphome
 
       std::vector<uint8_t> out_;
       std::vector<uint8_t> data_;
-      bool receiving_{false};
       uint32_t last_transmission_{0};
 
       bool data_processing_init = true;
