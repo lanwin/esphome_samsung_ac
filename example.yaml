@@ -1,41 +1,81 @@
-esp8266:
-  board: nodemcuv2
+# This example provides a basic configuration and description based on the M5STACK components
+# For further configuration you should visit the ESPHome docs https://esphome.io
+# Every line starting with a # can be removed.
 
+## BASIC CONFIGURATION
+esphome:
+  name: samsung_ac
+  friendly_name: Climate
+
+# Select chipset and board configuration - in this case M5STACK
+esp32:
+  board: m5stack-atom
+
+# [Optional] - Create web interface where you can control the AC from your web browser (without Home Assistant)
 web_server:
   port: 80
 
+# Enable logging
+logger:
+
+# Enable native API for communication with Home Assistant, this can be removed if you do not plan to use it with Home Assistant
+api:
+
+# Enable OTA firmware update, you will be able to upload the firmware over WiFi without connecting the device by cables
+ota:
+
+# Setup your WiFi password
+wifi:
+  ssid: "My WiFi Name" # !!!CHANGE ME!!!
+  password: "My WiFi Password" # !!!CHANGE ME!!!
+
+captive_portal:
+
+# Specify pins used by the board to comunicate with RS485 board - in this case M5STACK
 uart:
-  tx_pin: TX
-  rx_pin: RX
+  tx_pin: GPIO19
+  rx_pin: GPIO22
+  # For older devices it could also be 2400. But you should start with 9600.
   baud_rate: 9600
   parity: EVEN
 
+## SAMSUNG AC CONFIGURATION
+
+# Import custom component from GitHub
 external_components:
   - source: github://lanwin/esphome_samsung_ac@main
     components: [samsung_ac]
 
+# Configuration of AC component
 samsung_ac:
-  debug_log_messages: false # logs all messages - only for debugging
-  debug_log_messages_raw: false # logs the raw message bytes from all messages - only for debugging
-
   devices:
-    - address: "20.00.00" # for non NASA it sould be like "c4"
-      # Each property below are optional - choose what you want to use.
+    # Skip everything below on the first run! Wait a minute, watch your ESPHome logs until you see the "Discovered devices:" section and you see some addresses:
+    # For NASA devices it looks like this (with 4 indoor devices): 
+    #   Indoor:  20.00.00, 20.00.01, 20.00.02, 20.00.03
+    # For NonNASA devices it looks like this (with 2 indoor devices): 
+    #   Indoor:  00, 01
+    # You need this addresses for the the sections below. If you see only a "-" then you should visit the troubleshooting section in the readme. 
 
-      # You could use the ESPHome/Homeassist climate control
+    # Repeat everything below for each indoor device address you see in your logs
+    - address: "20.00.00" # Indoor device address 
+      # Each property below is optional (climate, room_temperature etc.) - you can delete those which you dont need.
+      # For the names I suggest to choose a combination of room name and the thing it controls. 
+            
+      # Creates climate control in Home Assistant. A climate control combines multiple of the controls below (like temperature, mode etc.)
       climate:
-        name: "My Room"
+        name: "Kitchen climate"
 
-      # And/or use seperate controls/sensors
+      # The controls directly below are all included in the climate control. Its adviced to only add the climate control and skip the extra controls.
       room_temperature:
-        name: Test1_temp
+        name: "Kitchen temperature"
       target_temperature:
-        name: Test1_target
+        name: "Kitchen target temperature"
       power:
-        name: Test1_power
+        name: "Kitchen power"
       mode:
-        name: Test1_mode
+        name: "Kitchen mode"
 
       # Only supported on NASA devices
       room_humidity:
-        name: Test1_humidity
+        name: "Kitchen humidity"
+
