@@ -3,7 +3,7 @@
 #include "esphome/core/log.h"
 #include "esphome/core/util.h"
 #include "util.h"
-#include "nasa.h"
+#include "protocol_nasa.h"
 #include "debug_mqtt.h"
 
 esphome::samsung_ac::Packet packet_;

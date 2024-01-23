@@ -3,7 +3,7 @@
 #include <iostream>
 #include "esphome/core/log.h"
 #include "util.h"
-#include "non_nasa.h"
+#include "protocol_non_nasa.h"
 
 esphome::samsung_ac::NonNasaDataPacket nonpacket_;
 
@@ -292,7 +292,7 @@ namespace esphome
             }
         }
 
-        bool process_nonnasa_packet(std::vector<uint8_t> data, MessageTarget *target)
+        bool process_non_nasa_packet(std::vector<uint8_t> data, MessageTarget *target)
         {
             if (!nonpacket_.decode(data))
                 return false;

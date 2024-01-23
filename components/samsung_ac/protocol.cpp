@@ -1,8 +1,8 @@
 #include "esphome/core/log.h"
 #include "protocol.h"
 #include "util.h"
-#include "nasa.h"
-#include "non_nasa.h"
+#include "protocol_nasa.h"
+#include "protocol_non_nasa.h"
 
 namespace esphome
 {
@@ -23,7 +23,7 @@ namespace esphome
                 {
                     ESP_LOGW(TAG, "RAW: %s", bytes_to_hex(data).c_str());
                 }
-                process_nonnasa_packet(data, target);
+                process_non_nasa_packet(data, target);
                 return DataResult::Clear;
             }
 
