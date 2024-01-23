@@ -7,8 +7,18 @@ namespace esphome
 {
     namespace samsung_ac
     {
-        extern bool debug_log_messages;
-        extern bool debug_log_messages_raw;
+        extern bool debug_log_packets;
+        extern bool debug_log_raw_bytes;
+
+        enum class DecodeResult
+        {
+            Ok = 0,
+            InvalidStartByte = 1,
+            InvalidEndByte = 2,
+            SizeDidNotMatch = 3,
+            UnexpectedSize = 4,
+            CrcError = 5
+        };
 
         enum class Mode
         {
@@ -52,7 +62,13 @@ namespace esphome
             virtual void set_fanmode(const std::string address, FanMode fanmode) = 0;
         };
 
-        void process_message(std::vector<uint8_t> &data, MessageTarget *target);
+        enum class DataResult
+        {
+            Fill = 0,
+            Clear = 1
+        };
+
+        DataResult process_data(std::vector<uint8_t> &data, MessageTarget *target);
 
         Protocol *get_protocol(const std::string &address);
 

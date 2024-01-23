@@ -7,8 +7,6 @@ namespace esphome
 {
   namespace samsung_ac
   {
-    static const char *TAG = "samsung_ac";
-
     climate::ClimateTraits Samsung_AC_Climate::traits()
     {
       auto traits = climate::ClimateTraits();

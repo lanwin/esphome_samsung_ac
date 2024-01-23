@@ -151,12 +151,13 @@ namespace esphome
             static Packet create(Address da, DataType dataType, MessageNumber messageNumber, int value);
             static Packet createa_partial(Address da, DataType dataType);
 
-            bool decode(std::vector<uint8_t> &data);
+            DecodeResult decode(std::vector<uint8_t> &data);
             std::vector<uint8_t> encode();
             std::string to_string();
         };
 
-        void process_nasa_message(std::vector<uint8_t> data, MessageTarget *target);
+        DecodeResult try_decode_nasa_packet(std::vector<uint8_t> data);
+        void process_nasa_packet(MessageTarget *target);
 
         class NasaProtocol : public Protocol
         {

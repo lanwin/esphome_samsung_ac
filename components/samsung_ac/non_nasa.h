@@ -69,7 +69,7 @@ namespace esphome
             NonNasaRequest toRequest();
         };
 
-        void process_non_nasa_message(std::vector<uint8_t> data, MessageTarget *target);
+        bool process_nonnasa_packet(std::vector<uint8_t> data, MessageTarget *target);
 
         class NonNasaProtocol : public Protocol
         {

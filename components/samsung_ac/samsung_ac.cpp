@@ -8,8 +8,6 @@ namespace esphome
 {
   namespace samsung_ac
   {
-    static const char *TAG = "samsung_ac";
-
     void Samsung_AC::setup()
     {
       ESP_LOGW(TAG, "setup");
@@ -103,13 +101,6 @@ namespace esphome
       last_transmission_ = now;
       while (available())
       {
-        if (data_.size() > 1500)
-        {
-          ESP_LOGW(TAG, "Current message exceeds the size limits.");
-          data_.clear();
-          return;
-        }
-
         uint8_t c;
         if (!read_byte(&c))
           continue;
@@ -117,11 +108,12 @@ namespace esphome
           continue; // skip until start-byte found
 
         data_.push_back(c);
-        if (c != 0x34)
-          continue; // endbyte not found
 
-        process_message(data_, this);
-        data_.clear();
+        if (process_data(data_, this) == DataResult::Clear)
+        {
+          data_.clear();
+          break; // wait for next loop
+        }
       }
     }
 

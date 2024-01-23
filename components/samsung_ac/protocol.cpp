@@ -8,28 +8,63 @@ namespace esphome
 {
     namespace samsung_ac
     {
-        bool debug_log_messages = false;
-        bool debug_log_messages_raw = false;
+        bool debug_log_packets = false;
+        bool debug_log_raw_bytes = false;
 
-        void process_message(std::vector<uint8_t> &data, MessageTarget *target)
+        DataResult process_data(std::vector<uint8_t> &data, MessageTarget *target)
         {
-            if (debug_log_messages_raw)
+            if (data.size() < 14)
+                return DataResult::Fill;
+
+            // NonNASA message?
+            if (data.size() == 14 && data[13] == 0x32)
             {
-                ESP_LOGW("samsung_ac", "RAW: %s", bytes_to_hex(data).c_str());
+                if (debug_log_raw_bytes)
+                {
+                    ESP_LOGW(TAG, "RAW: %s", bytes_to_hex(data).c_str());
+                }
+                process_nonnasa_packet(data, target);
+                return DataResult::Clear;
             }
 
-            if (data.size() == 14)
+            // NASA message
+            if (data.size() <= 1500)
             {
-                process_non_nasa_message(data, target);
-                return;
-            }
-            if (data.size() >= 16 && data.size() < 1500)
-            {
-                process_nasa_message(data, target);
-                return;
+                const auto result = try_decode_nasa_packet(data);
+                if (result == DecodeResult::SizeDidNotMatch || result == DecodeResult::UnexpectedSize)
+                    return DataResult::Fill;
+
+                if (debug_log_raw_bytes)
+                {
+                    ESP_LOGW(TAG, "RAW: %s", bytes_to_hex(data).c_str());
+                }
+
+                switch (result)
+                {
+                case DecodeResult::InvalidStartByte:
+                {
+                    ESP_LOGV(TAG, "invalid start byte");
+                    return DataResult::Clear;
+                }
+                case DecodeResult::InvalidEndByte:
+                {
+                    ESP_LOGV(TAG, "invalid end byte");
+                    return DataResult::Clear;
+                }
+                case DecodeResult::CrcError:
+                {
+                    ESP_LOGV(TAG, "message crc mismatch error");
+                    return DataResult::Clear;
+                }
+                }
+
+                process_nasa_packet(target);
+                return DataResult::Clear;
             }
 
-            ESP_LOGW("samsung_ac", "Unknown message type %s", bytes_to_hex(data).c_str());
+            // > 1500
+            ESP_LOGW(TAG, "Current message exceeds the size limits.");
+            return DataResult::Clear;
         }
 
         bool is_nasa_address(const std::string &address)

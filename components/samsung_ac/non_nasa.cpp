@@ -5,14 +5,12 @@
 #include "util.h"
 #include "non_nasa.h"
 
-static const char *TAG = "samsung_non_nasa";
+esphome::samsung_ac::NonNasaDataPacket nonpacket_;
 
 namespace esphome
 {
     namespace samsung_ac
     {
-        NonNasaDataPacket packet;
-
         uint8_t build_checksum(std::vector<uint8_t> &data)
         {
             uint8_t sum = data[1];
@@ -196,14 +194,14 @@ namespace esphome
 
         std::vector<uint8_t> NonNasaProtocol::get_power_message(const std::string &address, bool value)
         {
-            auto request = packet.toRequest();
+            auto request = nonpacket_.toRequest();
             request.power = value;
             return request.encode();
         }
 
         std::vector<uint8_t> NonNasaProtocol::get_target_temp_message(const std::string &address, float value)
         {
-            auto request = packet.toRequest();
+            auto request = nonpacket_.toRequest();
             request.target_temp = value;
             return request.encode();
         }
@@ -229,7 +227,7 @@ namespace esphome
 
         std::vector<uint8_t> NonNasaProtocol::get_mode_message(const std::string &address, Mode value)
         {
-            auto request = packet.toRequest();
+            auto request = nonpacket_.toRequest();
             request.mode = mode_to_nonnasa_mode(value);
             return request.encode();
         }
@@ -252,7 +250,7 @@ namespace esphome
 
         std::vector<uint8_t> NonNasaProtocol::get_fanmode_message(const std::string &address, FanMode value)
         {
-            auto request = packet.toRequest();
+            auto request = nonpacket_.toRequest();
             request.fanspeed = fanmode_to_nonnasa_fanspeed(value);
             return request.encode();
         }
@@ -294,22 +292,24 @@ namespace esphome
             }
         }
 
-        void process_non_nasa_message(std::vector<uint8_t> data, MessageTarget *target)
+        bool process_nonnasa_packet(std::vector<uint8_t> data, MessageTarget *target)
         {
-            if (!packet.decode(data))
-                return;
+            if (!nonpacket_.decode(data))
+                return false;
 
-            if (debug_log_messages)
+            if (debug_log_packets)
             {
-                ESP_LOGW(TAG, "MSG: %s", packet.to_string().c_str());
+                ESP_LOGW(TAG, "MSG: %s", nonpacket_.to_string().c_str());
             }
 
-            target->register_address(packet.src);
-            target->set_target_temperature(packet.src, packet.target_temp);
-            target->set_room_temperature(packet.src, packet.room_temp);
-            target->set_power(packet.src, packet.power);
-            target->set_mode(packet.src, nonnasa_mode_to_mode(packet.mode));
-            target->set_fanmode(packet.src, nonnasa_fanspeed_to_fanmode(packet.fanspeed));
+            target->register_address(nonpacket_.src);
+            target->set_target_temperature(nonpacket_.src, nonpacket_.target_temp);
+            target->set_room_temperature(nonpacket_.src, nonpacket_.room_temp);
+            target->set_power(nonpacket_.src, nonpacket_.power);
+            target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(nonpacket_.mode));
+            target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(nonpacket_.fanspeed));
+
+            return true;
         }
     } // namespace samsung_ac
 } // namespace esphome
