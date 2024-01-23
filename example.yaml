@@ -17,6 +17,9 @@ web_server:
 
 # Enable logging
 logger:
+  level: INFO
+  logs:
+    component: ERROR # Remove the "Your component takes to long to respond warning"
 
 # Enable native API for communication with Home Assistant, this can be removed if you do not plan to use it with Home Assistant
 api:
