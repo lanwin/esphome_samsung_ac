@@ -1,6 +1,4 @@
-#include <vector>
-#include <iostream>
-#include "../components/samsung_ac/util.h"
+#include "test_stuff.h"
 #include "../components/samsung_ac/protocol_nasa.h"
 
 using namespace std;
