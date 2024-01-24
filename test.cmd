@@ -1,1 +1,1 @@
-g++ test/main_test.cpp components/samsung_ac/protocol.cpp components/samsung_ac/nasa.cpp components/samsung_ac/non_nasa.cpp components/samsung_ac/util.cpp -Itest   -o test.exe && test.exe
+g++ test/main_test.cpp components/samsung_ac/protocol.cpp components/samsung_ac/protocol_nasa.cpp components/samsung_ac/protocol_non_nasa.cpp components/samsung_ac/util.cpp components/samsung_ac/debug_mqtt.cpp -Itest   -o test.exe && test.exe

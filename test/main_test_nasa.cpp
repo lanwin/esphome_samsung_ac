@@ -1,7 +1,7 @@
 #include <vector>
 #include <iostream>
 #include "../components/samsung_ac/util.h"
-#include "../components/samsung_ac/nasa.h"
+#include "../components/samsung_ac/protocol_nasa.h"
 
 using namespace std;
 using namespace esphome::samsung_ac;

@@ -4,7 +4,7 @@
 #include <cassert>
 #include "../components/samsung_ac/util.h"
 #include "../components/samsung_ac/protocol.h"
-#include "../components/samsung_ac/non_nasa.h"
+#include "../components/samsung_ac/protocol_non_nasa.h"
 
 using namespace std;
 using namespace esphome::samsung_ac;
@@ -31,6 +31,14 @@ public:
     void set_mode(const std::string address, Mode mode)
     {
         cout << "set_mode " << address << " " << to_string((int)mode) << endl;
+    }
+    void set_room_humidity(const std::string address, float value)
+    {
+        cout << "set_room_humidity " << address << " " << to_string(value) << endl;
+    }
+    void set_fanmode(const std::string address, FanMode fanmode)
+    {
+        cout << "set_fanmode " << address << " " << to_string((int)fanmode) << endl;
     }
 };
 
@@ -197,7 +205,7 @@ void test_target()
     DebugTarget target;
 
     auto bytes = hex_to_bytes("3200c8204f4f4efd821c004e8b34");
-    process_non_nasa_message(bytes, &target);
+    process_non_nasa_packet(bytes, &target);
 
     // Todo:
 }
