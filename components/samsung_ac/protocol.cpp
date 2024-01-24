@@ -17,7 +17,7 @@ namespace esphome
                 return DataResult::Fill;
 
             // NonNASA message?
-            if (data.size() == 14 && data[13] == 0x32)
+            if (data.size() == 14 && data[13] == 0x34 /*valid end byte*/)
             {
                 if (debug_log_raw_bytes)
                 {

@@ -167,7 +167,7 @@ void test_target()
     DebugTarget target;
 
     auto bytes = hex_to_bytes("3200c8204f4f4efd821c004e8b34");
-    process_non_nasa_packet(bytes, &target);
+    assert(process_data(bytes, &target) == DataResult::Clear);
 
     // Todo:
 }
