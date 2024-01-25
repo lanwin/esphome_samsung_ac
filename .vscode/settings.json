@@ -52,7 +52,16 @@
     "map": "cpp",
     "cinttypes": "cpp",
     "bitset": "cpp",
-    "ctime": "cpp"
+    "ctime": "cpp",
+    "charconv": "cpp",
+    "chrono": "cpp",
+    "condition_variable": "cpp",
+    "list": "cpp",
+    "ratio": "cpp",
+    "future": "cpp",
+    "mutex": "cpp",
+    "thread": "cpp",
+    "variant": "cpp"
   },
   "[python]": {
     "editor.defaultFormatter": "ms-python.autopep8"
