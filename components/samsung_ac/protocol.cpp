@@ -39,23 +39,20 @@ namespace esphome
                     ESP_LOGW(TAG, "RAW: %s", bytes_to_hex(data).c_str());
                 }
 
-                switch (result)
-                {
-                case DecodeResult::InvalidStartByte:
+                if (result == DecodeResult::InvalidStartByte)
                 {
                     ESP_LOGV(TAG, "invalid start byte");
                     return DataResult::Clear;
                 }
-                case DecodeResult::InvalidEndByte:
+                else if (result == DecodeResult::InvalidEndByte)
                 {
                     ESP_LOGV(TAG, "invalid end byte");
                     return DataResult::Clear;
                 }
-                case DecodeResult::CrcError:
+                else if (result == DecodeResult::CrcError)
                 {
                     ESP_LOGV(TAG, "message crc mismatch error");
                     return DataResult::Clear;
-                }
                 }
 
                 process_nasa_packet(target);
