@@ -201,12 +201,15 @@ namespace esphome
 
         static int _packetCounter = 0;
 
+        std::vector<Packet> out;
+
         Packet Packet::create(Address da, DataType dataType, MessageNumber messageNumber, int value)
         {
             Packet packet = createa_partial(da, dataType);
             MessageSet message(messageNumber);
             message.value = value;
             packet.messages.push_back(message);
+            out.push_back(packet);
             return packet;
         }
 
@@ -505,6 +508,22 @@ namespace esphome
                 ESP_LOGW(TAG, "MSG: %s", packet_.to_string().c_str());
             }
 
+            if (packet_.commad.dataType == DataType::Ack)
+            {
+                for (int i = 0; i < out.size(); i++)
+                {
+                    if (out[i].commad.packetNumber == packet_.commad.packetNumber)
+                    {
+                        ESP_LOGW(TAG, "found %d", out[i].commad.packetNumber);
+                        out.erase(out.begin() + i);
+                        break;
+                    }
+                }
+
+                ESP_LOGW(TAG, "Ack %s s %d", packet_.to_string().c_str(), out.size());
+                return;
+            }
+
             if (packet_.commad.dataType == DataType::Request)
             {
                 ESP_LOGW(TAG, "Request %s", packet_.to_string().c_str());
@@ -518,11 +537,6 @@ namespace esphome
             if (packet_.commad.dataType == DataType::Write)
             {
                 ESP_LOGW(TAG, "Write %s", packet_.to_string().c_str());
-                return;
-            }
-            if (packet_.commad.dataType == DataType::Ack)
-            {
-                ESP_LOGW(TAG, "Ack %s", packet_.to_string().c_str());
                 return;
             }
             if (packet_.commad.dataType == DataType::Nack)
