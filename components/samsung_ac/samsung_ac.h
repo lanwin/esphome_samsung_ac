@@ -55,16 +55,7 @@ namespace esphome
         };
       }
 
-      void register_device(Samsung_AC_Device *device)
-      {
-        if (find_device(device->address) != nullptr)
-        {
-          ESP_LOGW(TAG, "There is already and device for address %s registered.", device->address);
-          return;
-        }
-
-        devices_.insert({device->address, device});
-      }
+      void register_device(Samsung_AC_Device *device);
 
       void /*MessageTarget::*/ register_address(const std::string address) override
       {

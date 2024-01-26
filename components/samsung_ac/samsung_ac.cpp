@@ -63,6 +63,17 @@ namespace esphome
         ESP_LOGCONFIG(TAG, "  Other:   %s", knownOther.c_str());
     }
 
+    void Samsung_AC::register_device(Samsung_AC_Device *device)
+    {
+      if (find_device(device->address) != nullptr)
+      {
+        ESP_LOGW(TAG, "There is already and device for address %s registered.", device->address);
+        return;
+      }
+
+      devices_.insert({device->address, device});
+    }
+
     void Samsung_AC::dump_config()
     {
     }
