@@ -94,11 +94,9 @@ namespace esphome
             case 0x54:
             case 0x64:
             case 0x40:
-                ESP_LOGW(TAG, "unknown command %02X", cmd);
-                break;
-
             default:
-                break;
+                ESP_LOGW(TAG, "unknown command %02X", cmd);
+                return false;
             }
 
             return true;
