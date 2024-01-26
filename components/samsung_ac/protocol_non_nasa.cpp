@@ -41,8 +41,6 @@ namespace esphome
 
         bool NonNasaDataPacket::decode(std::vector<uint8_t> &data)
         {
-            ESP_LOGW(TAG, "decode %s", bytes_to_hex(data).c_str());
-
             if (data[0] != 0x32)
             {
                 ESP_LOGV(TAG, "invalid start byte");
