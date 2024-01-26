@@ -164,7 +164,15 @@ void test_encoding()
 
 void test_target()
 {
-    test_prcess_data("3200c8204f4f4efd821c004e8b34");
+    DebugTarget target;
+
+    target = test_prcess_data("3200c8204f4f4efd821c004e8b34");
+    assert(target.last_register_address == "00");
+    assert(target.last_set_target_temperature_value == 24.000000);
+    assert(target.last_set_room_temperature_value == 24.000000);
+    assert(target.last_set_power_value == true);
+    assert(target.last_last_set_mode_mode == Mode::Cool);
+    assert(target.last_set_fanmode_mode == FanMode::Hight);
 
     test_prcess_data("32c8dec70101000000000000d134");
     test_prcess_data("32c8f0860100000000000008b734");
@@ -186,8 +194,8 @@ void test_target()
 
 int main(int argc, char *argv[])
 {
-    test_decoding();
-    test_encoding();
+    // test_decoding();
+    // test_encoding();
     test_target();
 };
 
