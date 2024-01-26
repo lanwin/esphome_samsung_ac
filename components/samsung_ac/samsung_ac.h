@@ -28,11 +28,6 @@ namespace esphome
       void loop() override;
       void dump_config() override;
 
-      void register_address(const std::string address) override
-      {
-        addresses_.insert(address);
-      }
-
       void set_debug_mqtt(std::string host, int port, std::string username, std::string password)
       {
         debug_mqtt_host = host;
@@ -60,6 +55,22 @@ namespace esphome
         };
       }
 
+      void register_device(Samsung_AC_Device *device)
+      {
+        if (find_device(device->address) != nullptr)
+        {
+          ESP_LOGW(TAG, "There is already and device for address %s registered.", device->address);
+          return;
+        }
+
+        devices_.insert({device->address, device});
+      }
+
+      void /*MessageTarget::*/ register_address(const std::string address) override
+      {
+        addresses_.insert(address);
+      }
+
       uint32_t /*MessageTarget::*/ get_miliseconds()
       {
         return millis();
@@ -68,11 +79,6 @@ namespace esphome
       void /*MessageTarget::*/ publish_data(std::vector<uint8_t> &data)
       {
         out_.insert(out_.end(), data.begin(), data.end());
-      }
-
-      void /*MessageTarget::*/ register_device(Samsung_AC_Device *device)
-      {
-        devices_.insert({device->address, device});
       }
 
       void /*MessageTarget::*/ set_room_temperature(const std::string address, float value) override
@@ -116,8 +122,6 @@ namespace esphome
         if (dev != nullptr)
           dev->publish_fanmode(fanmode);
       }
-
-      void send_bus_message(std::vector<uint8_t> &data);
 
     protected:
       Samsung_AC_Device *find_device(const std::string address)
