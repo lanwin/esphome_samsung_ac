@@ -362,22 +362,18 @@ namespace esphome
             target->publish_data(data);
         }
 
-        std::vector<uint8_t> NasaProtocol::get_power_message(const std::string &address, bool value)
-        {
-            auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::ENUM_in_operation_power, value ? 1 : 0);
-            return packet.encode();
-        }
-
-        std::vector<uint8_t> NasaProtocol::get_target_temp_message(const std::string &address, float value)
+        void NasaProtocol::publish_target_temp_message(MessageTarget *target, const std::string &address, float value)
         {
             auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::VAR_in_temp_target_f, value * 10.0);
-            return packet.encode();
+            auto data = packet.encode();
+            target->publish_data(data);
         }
 
-        std::vector<uint8_t> NasaProtocol::get_mode_message(const std::string &address, Mode value)
+        void NasaProtocol::publish_mode_message(MessageTarget *target, const std::string &address, Mode value)
         {
             auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::ENUM_in_operation_mode, (int)value);
-            return packet.encode();
+            auto data = packet.encode();
+            target->publish_data(data);
         }
 
         int fanmode_to_nasa_fanmode(FanMode mode)
@@ -397,11 +393,11 @@ namespace esphome
             }
         }
 
-        std::vector<uint8_t> NasaProtocol::get_fanmode_message(const std::string &address, FanMode value)
+        void NasaProtocol::publish_fanmode_message(MessageTarget *target, const std::string &address, FanMode value)
         {
             auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::ENUM_in_fan_mode, fanmode_to_nasa_fanmode(value));
-            ESP_LOGW(TAG, "test %s", packet.to_string().c_str());
-            return packet.encode();
+            auto data = packet.encode();
+            target->publish_data(data);
         }
 
         Mode operation_mode_to_mode(int value)

@@ -112,20 +112,17 @@ namespace esphome
 
     void Samsung_AC_Device::write_target_temperature(float value)
     {
-      auto data = protocol->get_target_temp_message(address, value);
-      samsung_ac->send_bus_message(data);
+      protocol->publish_target_temp_message(samsung_ac, address, value);
     }
 
     void Samsung_AC_Device::write_mode(Mode value)
     {
-      auto data = protocol->get_mode_message(address, value);
-      samsung_ac->send_bus_message(data);
+      protocol->publish_mode_message(samsung_ac, address, value);
     }
 
     void Samsung_AC_Device::write_fanmode(FanMode value)
     {
-      auto data = protocol->get_fanmode_message(address, value);
-      samsung_ac->send_bus_message(data);
+      protocol->publish_fanmode_message(samsung_ac, address, value);
     }
 
     void Samsung_AC_Device::write_power(bool value)

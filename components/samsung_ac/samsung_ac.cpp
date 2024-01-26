@@ -63,11 +63,6 @@ namespace esphome
         ESP_LOGCONFIG(TAG, "  Other:   %s", knownOther.c_str());
     }
 
-    void Samsung_AC::send_bus_message(std::vector<uint8_t> &data)
-    {
-      out_.insert(out_.end(), data.begin(), data.end());
-    }
-
     void Samsung_AC::dump_config()
     {
     }
