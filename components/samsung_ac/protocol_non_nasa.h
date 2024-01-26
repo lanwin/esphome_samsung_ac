@@ -66,7 +66,7 @@ namespace esphome
 
             bool decode(std::vector<uint8_t> &data);
             std::string to_string();
-            NonNasaRequest toRequest();
+            NonNasaRequest toRequest(const std::string &dst_address);
         };
 
         bool process_non_nasa_packet(std::vector<uint8_t> data, MessageTarget *target);

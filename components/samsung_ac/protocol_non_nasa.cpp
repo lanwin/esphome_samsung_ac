@@ -106,9 +106,10 @@ namespace esphome
             return true;
         }
 
-        NonNasaRequest NonNasaDataPacket::toRequest()
+        NonNasaRequest NonNasaDataPacket::toRequest(const std::string &dst_address)
         {
             NonNasaRequest request;
+            request.dst = dst_address;
             request.power = power;
             request.target_temp = target_temp;
             request.fanspeed = fanspeed;
@@ -194,7 +195,7 @@ namespace esphome
 
         void NonNasaProtocol::publish_power_message(MessageTarget *target, const std::string &address, bool value)
         {
-            auto request = nonpacket_.toRequest();
+            auto request = nonpacket_.toRequest(address);
             request.power = value;
             auto data = request.encode();
             target->publish_data(data);
@@ -202,14 +203,14 @@ namespace esphome
 
         std::vector<uint8_t> NonNasaProtocol::get_power_message(const std::string &address, bool value)
         {
-            auto request = nonpacket_.toRequest();
+            auto request = nonpacket_.toRequest(address);
             request.power = value;
             return request.encode();
         }
 
         std::vector<uint8_t> NonNasaProtocol::get_target_temp_message(const std::string &address, float value)
         {
-            auto request = nonpacket_.toRequest();
+            auto request = nonpacket_.toRequest(address);
             request.target_temp = value;
             return request.encode();
         }
@@ -235,7 +236,7 @@ namespace esphome
 
         std::vector<uint8_t> NonNasaProtocol::get_mode_message(const std::string &address, Mode value)
         {
-            auto request = nonpacket_.toRequest();
+            auto request = nonpacket_.toRequest(address);
             request.mode = mode_to_nonnasa_mode(value);
             return request.encode();
         }
@@ -258,7 +259,7 @@ namespace esphome
 
         std::vector<uint8_t> NonNasaProtocol::get_fanmode_message(const std::string &address, FanMode value)
         {
-            auto request = nonpacket_.toRequest();
+            auto request = nonpacket_.toRequest(address);
             request.fanspeed = fanmode_to_nonnasa_fanspeed(value);
             return request.encode();
         }
