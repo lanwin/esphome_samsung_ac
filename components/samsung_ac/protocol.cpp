@@ -11,6 +11,8 @@ namespace esphome
         bool debug_log_packets = false;
         bool debug_log_raw_bytes = false;
 
+        // This functions is designed to run after a new value was added
+        // to the data vector. One by one.
         DataResult process_data(std::vector<uint8_t> &data, MessageTarget *target)
         {
             if (data.size() < 14)
