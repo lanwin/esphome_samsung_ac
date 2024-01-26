@@ -95,7 +95,6 @@ namespace esphome
             case 0x64:
             case 0x40:
             default:
-                ESP_LOGW(TAG, "unknown command %02X", cmd);
                 return false;
             }
 
