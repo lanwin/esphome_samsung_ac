@@ -192,6 +192,14 @@ namespace esphome
             return data;
         }
 
+        void NonNasaProtocol::publish_power_message(MessageTarget *target, const std::string &address, bool value)
+        {
+            auto request = nonpacket_.toRequest();
+            request.power = value;
+            auto data = request.encode();
+            target->publish_data(data);
+        }
+
         std::vector<uint8_t> NonNasaProtocol::get_power_message(const std::string &address, bool value)
         {
             auto request = nonpacket_.toRequest();

@@ -60,6 +60,16 @@ namespace esphome
         };
       }
 
+      uint32_t /*MessageTarget::*/ get_miliseconds()
+      {
+        return millis();
+      }
+
+      void /*MessageTarget::*/ publish_data(std::vector<uint8_t> &data)
+      {
+        out_.insert(out_.end(), data.begin(), data.end());
+      }
+
       void /*MessageTarget::*/ register_device(Samsung_AC_Device *device)
       {
         devices_.insert({device->address, device});

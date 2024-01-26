@@ -4,6 +4,8 @@
 #include <iostream>
 #include <vector>
 #include <bitset>
+#include <optional>
+#include <functional>
 
 namespace esphome
 {

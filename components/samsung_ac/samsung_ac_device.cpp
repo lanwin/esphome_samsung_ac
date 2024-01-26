@@ -130,8 +130,7 @@ namespace esphome
 
     void Samsung_AC_Device::write_power(bool value)
     {
-      auto data = protocol->get_power_message(address, value);
-      samsung_ac->send_bus_message(data);
+      protocol->publish_power_message(samsung_ac, address, value);
     }
   } // namespace samsung_ac
 } // namespace esphome

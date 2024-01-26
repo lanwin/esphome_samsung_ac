@@ -203,6 +203,28 @@ namespace esphome
 
         std::vector<Packet> out;
 
+        /*
+                class OutgoingPacket
+                {
+                public:
+                    OutgoingPacket(uint32_t timeout_seconds, Packet packet)
+                    {
+                        this->timeout_mili = millis() + (timeout_seconds * 1000);
+                        Packet = packet;
+                    }
+
+                    // std::function<void(float)> Func;
+                    Packet Packet;
+
+                    bool IsTimedout()
+                    {
+                        return timeout_mili < millis();
+                    };
+
+                private:
+                    uint32_t timeout_mili{0}; // millis();
+                };
+        */
         Packet Packet::create(Address da, DataType dataType, MessageNumber messageNumber, int value)
         {
             Packet packet = createa_partial(da, dataType);
@@ -210,6 +232,7 @@ namespace esphome
             message.value = value;
             packet.messages.push_back(message);
             out.push_back(packet);
+
             return packet;
         }
 
@@ -330,6 +353,13 @@ namespace esphome
             }
 
             return str;
+        }
+
+        void NasaProtocol::publish_power_message(MessageTarget *target, const std::string &address, bool value)
+        {
+            auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::ENUM_in_operation_power, value ? 1 : 0);
+            auto data = packet.encode();
+            target->publish_data(data);
         }
 
         std::vector<uint8_t> NasaProtocol::get_power_message(const std::string &address, bool value)
@@ -629,11 +659,11 @@ namespace esphome
                 // Todo Map
                 /*
                case 0:
-  return 'Off';
-  case 1:
-  return 'On';
-  default:
-  return undefined;
+    return 'Off';
+    case 1:
+    return 'On';
+    default:
+    return undefined;
                 */
                 ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_LOUVER_HL_SWING %li", source.c_str(), dest.c_str(), message.value);
                 return;

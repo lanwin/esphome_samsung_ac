@@ -41,18 +41,11 @@ namespace esphome
             Off = 5
         };
 
-        class Protocol
-        {
-        public:
-            virtual std::vector<uint8_t> get_power_message(const std::string &address, bool value) = 0;
-            virtual std::vector<uint8_t> get_target_temp_message(const std::string &address, float value) = 0;
-            virtual std::vector<uint8_t> get_mode_message(const std::string &address, Mode value) = 0;
-            virtual std::vector<uint8_t> get_fanmode_message(const std::string &address, FanMode value) = 0;
-        };
-
         class MessageTarget
         {
         public:
+            virtual uint32_t get_miliseconds() = 0;
+            virtual void publish_data(std::vector<uint8_t> &data) = 0;
             virtual void register_address(const std::string address) = 0;
             virtual void set_power(const std::string address, bool value) = 0;
             virtual void set_room_temperature(const std::string address, float value) = 0;
@@ -60,6 +53,17 @@ namespace esphome
             virtual void set_target_temperature(const std::string address, float value) = 0;
             virtual void set_mode(const std::string address, Mode mode) = 0;
             virtual void set_fanmode(const std::string address, FanMode fanmode) = 0;
+        };
+
+        class Protocol
+        {
+        public:
+            virtual void publish_power_message(MessageTarget *target, const std::string &address, bool value) = 0;
+
+            virtual std::vector<uint8_t> get_power_message(const std::string &address, bool value) = 0;
+            virtual std::vector<uint8_t> get_target_temp_message(const std::string &address, float value) = 0;
+            virtual std::vector<uint8_t> get_mode_message(const std::string &address, Mode value) = 0;
+            virtual std::vector<uint8_t> get_fanmode_message(const std::string &address, FanMode value) = 0;
         };
 
         enum class DataResult
