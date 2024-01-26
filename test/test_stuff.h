@@ -12,6 +12,14 @@ using namespace esphome::samsung_ac;
 class DebugTarget : public MessageTarget
 {
 public:
+    uint32_t get_miliseconds()
+    {
+        return 0;
+    }
+    void publish_data(std::vector<uint8_t> &data)
+    {
+    }
+
     std::string last_register_address;
     void register_address(const std::string address)
     {
