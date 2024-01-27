@@ -15,17 +15,38 @@ namespace esphome
         // to the data vector. One by one.
         DataResult process_data(std::vector<uint8_t> &data, MessageTarget *target)
         {
-            if (data.size() < 14)
-                return DataResult::Fill;
-
             // NonNASA message?
-            if (data.size() == 14 && data[13] == 0x34 /*valid end byte*/)
+            if (data.size() <= 14)
             {
+                if (data[data.size() - 1] != 0x34 /*valid end byte*/)
+                    return DataResult::Fill;
+
+                const auto result = try_decode_non_nasa_packet(data);
+                if (result == DecodeResult::SizeDidNotMatch || result == DecodeResult::UnexpectedSize)
+                    return DataResult::Fill;
+
                 if (debug_log_raw_bytes)
                 {
                     ESP_LOGW(TAG, "RAW: %s", bytes_to_hex(data).c_str());
                 }
-                process_non_nasa_packet(data, target);
+
+                if (result == DecodeResult::InvalidStartByte)
+                {
+                    ESP_LOGV(TAG, "invalid start byte");
+                    return DataResult::Clear;
+                }
+                else if (result == DecodeResult::InvalidEndByte)
+                {
+                    ESP_LOGV(TAG, "invalid end byte");
+                    return DataResult::Clear;
+                }
+                else if (result == DecodeResult::CrcError)
+                {
+                    // is logge dwithin decoder
+                    return DataResult::Clear;
+                }
+
+                process_non_nasa_packet(target);
                 return DataResult::Clear;
             }
 
@@ -53,7 +74,7 @@ namespace esphome
                 }
                 else if (result == DecodeResult::CrcError)
                 {
-                    ESP_LOGV(TAG, "message crc mismatch error");
+                    // is logge dwithin decoder
                     return DataResult::Clear;
                 }
 

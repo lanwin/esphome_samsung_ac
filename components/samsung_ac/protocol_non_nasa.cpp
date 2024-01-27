@@ -39,30 +39,23 @@ namespace esphome
             return str;
         }
 
-        bool NonNasaDataPacket::decode(std::vector<uint8_t> &data)
+        DecodeResult NonNasaDataPacket::decode(std::vector<uint8_t> &data)
         {
             if (data[0] != 0x32)
-            {
-                ESP_LOGV(TAG, "invalid start byte");
-                return false;
-            }
+                return DecodeResult::InvalidStartByte;
 
-            if (data.size() != 14)
-            {
-                ESP_LOGV(TAG, "invalid size");
-                return false;
-            }
+            if (data[data.size() - 1] != 0x34)
+                return DecodeResult::InvalidEndByte;
 
-            if (data[13] != 0x34)
-            {
-                ESP_LOGV(TAG, "invalid end byte");
-                return false;
-            }
+            if (data.size() > 14)
+                return DecodeResult::UnexpectedSize;
 
-            if (data[12] != build_checksum(data))
+            auto crc_expected = build_checksum(data);
+            auto crc_actual = data[data.size() - 2];
+            if (crc_actual != build_checksum(data))
             {
-                ESP_LOGV(TAG, "invalid checksum");
-                return false;
+                ESP_LOGV(TAG, "invalid crc - got %d but should be %d", crc_actual, crc_expected);
+                return DecodeResult::CrcError;
             }
 
             src = long_to_hex(data[1]);
@@ -85,7 +78,7 @@ namespace esphome
                 if (wind_direction == (NonNasaWindDirection)0)
                     wind_direction = NonNasaWindDirection::Stop;
 
-                break;
+                return DecodeResult::Ok;
             }
 
             case 0xA0:
@@ -95,10 +88,8 @@ namespace esphome
             case 0x64:
             case 0x40:
             default:
-                return false;
+                return DecodeResult::UnknownCommand;
             }
-
-            return true;
         }
 
         NonNasaRequest NonNasaDataPacket::toRequest(const std::string &dst_address)
@@ -292,11 +283,13 @@ namespace esphome
             }
         }
 
-        bool process_non_nasa_packet(std::vector<uint8_t> data, MessageTarget *target)
+        DecodeResult try_decode_non_nasa_packet(std::vector<uint8_t> data)
         {
-            if (!nonpacket_.decode(data))
-                return false;
+            return nonpacket_.decode(data);
+        }
 
+        void process_non_nasa_packet(MessageTarget *target)
+        {
             if (debug_log_packets)
             {
                 ESP_LOGW(TAG, "MSG: %s", nonpacket_.to_string().c_str());
@@ -308,8 +301,6 @@ namespace esphome
             target->set_power(nonpacket_.src, nonpacket_.power);
             target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(nonpacket_.mode));
             target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(nonpacket_.fanspeed));
-
-            return true;
         }
     } // namespace samsung_ac
 } // namespace esphome

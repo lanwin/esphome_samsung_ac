@@ -70,7 +70,7 @@ NonNasaDataPacket test_decode(std::string data)
 {
     NonNasaDataPacket p;
     auto bytes = hex_to_bytes(data);
-    assert(p.decode(bytes) == true);
+    assert(p.decode(bytes) == DecodeResult::Ok);
     std::cout << p.to_string() << std::endl;
     return p;
 }
@@ -194,9 +194,7 @@ void test_target()
 
 int main(int argc, char *argv[])
 {
-    // test_decoding();
+    test_decoding();
     // test_encoding();
     test_target();
 };
-
-// g++ *.cpp -o test.exe && test.exe
