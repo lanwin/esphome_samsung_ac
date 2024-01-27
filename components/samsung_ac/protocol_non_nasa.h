@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <iostream>
+#include <optional>
 #include "protocol.h"
 
 namespace esphome
@@ -35,24 +36,8 @@ namespace esphome
             Stop = 31
         };
 
-        struct NonNasaRequest
+        struct NonNasaCommand20
         {
-            std::string dst;
-
-            uint8_t target_temp = 0;
-            NonNasaFanspeed fanspeed = NonNasaFanspeed::Auto;
-            NonNasaMode mode = NonNasaMode::Heat;
-            bool power = false;
-
-            std::vector<uint8_t> encode();
-            std::string to_string();
-        };
-
-        struct NonNasaDataPacket // cmd 20
-        {
-            std::string src;
-            std::string dst;
-
             uint8_t target_temp = 0;
             uint8_t room_temp = 0;
             uint8_t pipe_in = 0;
@@ -64,9 +49,42 @@ namespace esphome
 
             bool power = false;
 
+            std::string to_string();
+        };
+
+        struct NonNasaDataPacket
+        {
+            std::string src;
+            std::string dst;
+
+            uint8_t cmd;
+
+            NonNasaDataPacket()
+            {
+            }
+
+            union
+            {
+                NonNasaCommand20 command20;
+            };
+
             DecodeResult decode(std::vector<uint8_t> &data);
             std::string to_string();
-            NonNasaRequest toRequest(const std::string &dst_address);
+        };
+
+        struct NonNasaRequest
+        {
+            std::string dst;
+
+            uint8_t target_temp = 0;
+            NonNasaFanspeed fanspeed = NonNasaFanspeed::Auto;
+            NonNasaMode mode = NonNasaMode::Heat;
+            bool power = false;
+
+            std::vector<uint8_t> encode();
+            std::string to_string();
+
+            static NonNasaRequest create(std::string dst_address);
         };
 
         DecodeResult try_decode_non_nasa_packet(std::vector<uint8_t> data);

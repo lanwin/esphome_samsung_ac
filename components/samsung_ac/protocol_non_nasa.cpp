@@ -5,6 +5,8 @@
 #include "util.h"
 #include "protocol_non_nasa.h"
 
+esphome::samsung_ac::NonNasaCommand20 last_command20_;
+
 esphome::samsung_ac::NonNasaDataPacket nonpacket_;
 
 namespace esphome
@@ -21,12 +23,9 @@ namespace esphome
             return sum;
         }
 
-        std::string NonNasaDataPacket::to_string()
+        std::string NonNasaCommand20::to_string()
         {
             std::string str;
-            str += "{";
-            str += "src:" + src + ";";
-            str += "dst:" + dst + ";";
             str += "target_temp:" + std::to_string(target_temp) + ";";
             str += "room_temp:" + std::to_string(room_temp) + ";";
             str += "pipe_in:" + std::to_string(pipe_in) + ";";
@@ -35,6 +34,18 @@ namespace esphome
             str += "wind_direction:" + std::to_string((uint8_t)wind_direction) + ";";
             str += "fanspeed:" + std::to_string((uint8_t)fanspeed) + ";";
             str += "mode:" + long_to_hex((uint8_t)mode) + ";";
+            return str;
+        }
+
+        std::string NonNasaDataPacket::to_string()
+        {
+            std::string str;
+            str += "{";
+            str += "src:" + src + ";";
+            str += "dst:" + dst + ";";
+            str += "cmd:" + long_to_hex(cmd) + ";";
+            if (cmd == 0x20)
+                str += "command20:{" + command20.to_string() + "}";
             str += "}";
             return str;
         }
@@ -61,46 +72,28 @@ namespace esphome
             src = long_to_hex(data[1]);
             dst = long_to_hex(data[2]);
 
-            uint8_t cmd = data[3];
+            cmd = data[3];
             switch (cmd)
             {
             case 0x20: // temperatures
             {
-                target_temp = data[4] - 55;
-                room_temp = data[5] - 55;
-                pipe_in = data[6] - 55;
-                wind_direction = (NonNasaWindDirection)((data[7]) >> 3);
-                fanspeed = (NonNasaFanspeed)((data[7] & 0b00000111));
-                mode = (NonNasaMode)(data[8] & 0b00111111);
-                power = data[8] & 0b10000000;
-                pipe_out = data[11] - 55;
+                command20.target_temp = data[4] - 55;
+                command20.room_temp = data[5] - 55;
+                command20.pipe_in = data[6] - 55;
+                command20.wind_direction = (NonNasaWindDirection)((data[7]) >> 3);
+                command20.fanspeed = (NonNasaFanspeed)((data[7] & 0b00000111));
+                command20.mode = (NonNasaMode)(data[8] & 0b00111111);
+                command20.power = data[8] & 0b10000000;
+                command20.pipe_out = data[11] - 55;
 
-                if (wind_direction == (NonNasaWindDirection)0)
-                    wind_direction = NonNasaWindDirection::Stop;
+                if (command20.wind_direction == (NonNasaWindDirection)0)
+                    command20.wind_direction = NonNasaWindDirection::Stop;
 
                 return DecodeResult::Ok;
             }
-
-            case 0xA0:
-            case 0x52:
-            case 0x53:
-            case 0x54:
-            case 0x64:
-            case 0x40:
             default:
-                return DecodeResult::UnknownCommand;
+                return DecodeResult::Ok;
             }
-        }
-
-        NonNasaRequest NonNasaDataPacket::toRequest(const std::string &dst_address)
-        {
-            NonNasaRequest request;
-            request.dst = dst_address;
-            request.power = power;
-            request.target_temp = target_temp;
-            request.fanspeed = fanspeed;
-            request.mode = mode;
-            return request;
         }
 
         uint8_t encode_request_mode(NonNasaMode value)
@@ -179,9 +172,20 @@ namespace esphome
             return data;
         }
 
+        NonNasaRequest NonNasaRequest::create(std::string dst_address)
+        {
+            NonNasaRequest request;
+            request.dst = dst_address;
+            request.power = last_command20_.power;
+            request.target_temp = last_command20_.target_temp;
+            request.fanspeed = last_command20_.fanspeed;
+            request.mode = last_command20_.mode;
+            return request;
+        }
+
         void NonNasaProtocol::publish_power_message(MessageTarget *target, const std::string &address, bool value)
         {
-            auto request = nonpacket_.toRequest(address);
+            auto request = NonNasaRequest::create(address);
             request.power = value;
             auto data = request.encode();
             target->publish_data(data);
@@ -189,7 +193,7 @@ namespace esphome
 
         void NonNasaProtocol::publish_target_temp_message(MessageTarget *target, const std::string &address, float value)
         {
-            auto request = nonpacket_.toRequest(address);
+            auto request = NonNasaRequest::create(address);
             request.target_temp = value;
             auto data = request.encode();
             target->publish_data(data);
@@ -216,7 +220,7 @@ namespace esphome
 
         void NonNasaProtocol::publish_mode_message(MessageTarget *target, const std::string &address, Mode value)
         {
-            auto request = nonpacket_.toRequest(address);
+            auto request = NonNasaRequest::create(address);
             request.mode = mode_to_nonnasa_mode(value);
             auto data = request.encode();
             target->publish_data(data);
@@ -240,7 +244,7 @@ namespace esphome
 
         void NonNasaProtocol::publish_fanmode_message(MessageTarget *target, const std::string &address, FanMode value)
         {
-            auto request = nonpacket_.toRequest(address);
+            auto request = NonNasaRequest::create(address);
             request.fanspeed = fanmode_to_nonnasa_fanspeed(value);
             auto data = request.encode();
             target->publish_data(data);
@@ -296,11 +300,16 @@ namespace esphome
             }
 
             target->register_address(nonpacket_.src);
-            target->set_target_temperature(nonpacket_.src, nonpacket_.target_temp);
-            target->set_room_temperature(nonpacket_.src, nonpacket_.room_temp);
-            target->set_power(nonpacket_.src, nonpacket_.power);
-            target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(nonpacket_.mode));
-            target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(nonpacket_.fanspeed));
+
+            if (nonpacket_.cmd == 0x20)
+            {
+                last_command20_ = nonpacket_.command20;
+                target->set_target_temperature(nonpacket_.src, last_command20_.target_temp);
+                target->set_room_temperature(nonpacket_.src, last_command20_.room_temp);
+                target->set_power(nonpacket_.src, last_command20_.power);
+                target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(last_command20_.mode));
+                target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(last_command20_.fanspeed));
+            }
         }
     } // namespace samsung_ac
 } // namespace esphome

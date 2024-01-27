@@ -17,8 +17,7 @@ namespace esphome
             InvalidEndByte = 2,
             SizeDidNotMatch = 3,
             UnexpectedSize = 4,
-            CrcError = 5,
-            UnknownCommand = 6
+            CrcError = 5
         };
 
         enum class Mode
