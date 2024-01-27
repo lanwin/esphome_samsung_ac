@@ -55,21 +55,21 @@ public:
     }
 
     std::string last_set_room_humidity_address;
-    float set_room_humidity_value;
+    float last_set_room_humidity_value;
     void set_room_humidity(const std::string address, float value)
     {
         cout << "set_room_humidity " << address << " " << to_string(value) << endl;
         last_set_room_humidity_address = address;
-        set_room_humidity_value = value;
+        last_set_room_humidity_value = value;
     }
 
-    std::string last_last_set_mode_address;
-    Mode last_last_set_mode_mode;
+    std::string last_set_mode_address;
+    Mode last_set_mode_mode;
     void set_mode(const std::string address, Mode mode)
     {
         cout << "set_mode " << address << " " << to_string((int)mode) << endl;
-        last_last_set_mode_address = address;
-        last_last_set_mode_mode = mode;
+        last_set_mode_address = address;
+        last_set_mode_mode = mode;
     }
 
     std::string last_set_fanmode_address;
@@ -80,9 +80,32 @@ public:
         last_set_fanmode_address = address;
         last_set_fanmode_mode = fanmode;
     }
+
+    void assert_values(const std::string address, bool power, float room_temp, float target_temp, float humidity, Mode mode, FanMode fanmode)
+    {
+        assert(last_register_address == address);
+
+        assert(last_set_power_address == address);
+        assert(last_set_power_value == power);
+
+        assert(last_set_room_temperature_address == address);
+        assert(last_set_room_temperature_value == room_temp);
+
+        assert(last_set_target_temperature_address == address);
+        assert(last_set_target_temperature_value == target_temp);
+
+        assert(last_set_room_humidity_address == address);
+        assert(last_set_room_humidity_value == humidity);
+
+        assert(last_set_mode_address == address);
+        assert(last_set_mode_mode == mode);
+
+        assert(last_set_fanmode_address == address);
+        assert(last_set_fanmode_mode == fanmode);
+    }
 };
 
-DebugTarget test_prcess_data(const std::string &hex)
+DebugTarget test_process_data(const std::string &hex)
 {
     DebugTarget target;
     auto bytes = hex_to_bytes(hex);
