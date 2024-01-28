@@ -1,5 +1,6 @@
 #include "test_stuff.h"
 #include "../components/samsung_ac/protocol_non_nasa.h"
+#include <fstream>
 
 using namespace std;
 using namespace esphome::samsung_ac;
@@ -148,18 +149,82 @@ void test_decoding()
     assert(p.command20.wind_direction == NonNasaWindDirection::Stop);
 }
 
-void test_encoding()
+NonNasaRequest create_request()
 {
     NonNasaRequest p;
-    p.dst = "c8";
-    p.power = true;
-    p.target_temp = 24;
+    p.dst = "00";
+    p.power = false;
+    p.target_temp = 20;
     p.fanspeed = NonNasaFanspeed::Auto;
-    p.mode = NonNasaMode::Cool;
-    auto data = bytes_to_hex(p.encode());
-    std::cout << "expected: 3200c8204f4f4efd821c004e8b34" << std::endl;
-    std::cout << "actual:   " << data << std::endl;
-    assert(data == "32d0c8b01f04a601f4210000c134");
+    p.mode = NonNasaMode::Auto;
+    return p;
+}
+
+void test_request(NonNasaRequest request, std::string expected)
+{
+    auto actual = bytes_to_hex(request.encode());
+    if (expected != actual)
+    {
+        // std::cout << request.to_string() << std::endl;
+        std::cout << "expected: " << expected << std::endl;
+        std::cout << "actual:   " << actual << std::endl;
+    }
+    assert(actual == expected);
+}
+
+void test_encoding()
+{
+    NonNasaRequest req;
+
+    req = create_request();
+    req.dst = "00";
+    req.power = true;
+    req.room_temp = 23;
+    req.target_temp = 24;
+    req.fanspeed = NonNasaFanspeed::Auto;
+    req.mode = NonNasaMode::Fan;
+    test_request(req, "32d000b01f171803f4210000a634");
+
+    req = create_request();
+    req.power = true;
+    test_request(req, "32d000b01f041400f4210000ba34");
+
+    req = create_request();
+    req.power = false;
+    test_request(req, "32d000b01f041400c42100008a34");
+
+    req = create_request();
+    req.fanspeed = NonNasaFanspeed::Auto;
+    test_request(req, "32d000b01f041400c42100008a34");
+    req = create_request();
+    req.fanspeed = NonNasaFanspeed::High;
+    test_request(req, "32d000b01f04b400c42100002a34");
+    req = create_request();
+    req.fanspeed = NonNasaFanspeed::Medium;
+    test_request(req, "32d000b01f049400c42100000a34");
+    req = create_request();
+    req.fanspeed = NonNasaFanspeed::Low;
+    test_request(req, "32d000b01f045400c4210000ca34");
+
+    req = create_request();
+    req.target_temp = 25;
+    test_request(req, "32d000b01f041900c42100008734");
+
+    req = create_request();
+    req.mode = NonNasaMode::Auto;
+    test_request(req, "32d000b01f041400c42100008a34");
+    req = create_request();
+    req.mode = NonNasaMode::Cool;
+    test_request(req, "32d000b01f041401c42100008b34");
+    req = create_request();
+    req.mode = NonNasaMode::Dry;
+    test_request(req, "32d000b01f041402c42100008834");
+    req = create_request();
+    req.mode = NonNasaMode::Fan;
+    test_request(req, "32d000b01f041403c42100008934");
+    req = create_request();
+    req.mode = NonNasaMode::Heat;
+    test_request(req, "32d000b01f041404c42100008e34");
 }
 
 void test_target()
@@ -190,9 +255,34 @@ void test_target()
     target.assert_values("00", true, 24.000000, 24.000000, Mode::Cool, FanMode::Hight);
 }
 
+void test_read_file()
+{
+    std::ifstream file("C:\\Users\\Steve Wagner\\Temp\\test.txt");
+    std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
+    DebugTarget target;
+    std::vector<uint8_t> data_;
+    for (int i = 0; i < str.size(); i += 2)
+    {
+        uint8_t c = hex_to_int(str.substr(i, 2));
+        // cout << long_to_hex(c) << std::endl;
+        if (data_.size() == 0 && c != 0x32)
+            continue; // skip until start-byte found
+
+        data_.push_back(c);
+
+        if (process_data(data_, &target) == DataResult::Clear)
+        {
+            data_.clear();
+            break; // wait for next loop
+        }
+    }
+}
+
 int main(int argc, char *argv[])
 {
+    // test_read_file();
     test_decoding();
-    // test_encoding();
+    test_encoding();
     test_target();
 };
