@@ -58,7 +58,7 @@ namespace esphome
             if (data[data.size() - 1] != 0x34)
                 return DecodeResult::InvalidEndByte;
 
-            if (data.size() > 14)
+            if (data.size() < 7 && data.size() > 14)
                 return DecodeResult::UnexpectedSize;
 
             auto crc_expected = build_checksum(data);
