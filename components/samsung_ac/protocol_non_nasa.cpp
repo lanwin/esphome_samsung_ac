@@ -146,8 +146,8 @@ namespace esphome
                 0xD0,                     // 01 src
                 (uint8_t)hex_to_int(dst), // 02 dst
                 0xB0,                     // 03 cmd
-                0x1F,                     // 04
-                0x04,                     // 05
+                0x1F,                     // 04 ?
+                0x04,                     // 05 ?
                 0,                        // 06 temp + fanmode
                 0,                        // 07 operation mode
                 0,                        // 08 power + individual mode
@@ -162,12 +162,16 @@ namespace esphome
             // seems to be like a building management system.
             bool individual = false;
 
+            if (room_temp > 0)
+                data[5] = room_temp;
             data[6] = (target_temp & 31U) | encode_request_fanspeed(fanspeed);
             data[7] = (uint8_t)encode_request_mode(mode);
             data[8] = !power ? (uint8_t)0xC0 : (uint8_t)0xF0;
             data[8] |= (individual ? 6U : 4U);
             data[9] = (uint8_t)0x21;
             data[12] = build_checksum(data);
+
+            data[9] = (uint8_t)0x21;
 
             return data;
         }
@@ -176,6 +180,7 @@ namespace esphome
         {
             NonNasaRequest request;
             request.dst = dst_address;
+            request.room_temp = last_command20_.room_temp;
             request.power = last_command20_.power;
             request.target_temp = last_command20_.target_temp;
             request.fanspeed = last_command20_.fanspeed;

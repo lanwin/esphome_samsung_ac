@@ -76,6 +76,7 @@ namespace esphome
         {
             std::string dst;
 
+            uint8_t room_temp = 0;
             uint8_t target_temp = 0;
             NonNasaFanspeed fanspeed = NonNasaFanspeed::Auto;
             NonNasaMode mode = NonNasaMode::Heat;
