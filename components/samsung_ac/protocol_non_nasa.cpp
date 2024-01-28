@@ -1,11 +1,12 @@
 #include <queue>
+#include <map>
 #include <cmath>
 #include <iostream>
 #include "esphome/core/log.h"
 #include "util.h"
 #include "protocol_non_nasa.h"
 
-esphome::samsung_ac::NonNasaCommand20 last_command20_;
+std::map<std::string, esphome::samsung_ac::NonNasaCommand20> last_command20s_;
 
 esphome::samsung_ac::NonNasaDataPacket nonpacket_;
 
@@ -180,11 +181,14 @@ namespace esphome
         {
             NonNasaRequest request;
             request.dst = dst_address;
+
+            auto last_command20_ = last_command20s_[dst_address];
             request.room_temp = last_command20_.room_temp;
             request.power = last_command20_.power;
             request.target_temp = last_command20_.target_temp;
             request.fanspeed = last_command20_.fanspeed;
             request.mode = last_command20_.mode;
+
             return request;
         }
 
@@ -308,12 +312,12 @@ namespace esphome
 
             if (nonpacket_.cmd == 0x20)
             {
-                last_command20_ = nonpacket_.command20;
-                target->set_target_temperature(nonpacket_.src, last_command20_.target_temp);
-                target->set_room_temperature(nonpacket_.src, last_command20_.room_temp);
-                target->set_power(nonpacket_.src, last_command20_.power);
-                target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(last_command20_.mode));
-                target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(last_command20_.fanspeed));
+                last_command20s_[nonpacket_.src] = nonpacket_.command20;
+                target->set_target_temperature(nonpacket_.src, nonpacket_.command20.target_temp);
+                target->set_room_temperature(nonpacket_.src, nonpacket_.command20.room_temp);
+                target->set_power(nonpacket_.src, nonpacket_.command20.power);
+                target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(nonpacket_.command20.mode));
+                target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(nonpacket_.command20.fanspeed));
             }
         }
     } // namespace samsung_ac
