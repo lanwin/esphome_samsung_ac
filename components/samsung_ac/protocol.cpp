@@ -15,75 +15,49 @@ namespace esphome
         // to the data vector. One by one.
         DataResult process_data(std::vector<uint8_t> &data, MessageTarget *target)
         {
-            // NonNASA message?
-            if (data.size() <= 14)
+            if (data.size() > 1500)
             {
-                if (data[data.size() - 1] != 0x34 /*valid end byte*/)
-                    return DataResult::Fill;
+                ESP_LOGW(TAG, "current packat exceeds the size limits: %s", bytes_to_hex(data).c_str());
+                return DataResult::Clear;
+            }
 
+            // Check if its a decodeable NonNASA packat
+            if (data.size() == 7 /* duplicate addr package */ || data.size() == 14 /* generic package */)
+            {
                 const auto result = try_decode_non_nasa_packet(data);
-                if (result == DecodeResult::SizeDidNotMatch || result == DecodeResult::UnexpectedSize)
-                    return DataResult::Fill;
-
-                if (debug_log_raw_bytes)
+                if (result == DecodeResult::Ok)
                 {
-                    ESP_LOGW(TAG, "RAW: %s", bytes_to_hex(data).c_str());
-                }
-
-                if (result == DecodeResult::InvalidStartByte)
-                {
-                    ESP_LOGW(TAG, "invalid start byte: %s", bytes_to_hex(data).c_str());
+                    process_non_nasa_packet(target);
                     return DataResult::Clear;
                 }
-                else if (result == DecodeResult::InvalidEndByte)
-                {
-                    ESP_LOGW(TAG, "invalid end byte: %s", bytes_to_hex(data).c_str());
-                    return DataResult::Clear;
-                }
-                else if (result == DecodeResult::CrcError)
-                {
-                    // is logge dwithin decoder
-                    return DataResult::Clear;
-                }
-
-                process_non_nasa_packet(target);
-                return DataResult::Clear;
             }
 
-            // NASA message
-            if (data.size() <= 1500)
+            const auto result = try_decode_nasa_packet(data);
+            if (result == DecodeResult::SizeDidNotMatch || result == DecodeResult::UnexpectedSize)
+                return DataResult::Fill;
+
+            if (debug_log_raw_bytes)
             {
-                const auto result = try_decode_nasa_packet(data);
-                if (result == DecodeResult::SizeDidNotMatch || result == DecodeResult::UnexpectedSize)
-                    return DataResult::Fill;
+                ESP_LOGW(TAG, "RAW: %s", bytes_to_hex(data).c_str());
+            }
 
-                if (debug_log_raw_bytes)
-                {
-                    ESP_LOGW(TAG, "RAW: %s", bytes_to_hex(data).c_str());
-                }
-
-                if (result == DecodeResult::InvalidStartByte)
-                {
-                    ESP_LOGW(TAG, "invalid start byte: %s", bytes_to_hex(data).c_str());
-                    return DataResult::Clear;
-                }
-                else if (result == DecodeResult::InvalidEndByte)
-                {
-                    ESP_LOGW(TAG, "invalid end byte: %s", bytes_to_hex(data).c_str());
-                    return DataResult::Clear;
-                }
-                else if (result == DecodeResult::CrcError)
-                {
-                    // is logge dwithin decoder
-                    return DataResult::Clear;
-                }
-
-                process_nasa_packet(target);
+            if (result == DecodeResult::InvalidStartByte)
+            {
+                ESP_LOGW(TAG, "invalid start byte: %s", bytes_to_hex(data).c_str());
+                return DataResult::Clear;
+            }
+            else if (result == DecodeResult::InvalidEndByte)
+            {
+                ESP_LOGW(TAG, "invalid end byte: %s", bytes_to_hex(data).c_str());
+                return DataResult::Clear;
+            }
+            else if (result == DecodeResult::CrcError)
+            {
+                // is logge dwithin decoder
                 return DataResult::Clear;
             }
 
-            // > 1500
-            ESP_LOGW(TAG, "current message exceeds the size limits: %s", bytes_to_hex(data).c_str());
+            process_nasa_packet(target);
             return DataResult::Clear;
         }
 

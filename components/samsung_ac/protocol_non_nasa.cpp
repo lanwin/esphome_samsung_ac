@@ -58,14 +58,14 @@ namespace esphome
             if (data[data.size() - 1] != 0x34)
                 return DecodeResult::InvalidEndByte;
 
-            if (data.size() < 7 && data.size() > 14)
+            if (data.size() != 7 && data.size() != 14)
                 return DecodeResult::UnexpectedSize;
 
             auto crc_expected = build_checksum(data);
             auto crc_actual = data[data.size() - 2];
             if (crc_actual != build_checksum(data))
             {
-                ESP_LOGW(TAG, "invalid crc - got %d but should be %d: %s", crc_actual, crc_expected, bytes_to_hex(data).c_str());
+                ESP_LOGW(TAG, "NonNASA: invalid crc - got %d but should be %d: %s", crc_actual, crc_expected, bytes_to_hex(data).c_str());
                 return DecodeResult::CrcError;
             }
 
