@@ -32,12 +32,12 @@ namespace esphome
 
                 if (result == DecodeResult::InvalidStartByte)
                 {
-                    ESP_LOGV(TAG, "invalid start byte");
+                    ESP_LOGW(TAG, "invalid start byte");
                     return DataResult::Clear;
                 }
                 else if (result == DecodeResult::InvalidEndByte)
                 {
-                    ESP_LOGV(TAG, "invalid end byte");
+                    ESP_LOGW(TAG, "invalid end byte");
                     return DataResult::Clear;
                 }
                 else if (result == DecodeResult::CrcError)
@@ -64,12 +64,12 @@ namespace esphome
 
                 if (result == DecodeResult::InvalidStartByte)
                 {
-                    ESP_LOGV(TAG, "invalid start byte");
+                    ESP_LOGW(TAG, "invalid start byte");
                     return DataResult::Clear;
                 }
                 else if (result == DecodeResult::InvalidEndByte)
                 {
-                    ESP_LOGV(TAG, "invalid end byte");
+                    ESP_LOGW(TAG, "invalid end byte");
                     return DataResult::Clear;
                 }
                 else if (result == DecodeResult::CrcError)
@@ -82,8 +82,12 @@ namespace esphome
                 return DataResult::Clear;
             }
 
+            if (debug_log_raw_bytes)
+            {
+                ESP_LOGW(TAG, "RAW: %s", bytes_to_hex(data).c_str());
+            }
             // > 1500
-            ESP_LOGW(TAG, "Current message exceeds the size limits.");
+            ESP_LOGW(TAG, "Current message exceeds the size limits");
             return DataResult::Clear;
         }
 

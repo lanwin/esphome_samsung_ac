@@ -251,31 +251,23 @@ namespace esphome
         DecodeResult Packet::decode(std::vector<uint8_t> &data)
         {
             if (data[0] != 0x32)
-            {
                 return DecodeResult::InvalidStartByte;
-            }
 
             if (data.size() < 16 || data.size() > 1500)
-            {
                 return DecodeResult::UnexpectedSize;
-            }
 
             int size = (int)data[1] << 8 | (int)data[2];
             if (size + 2 != data.size())
-            {
                 return DecodeResult::SizeDidNotMatch;
-            }
 
             if (data[data.size() - 1] != 0x34)
-            {
                 return DecodeResult::InvalidEndByte;
-            }
 
             uint16_t crc_actual = crc16(data, 3, size - 4);
             uint16_t crc_expected = (int)data[data.size() - 3] << 8 | (int)data[data.size() - 2];
             if (crc_expected != crc_actual)
             {
-                ESP_LOGV(TAG, "invalid crc - got %d but should be %d", crc_actual, crc_expected);
+                ESP_LOGW(TAG, "invalid crc - got %d but should be %d", crc_actual, crc_expected);
                 return DecodeResult::CrcError;
             }
 
