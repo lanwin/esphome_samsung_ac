@@ -65,7 +65,7 @@ namespace esphome
             auto crc_actual = data[data.size() - 2];
             if (crc_actual != build_checksum(data))
             {
-                ESP_LOGW(TAG, "invalid crc - got %d but should be %d", crc_actual, crc_expected);
+                ESP_LOGW(TAG, "invalid crc - got %d but should be %d: %s", crc_actual, crc_expected, bytes_to_hex(data).c_str());
                 return DecodeResult::CrcError;
             }
 

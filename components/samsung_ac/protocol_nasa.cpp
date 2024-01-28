@@ -267,7 +267,7 @@ namespace esphome
             uint16_t crc_expected = (int)data[data.size() - 3] << 8 | (int)data[data.size() - 2];
             if (crc_expected != crc_actual)
             {
-                ESP_LOGW(TAG, "invalid crc - got %d but should be %d", crc_actual, crc_expected);
+                ESP_LOGW(TAG, "invalid crc - got %d but should be %d: %s", crc_actual, crc_expected, bytes_to_hex(data).c_str());
                 return DecodeResult::CrcError;
             }
 
