@@ -93,12 +93,13 @@ namespace esphome
       // If there is no data we use the time to send
       if (!available())
       {
-        if (out_.size() > 0)
+        if (send_queue_.size() > 0)
         {
-          ESP_LOGW(TAG, "write %s", bytes_to_hex(out_).c_str());
-          this->write_array(out_);
+          auto senddata = send_queue_.front();
+          ESP_LOGW(TAG, "write %s", bytes_to_hex(senddata).c_str());
+          this->write_array(senddata);
           this->flush();
-          out_.clear();
+          send_queue_.pop();
         }
 
         return; // nothing in uart-input-buffer, end here

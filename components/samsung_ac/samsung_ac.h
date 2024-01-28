@@ -3,6 +3,7 @@
 #include <set>
 #include <map>
 #include <optional>
+#include <queue>
 #include "esphome/core/component.h"
 #include "esphome/components/uart/uart.h"
 #include "samsung_ac_device.h"
@@ -69,7 +70,7 @@ namespace esphome
 
       void /*MessageTarget::*/ publish_data(std::vector<uint8_t> &data)
       {
-        out_.insert(out_.end(), data.begin(), data.end());
+        send_queue_.push(data);
       }
 
       void /*MessageTarget::*/ set_room_temperature(const std::string address, float value) override
@@ -128,7 +129,7 @@ namespace esphome
       std::map<std::string, Samsung_AC_Device *> devices_;
       std::set<std::string> addresses_;
 
-      std::vector<uint8_t> out_;
+      std::queue<std::vector<uint8_t>> send_queue_;
       std::vector<uint8_t> data_;
       uint32_t last_transmission_{0};
 
