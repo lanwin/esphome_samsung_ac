@@ -27,6 +27,11 @@ namespace esphome
                 const auto result = try_decode_non_nasa_packet(data);
                 if (result == DecodeResult::Ok)
                 {
+                    if (debug_log_raw_bytes)
+                    {
+                        ESP_LOGW(TAG, "RAW: %s", bytes_to_hex(data).c_str());
+                    }
+
                     process_non_nasa_packet(target);
                     return DataResult::Clear;
                 }
