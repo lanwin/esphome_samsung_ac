@@ -22,6 +22,7 @@ public:
     void publish_data(std::vector<uint8_t> &data)
     {
         last_publish_data = bytes_to_hex(data);
+        cout << "> publish_data " << last_publish_data << endl;
     }
 
     std::string last_register_address;
