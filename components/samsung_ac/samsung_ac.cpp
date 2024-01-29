@@ -67,7 +67,7 @@ namespace esphome
     {
       if (find_device(device->address) != nullptr)
       {
-        ESP_LOGW(TAG, "There is already and device for address %s registered.", device->address);
+        ESP_LOGW(TAG, "There is already and device for address %s registered.", device->address.c_str());
         return;
       }
 
