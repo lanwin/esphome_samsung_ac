@@ -52,7 +52,7 @@ namespace esphome
             std::string to_string();
         };
 
-        struct NonNasaCommandD6
+        struct NonNasaCommandC6
         {
             bool control_status = false;
             std::string to_string()
@@ -75,7 +75,7 @@ namespace esphome
             union
             {
                 NonNasaCommand20 command20;
-                NonNasaCommandD6 commandD6;
+                NonNasaCommandC6 commandC6;
             };
 
             DecodeResult decode(std::vector<uint8_t> &data);

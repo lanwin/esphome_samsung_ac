@@ -95,7 +95,7 @@ namespace esphome
             case 0xc6:
             {
                 // makes only sens src == "c8" && dst == "d0"
-                commandD6.control_status = data[4];
+                commandC6.control_status = data[4];
                 return DecodeResult::Ok;
             }
             default:
@@ -323,11 +323,11 @@ namespace esphome
                 target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(nonpacket_.command20.mode));
                 target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(nonpacket_.command20.fanspeed));
             }
-            else if (nonpacket_.cmd == 0xd6)
+            else if (nonpacket_.cmd == 0xc6)
             {
                 if (nonpacket_.src == "c8" && nonpacket_.dst == "d0")
                 {
-                    ESP_LOGW(TAG, "control_status=%d", nonpacket_.commandD6.control_status);
+                    ESP_LOGW(TAG, "control_status=%d", nonpacket_.commandC6.control_status);
 
                     while (nonnasa_requests.size() > 0)
                     {
