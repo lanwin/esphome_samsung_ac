@@ -52,6 +52,15 @@ namespace esphome
             std::string to_string();
         };
 
+        struct NonNasaCommandD6
+        {
+            bool control_status = false;
+            std::string to_string()
+            {
+                return "control_status:" + control_status;
+            };
+        };
+
         struct NonNasaDataPacket
         {
             std::string src;
@@ -66,6 +75,7 @@ namespace esphome
             union
             {
                 NonNasaCommand20 command20;
+                NonNasaCommandD6 commandD6;
             };
 
             DecodeResult decode(std::vector<uint8_t> &data);

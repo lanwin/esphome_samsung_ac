@@ -92,6 +92,12 @@ namespace esphome
 
                 return DecodeResult::Ok;
             }
+            case 0xc6:
+            {
+                // makes only sens src == "c8" && dst == "d0"
+                commandD6.control_status = data[4];
+                return DecodeResult::Ok;
+            }
             default:
                 return DecodeResult::Ok;
             }
@@ -192,20 +198,20 @@ namespace esphome
             return request;
         }
 
+        std::queue<NonNasaRequest> nonnasa_requests;
+
         void NonNasaProtocol::publish_power_message(MessageTarget *target, const std::string &address, bool value)
         {
             auto request = NonNasaRequest::create(address);
             request.power = value;
-            auto data = request.encode();
-            target->publish_data(data);
+            nonnasa_requests.push(request);
         }
 
         void NonNasaProtocol::publish_target_temp_message(MessageTarget *target, const std::string &address, float value)
         {
             auto request = NonNasaRequest::create(address);
             request.target_temp = value;
-            auto data = request.encode();
-            target->publish_data(data);
+            nonnasa_requests.push(request);
         }
 
         NonNasaMode mode_to_nonnasa_mode(Mode value)
@@ -231,8 +237,7 @@ namespace esphome
         {
             auto request = NonNasaRequest::create(address);
             request.mode = mode_to_nonnasa_mode(value);
-            auto data = request.encode();
-            target->publish_data(data);
+            nonnasa_requests.push(request);
         }
 
         NonNasaFanspeed fanmode_to_nonnasa_fanspeed(FanMode value)
@@ -255,8 +260,7 @@ namespace esphome
         {
             auto request = NonNasaRequest::create(address);
             request.fanspeed = fanmode_to_nonnasa_fanspeed(value);
-            auto data = request.encode();
-            target->publish_data(data);
+            nonnasa_requests.push(request);
         }
 
         Mode nonnasa_mode_to_mode(NonNasaMode value)
@@ -318,6 +322,20 @@ namespace esphome
                 target->set_power(nonpacket_.src, nonpacket_.command20.power);
                 target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(nonpacket_.command20.mode));
                 target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(nonpacket_.command20.fanspeed));
+            }
+            else if (nonpacket_.cmd == 0xd6)
+            {
+                if (nonpacket_.src == "c8" && nonpacket_.dst == "d0")
+                {
+                    ESP_LOGW(TAG, "control_status=%d", nonpacket_.commandD6.control_status);
+
+                    while (nonnasa_requests.size() > 0)
+                    {
+                        auto data = nonnasa_requests.front().encode();
+                        target->publish_data(data);
+                        nonnasa_requests.pop();
+                    }
+                }
             }
         }
     } // namespace samsung_ac
