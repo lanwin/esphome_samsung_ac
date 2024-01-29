@@ -162,13 +162,7 @@ NonNasaRequest create_request()
 void test_request(NonNasaRequest request, std::string expected)
 {
     auto actual = bytes_to_hex(request.encode());
-    if (expected != actual)
-    {
-        // std::cout << request.to_string() << std::endl;
-        std::cout << "expected: " << expected << std::endl;
-        std::cout << "actual:   " << actual << std::endl;
-    }
-    assert(actual == expected);
+    assert_str(actual, expected);
 }
 
 void test_encoding()
