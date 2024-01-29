@@ -17,8 +17,11 @@ public:
     {
         return 0;
     }
+
+    std::string last_publish_data;
     void publish_data(std::vector<uint8_t> &data)
     {
+        last_publish_data = bytes_to_hex(data);
     }
 
     std::string last_register_address;
@@ -128,4 +131,14 @@ DebugTarget test_process_data(const std::string &hex)
     auto bytes = hex_to_bytes(hex);
     assert(process_data(bytes, &target) == DataResult::Clear);
     return target;
+}
+
+void assert_str(const std::string actual, const std::string expected)
+{
+    if (actual != expected)
+    {
+        cout << "actual:   " << actual << std::endl;
+        cout << "expected: " << expected << std::endl;
+    }
+    assert(actual == expected);
 }
