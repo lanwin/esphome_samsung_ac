@@ -78,6 +78,12 @@ namespace esphome
     {
     }
 
+    void Samsung_AC::publish_data(std::vector<uint8_t> &data)
+    {
+      this->write_array(data);
+      this->flush();
+    }
+
     void Samsung_AC::loop()
     {
       if (data_processing_init || data_processing_paused)

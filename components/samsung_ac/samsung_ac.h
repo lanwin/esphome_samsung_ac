@@ -68,10 +68,7 @@ namespace esphome
         return millis();
       }
 
-      void /*MessageTarget::*/ publish_data(std::vector<uint8_t> &data)
-      {
-        send_queue_.push(data);
-      }
+      void /*MessageTarget::*/ publish_data(std::vector<uint8_t> &data);
 
       void /*MessageTarget::*/ set_room_temperature(const std::string address, float value) override
       {
