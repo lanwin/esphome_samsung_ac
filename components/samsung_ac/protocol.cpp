@@ -17,7 +17,7 @@ namespace esphome
         {
             if (data.size() > 1500)
             {
-                ESP_LOGW(TAG, "current packat exceeds the size limits: %s", bytes_to_hex(data).c_str());
+                ESP_LOGV(TAG, "current packat exceeds the size limits: %s", bytes_to_hex(data).c_str());
                 return DataResult::Clear;
             }
 
@@ -43,17 +43,17 @@ namespace esphome
 
             if (debug_log_raw_bytes)
             {
-                ESP_LOGW(TAG, "RAW: %s", bytes_to_hex(data).c_str());
+                ESP_LOGV(TAG, "RAW: %s", bytes_to_hex(data).c_str());
             }
 
             if (result == DecodeResult::InvalidStartByte)
             {
-                ESP_LOGW(TAG, "invalid start byte: %s", bytes_to_hex(data).c_str());
+                ESP_LOGV(TAG, "invalid start byte: %s", bytes_to_hex(data).c_str());
                 return DataResult::Clear;
             }
             else if (result == DecodeResult::InvalidEndByte)
             {
-                ESP_LOGW(TAG, "invalid end byte: %s", bytes_to_hex(data).c_str());
+                ESP_LOGV(TAG, "invalid end byte: %s", bytes_to_hex(data).c_str());
                 return DataResult::Clear;
             }
             else if (result == DecodeResult::CrcError)
