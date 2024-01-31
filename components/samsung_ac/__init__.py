@@ -79,7 +79,6 @@ DEVICE_SCHEMA = (
 )
 
 CONF_DEVICES = "devices"
-CONF_PAUSE_PROCESSING = "pause_processing"
 
 CONF_DEBUG_MQTT_HOST = "debug_mqtt_host"
 CONF_DEBUG_MQTT_PORT = "debug_mqtt_port"
@@ -94,7 +93,6 @@ CONFIG_SCHEMA = (
         {
             cv.GenerateID(): cv.declare_id(Samsung_AC),
             # cv.Optional(CONF_PAUSE, default=False): cv.boolean,
-            cv.Optional(CONF_PAUSE_PROCESSING): switch.switch_schema(Samsung_AC_Switch),
             cv.Optional(CONF_DEBUG_MQTT_HOST, default=""): cv.string,
             cv.Optional(CONF_DEBUG_MQTT_PORT, default=1883): cv.int_,
             cv.Optional(CONF_DEBUG_MQTT_USERNAME, default=""): cv.string,
@@ -157,11 +155,6 @@ async def to_code(config):
             cg.add(var_dev.set_climate(var_cli))
 
         cg.add(var.register_device(var_dev))
-
-    if CONF_PAUSE_PROCESSING in config:
-        conf = config[CONF_PAUSE_PROCESSING]
-        sens = await switch.new_switch(conf)
-        cg.add(var.set_pause_processing_switch(sens))
 
     cg.add(var.set_debug_mqtt(config[CONF_DEBUG_MQTT_HOST], config[CONF_DEBUG_MQTT_PORT],
            config[CONF_DEBUG_MQTT_USERNAME], config[CONF_DEBUG_MQTT_PASSWORD]))

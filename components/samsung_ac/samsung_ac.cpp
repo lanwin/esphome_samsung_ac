@@ -26,11 +26,6 @@ namespace esphome
         data_processing_init = false;
       }
 
-      if (data_processing_paused)
-      {
-        ESP_LOGCONFIG(TAG, "Data Processing is paused !!!!");
-      }
-
       std::string devices = "";
       for (const auto &pair : devices_)
       {
@@ -86,7 +81,7 @@ namespace esphome
 
     void Samsung_AC::loop()
     {
-      if (data_processing_init || data_processing_paused)
+      if (data_processing_init)
         return;
 
       const uint32_t now = millis();

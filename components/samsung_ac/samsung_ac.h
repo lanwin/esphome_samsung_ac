@@ -47,15 +47,6 @@ namespace esphome
         debug_log_raw_bytes = value;
       }
 
-      void set_pause_processing_switch(Samsung_AC_Switch *value)
-      {
-        // value->turn_off();
-        value->write_state_ = [this](bool value)
-        {
-          data_processing_paused = value;
-        };
-      }
-
       void register_device(Samsung_AC_Device *device);
 
       void /*MessageTarget::*/ register_address(const std::string address) override
@@ -131,7 +122,6 @@ namespace esphome
       uint32_t last_transmission_{0};
 
       bool data_processing_init = true;
-      bool data_processing_paused = false;
 
       // settings from yaml
       std::string debug_mqtt_host = "";
