@@ -502,10 +502,41 @@ namespace esphome
                 target->set_fanmode(source, fan_mode_real_to_fanmode(message.value));
                 return;
             }
-            default:
-            {
-                // process_messageset_debug(source, dest, message, target);
             }
+
+            if ((u_int16_t)message.messageNumber == 0x4237)
+            {
+                // VAR_IN_TEMP_WATER_TANK_F
+                double temp = (double)message.value / (double)10;
+                ESP_LOGW(TAG, "s:%s d:%s VAR_IN_TEMP_WATER_TANK_F %f", source.c_str(), dest.c_str(), temp);
+                return;
+            }
+            if ((u_int16_t)message.messageNumber == 0x4065)
+            {
+                // ENUM_IN_WATER_HEATER_POWER
+                ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_WATER_HEATER_POWER %s", source.c_str(), dest.c_str(), message.value == 0 ? "off" : "on");
+                return;
+            }
+            if ((u_int16_t)message.messageNumber == 0x4260)
+            {
+                // VAR_IN_FSV_3021
+                double temp = (double)message.value / (double)10;
+                ESP_LOGW(TAG, "s:%s d:%s VAR_IN_FSV_3021 %f", source.c_str(), dest.c_str(), temp);
+                return;
+            }
+            if ((u_int16_t)message.messageNumber == 0x4261)
+            {
+                // VAR_IN_FSV_3022
+                double temp = (double)message.value / (double)10;
+                ESP_LOGW(TAG, "s:%s d:%s VAR_IN_FSV_3022 %f", source.c_str(), dest.c_str(), temp);
+                return;
+            }
+            if ((u_int16_t)message.messageNumber == 0x4262)
+            {
+                // VAR_IN_FSV_3023
+                double temp = (double)message.value / (double)10;
+                ESP_LOGW(TAG, "s:%s d:%s VAR_IN_FSV_3023 %f", source.c_str(), dest.c_str(), temp);
+                return;
             }
         }
 
