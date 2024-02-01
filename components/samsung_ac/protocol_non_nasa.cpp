@@ -46,8 +46,26 @@ namespace esphome
             str += "src:" + src + ";";
             str += "dst:" + dst + ";";
             str += "cmd:" + long_to_hex(cmd) + ";";
-            if (cmd == 0x20)
+            switch (cmd)
+            {
+            case 0x20:
+            {
                 str += "command20:{" + command20.to_string() + "}";
+                break;
+            }
+            case 0xc6:
+            {
+                str += "commandC6:{" + commandC6.to_string() + "}";
+                break;
+            }
+
+            default:
+            {
+                str += "raw:" + commandRaw.to_string();
+                break;
+            }
+            }
+
             str += "}";
             return str;
         }
@@ -106,7 +124,12 @@ namespace esphome
                 return DecodeResult::Ok;
             }
             default:
+            {
+                commandRaw.length = data.size() - 4 - 1;
+                auto begin = data.begin() + 4;
+                std::copy(begin, begin + commandRaw.length, commandRaw.data);
                 return DecodeResult::Ok;
+            }
             }
         }
 

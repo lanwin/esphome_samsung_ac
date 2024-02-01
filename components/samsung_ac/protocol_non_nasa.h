@@ -68,6 +68,18 @@ namespace esphome
             {
                 return "control_status:" + control_status;
             };
+        }
+
+        struct NonNasaCommandRaw
+        {
+            uint8_t length;
+            uint8_t data[16 - 4 - 1];
+
+            std::string to_string()
+            {
+                std::vector<uint8_t> vec(std::begin(data), std::begin(data) + length);
+                return bytes_to_hex(vec);
+            }
         };
 
         struct NonNasaDataPacket
@@ -86,6 +98,7 @@ namespace esphome
                 NonNasaCommand20 command20;
                 NonNasaCommandC6 commandC6;
                 NonNasaCommandF8 commandF8;
+                NonNasaCommandRaw commandRaw;
             };
 
             DecodeResult decode(std::vector<uint8_t> &data);
