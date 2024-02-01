@@ -99,6 +99,7 @@ Follow these steps to install and configure the software for your AC unit contro
 The following YAML configuration is not included in the example since they are for development purposes. 
 
 ```yaml
+# All this values are optional. Only use the ones you need.
 samsung_ac:
   # Sends all NASA package values to MQTT so the can be analysed or monitored.
   debug_mqtt_host: 10.10.10.10
