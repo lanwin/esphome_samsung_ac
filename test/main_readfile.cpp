@@ -7,6 +7,8 @@ using namespace esphome::samsung_ac;
 
 int main(int argc, char *argv[])
 {
+    debug_log_packets = true;
+
     std::ifstream file("test.txt");
     std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
@@ -24,7 +26,7 @@ int main(int argc, char *argv[])
         if (process_data(data_, &target) == DataResult::Clear)
         {
             data_.clear();
-            break; // wait for next loop
+            continue; // wait for next loop
         }
     }
 };
