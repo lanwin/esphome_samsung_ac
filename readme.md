@@ -99,6 +99,7 @@ Follow these steps to install and configure the software for your AC unit contro
 The following YAML configuration is not included in the example since they are for development purposes. 
 
 ```yaml
+# All this values are optional. Only use the ones you need.
 samsung_ac:
   # Sends all NASA package values to MQTT so the can be analysed or monitored.
   debug_mqtt_host: 10.10.10.10
@@ -118,9 +119,19 @@ It took me a while to figure out what the difference is. NASA is the new wire pr
 The old units are using the so-called Non NASA protocol. The protocols share some aspects like the start and end byte. But the
 newer NASA protocol is more complex and allows more data to be transferred and more units to communicate.
 
-If you're working with older Samsung AC units and need detailed information about the Non NASA protocol, you can refer to [DannyDeGaspari's excellent explanation](https://github.com/DannyDeGaspari/Samsung-HVAC-buscontrol) of the Non NASA protocol.
+### NASA
 
-Hopefully I can provide a description of the NASA protocol here soon.
+The NASA protocol is pretty generic. Its basicaly desinged to transport variables witch are a key (number) and a value (with 
+an datatype like Enum,Int,Long,Bytes). All meaning is defined to the keys. If you want to know the room temperature you need 
+to know the number and wait for it.
+
+[Foxhill67](https://github.com/Foxhill67) started to document the NASA protocol [here](https://wiki.myehs.eu/wiki/NASA_Protocol).
+
+### Non NASA
+
+The Non NASA protocol is specifically desined to transport AC data.
+
+[DannyDeGaspari](https://github.com/DannyDeGaspari) started toe document the Non NASA protocol (but from wall controller side) [here](https://github.com/DannyDeGaspari/Samsung-HVAC-buscontrol).
 
 ## Credits
 
