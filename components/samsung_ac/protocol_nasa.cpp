@@ -502,6 +502,8 @@ namespace esphome
                 target->set_fanmode(source, fan_mode_real_to_fanmode(message.value));
                 return;
             }
+            default:
+                ESP_LOGW(TAG, "s:%s d:%s !! unknown %li", source.c_str(), dest.c_str(), message.value);
             }
 
             if ((uint16_t)message.messageNumber == 0x4237)
