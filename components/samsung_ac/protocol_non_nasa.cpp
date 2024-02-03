@@ -329,7 +329,7 @@ namespace esphome
                 target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(nonpacket_.command20.mode));
                 target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(nonpacket_.command20.fanspeed));
             }
-            else if (nonpacket_.cmd == 0xf8)
+            else if (nonpacket_.cmd == 0xf8) //After cmd F8 (srcc8 dstf0) is a lage gap in communication, time to send data
             {
                 if (nonpacket_.src == "c8" && nonpacket_.dst == "f0")
                 {
@@ -338,10 +338,8 @@ namespace esphome
                     while (nonnasa_requests.size() > 0)
                     {
                         auto data = nonnasa_requests.front().encode();
-                        os_delay_us(20000);
                         target->publish_data(data);
-                        //target->publish_data(data);
-                        ESP_LOGW(TAG, "NonNASA: Data send: %s", bytes_to_hex(data).c_str());
+                        target->publish_data(data);  // WORKAROUND: Send data twice. I think its a timing problem, sending data to fast after cmd f8. A delay should work also
                         nonnasa_requests.pop();
                     }
                 }
