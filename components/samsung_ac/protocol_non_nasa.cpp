@@ -338,7 +338,7 @@ namespace esphome
                     while (nonnasa_requests.size() > 0)
                     {
                         auto data = nonnasa_requests.front().encode();
-                        delay_ms(20);
+                        os_delay_us(20000);
                         target->publish_data(data);
                         //target->publish_data(data);
                         ESP_LOGW(TAG, "NonNASA: Data send: %s", bytes_to_hex(data).c_str());
