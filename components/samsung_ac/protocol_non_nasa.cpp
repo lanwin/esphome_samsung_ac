@@ -339,6 +339,7 @@ namespace esphome
                     {
                         auto data = nonnasa_requests.front().encode();
                         target->publish_data(data);
+                        ESP_LOGW(TAG, "NonNASA: Data send: %s", crc_actual, crc_expected, bytes_to_hex(data).c_str());
                         nonnasa_requests.pop();
                     }
                 }
