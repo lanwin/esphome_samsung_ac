@@ -236,6 +236,7 @@ namespace esphome
         void NonNasaProtocol::publish_mode_message(MessageTarget *target, const std::string &address, Mode value)
         {
             auto request = NonNasaRequest::create(address);
+            request.power = true;
             request.mode = mode_to_nonnasa_mode(value);
             nonnasa_requests.push(request);
         }
