@@ -335,14 +335,13 @@ namespace esphome
         std::string Packet::to_string()
         {
             std::string str;
-            str += "#Packet Sa:" + sa.to_string() + " Da:" + da.to_string() + "\n";
-            str += "Command: " + commad.to_string() + "\n";
+            str += "#Packet Sa:" + sa.to_string() + " Da:" + da.to_string() + " Command: " + commad.to_string() + "\n";
 
             for (int i = 0; i < messages.size(); i++)
             {
                 if (i > 0)
                     str += "\n";
-                str += "> Message: " + messages[i].to_string();
+                str += " > Message: " + messages[i].to_string();
             }
 
             return str;
@@ -392,6 +391,7 @@ namespace esphome
         void NasaProtocol::publish_fanmode_message(MessageTarget *target, const std::string &address, FanMode value)
         {
             auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::ENUM_in_fan_mode, fanmode_to_nasa_fanmode(value));
+            ESP_LOGW(TAG, "publish_fanmode_message %s", packet.to_string().c_str());
             auto data = packet.encode();
             target->publish_data(data);
         }
