@@ -509,34 +509,34 @@ namespace esphome
             default:
             {
                 // Test stuff
-                if ((u_int16_t)message.messageNumber == 0x4237)
+                if ((uint16_t)message.messageNumber == 0x4237)
                 {
                     // VAR_IN_TEMP_WATER_TANK_F
                     double temp = (double)message.value / (double)10;
                     ESP_LOGW(TAG, "s:%s d:%s VAR_IN_TEMP_WATER_TANK_F %f", source.c_str(), dest.c_str(), temp);
                     return;
                 }
-                if ((u_int16_t)message.messageNumber == 0x4065)
+                if ((uint16_t)message.messageNumber == 0x4065)
                 {
                     // ENUM_IN_WATER_HEATER_POWER
                     ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_WATER_HEATER_POWER %s", source.c_str(), dest.c_str(), message.value == 0 ? "off" : "on");
                     return;
                 }
-                if ((u_int16_t)message.messageNumber == 0x4260)
+                if ((uint16_t)message.messageNumber == 0x4260)
                 {
                     // VAR_IN_FSV_3021
                     double temp = (double)message.value / (double)10;
                     ESP_LOGW(TAG, "s:%s d:%s VAR_IN_FSV_3021 %f", source.c_str(), dest.c_str(), temp);
                     return;
                 }
-                if ((u_int16_t)message.messageNumber == 0x4261)
+                if ((uint16_t)message.messageNumber == 0x4261)
                 {
                     // VAR_IN_FSV_3022
                     double temp = (double)message.value / (double)10;
                     ESP_LOGW(TAG, "s:%s d:%s VAR_IN_FSV_3022 %f", source.c_str(), dest.c_str(), temp);
                     return;
                 }
-                if ((u_int16_t)message.messageNumber == 0x4262)
+                if ((uint16_t)message.messageNumber == 0x4262)
                 {
                     // VAR_IN_FSV_3023
                     double temp = (double)message.value / (double)10;
@@ -544,45 +544,45 @@ namespace esphome
                     return;
                 }
 
-                if ((u_int16_t)message.messageNumber == 0x8414)
+                if ((uint16_t)message.messageNumber == 0x8414)
                 {
                     //  LVAR_OUT_CONTROL_WATTMETER_ALL_UNIT_ACCUM
                     double kwh = (double)message.value / (double)1000;
                     ESP_LOGW(TAG, "s:%s d:%s LVAR_OUT_CONTROL_WATTMETER_ALL_UNIT_ACCUM %fkwh", source.c_str(), dest.c_str(), kwh);
                     return;
                 }
-                if ((u_int16_t)message.messageNumber == 0x8413)
+                if ((uint16_t)message.messageNumber == 0x8413)
                 {
                     //  LVAR_OUT_CONTROL_WATTMETER_1W_1MIN_SUM
                     double value = (double)message.value;
                     ESP_LOGW(TAG, "s:%s d:%s LVAR_OUT_CONTROL_WATTMETER_1W_1MIN_SUM %f", source.c_str(), dest.c_str(), value);
                     return;
                 }
-                if ((u_int16_t)message.messageNumber == 0x8411)
+                if ((uint16_t)message.messageNumber == 0x8411)
                 {
                     double value = (double)message.value;
                     ESP_LOGW(TAG, "s:%s d:%s NASA_OUTDOOR_CONTROL_WATTMETER_1UNIT  %f", source.c_str(), dest.c_str(), value);
                     return;
                 }
-                if ((u_int16_t)message.messageNumber == 0x8427)
+                if ((uint16_t)message.messageNumber == 0x8427)
                 {
                     double value = (double)message.value;
                     ESP_LOGW(TAG, "s:%s d:%s total produced energy  %f", source.c_str(), dest.c_str(), value);
                     return;
                 }
-                if ((u_int16_t)message.messageNumber == 0x8426)
+                if ((uint16_t)message.messageNumber == 0x8426)
                 {
                     double value = (double)message.value;
                     ESP_LOGW(TAG, "s:%s d:%s actual produced energy %f", source.c_str(), dest.c_str(), value);
                     return;
                 }
-                if ((u_int16_t)message.messageNumber == 0x8415)
+                if ((uint16_t)message.messageNumber == 0x8415)
                 {
                     double value = (double)message.value;
                     ESP_LOGW(TAG, "s:%s d:%s NASA_OUTDOOR_CONTROL_WATTMETER_TOTAL_SUM %f", source.c_str(), dest.c_str(), value);
                     return;
                 }
-                if ((u_int16_t)message.messageNumber == 0x8416)
+                if ((uint16_t)message.messageNumber == 0x8416)
                 {
                     double value = (double)message.value;
                     ESP_LOGW(TAG, "s:%s d:%s NASA_OUTDOOR_CONTROL_WATTMETER_TOTAL_SUM_ACCUM %f", source.c_str(), dest.c_str(), value);
