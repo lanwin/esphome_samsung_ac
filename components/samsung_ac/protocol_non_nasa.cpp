@@ -360,7 +360,7 @@ namespace esphome
                     while (nonnasa_requests.size() > 0)
                     {
                         auto data = nonnasa_requests.front().encode();
-                        delay(10);
+                        delay(7);
                         target->publish_data(data);
                         //target->publish_data(data); // WORKAROUND: Send data twice. I think its a timing problem, sending data to fast after cmd f8. A delay should work also
                         nonnasa_requests.pop();
