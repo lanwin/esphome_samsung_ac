@@ -68,7 +68,7 @@ namespace esphome
             {
                 return "control_status:" + control_status;
             };
-        }
+        };
 
         struct NonNasaCommandRaw
         {
