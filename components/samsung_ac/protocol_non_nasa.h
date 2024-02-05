@@ -4,6 +4,7 @@
 #include <iostream>
 #include <optional>
 #include "protocol.h"
+#include "util.h"
 
 namespace esphome
 {
