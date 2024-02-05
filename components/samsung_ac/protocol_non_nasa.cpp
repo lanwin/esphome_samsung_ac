@@ -360,8 +360,9 @@ namespace esphome
                     while (nonnasa_requests.size() > 0)
                     {
                         auto data = nonnasa_requests.front().encode();
-                        //the communication needs a delay from cmdf8 to send the data.
-                        //series of test-delay-times: 1ms: no reaction, 7ms reactions half the time, 10ms very often a reaction (95%) -> delay on 20ms should be safe
+                        // the communication needs a delay from cmdf8 to send the data.
+                        // series of test-delay-times: 1ms: no reaction, 7ms reactions half the time, 10ms very often a reaction (95%) -> delay on 20ms should be safe
+                        // the gap is around ~300ms
                         delay(20);
                         target->publish_data(data);
                         nonnasa_requests.pop();
