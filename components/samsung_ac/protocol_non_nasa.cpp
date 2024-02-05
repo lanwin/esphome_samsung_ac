@@ -360,8 +360,10 @@ namespace esphome
                     while (nonnasa_requests.size() > 0)
                     {
                         auto data = nonnasa_requests.front().encode();
+                        //the communication needs a delay from cmdf8 to send the data.
+                        //series of test-delay-times: 1ms: no reaction, 7ms reactions half the time, 10ms very often a reaction (95%) -> delay on 20ms should be safe
+                        delay(20);
                         target->publish_data(data);
-                        target->publish_data(data); // WORKAROUND: Send data twice. I think its a timing problem, sending data to fast after cmd f8. A delay should work also
                         nonnasa_requests.pop();
                     }
                 }

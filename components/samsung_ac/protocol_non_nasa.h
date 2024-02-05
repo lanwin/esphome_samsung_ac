@@ -4,6 +4,7 @@
 #include <iostream>
 #include <optional>
 #include "protocol.h"
+#include "util.h"
 
 namespace esphome
 {
@@ -70,7 +71,7 @@ namespace esphome
             {
                 std::vector<uint8_t> vec(std::begin(data), std::begin(data) + length);
                 return bytes_to_hex(vec);
-            }
+            };
         };
 
         enum class NonNasaCommand : uint8_t
