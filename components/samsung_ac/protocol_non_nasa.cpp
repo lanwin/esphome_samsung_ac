@@ -98,6 +98,12 @@ namespace esphome
                 commandC6.control_status = data[4];
                 return DecodeResult::Ok;
             }
+            case 0xf8:
+            {
+                // only an free time-slot after src == "c8" && dst == "f0"
+                commandF8.control_status = data[4]; //?
+                return DecodeResult::Ok;
+            }
             default:
                 return DecodeResult::Ok;
             }
@@ -324,16 +330,17 @@ namespace esphome
                 target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(nonpacket_.command20.mode));
                 target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(nonpacket_.command20.fanspeed));
             }
-            else if (nonpacket_.cmd == 0xc6)
+            else if (nonpacket_.cmd == 0xf8) //After cmd F8 (srcc8 dstf0) is a lage gap in communication, time to send data
             {
-                if (nonpacket_.src == "c8" && nonpacket_.dst == "d0")
+                if (nonpacket_.src == "c8" && nonpacket_.dst == "f0")
                 {
-                    ESP_LOGW(TAG, "control_status=%d", nonpacket_.commandC6.control_status);
+                    ESP_LOGW(TAG, "control_status=%d", nonpacket_.commandF8.control_status);
 
                     while (nonnasa_requests.size() > 0)
                     {
                         auto data = nonnasa_requests.front().encode();
                         target->publish_data(data);
+                        target->publish_data(data);  // WORKAROUND: Send data twice. I think its a timing problem, sending data to fast after cmd f8. A delay should work also
                         nonnasa_requests.pop();
                     }
                 }
