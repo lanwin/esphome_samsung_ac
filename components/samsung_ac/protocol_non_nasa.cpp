@@ -58,7 +58,11 @@ namespace esphome
                 str += "commandC6:{" + commandC6.to_string() + "}";
                 break;
             }
-
+            case 0xf8:
+            {
+                str += "commandF8:{" + commandF8.to_string() + "}";
+                break;
+            }
             default:
             {
                 str += "raw:" + commandRaw.to_string();
@@ -115,12 +119,6 @@ namespace esphome
             {
                 // makes only sens src == "c8" && dst == "d0"
                 commandC6.control_status = data[4];
-                return DecodeResult::Ok;
-            }
-            case 0xf8:
-            {
-                // only an free time-slot after src == "c8" && dst == "f0"
-                commandF8.control_status = data[4]; //?
                 return DecodeResult::Ok;
             }
             default:
@@ -358,8 +356,6 @@ namespace esphome
             {
                 if (nonpacket_.src == "c8" && nonpacket_.dst == "f0")
                 {
-                    ESP_LOGW(TAG, "control_status=%d", nonpacket_.commandF8.control_status);
-
                     while (nonnasa_requests.size() > 0)
                     {
                         auto data = nonnasa_requests.front().encode();

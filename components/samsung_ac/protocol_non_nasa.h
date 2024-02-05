@@ -61,15 +61,6 @@ namespace esphome
             };
         };
 
-        struct NonNasaCommandF8
-        {
-            bool control_status = false;
-            std::string to_string()
-            {
-                return "control_status:" + control_status;
-            };
-        };
-
         struct NonNasaCommandRaw
         {
             uint8_t length;
@@ -97,7 +88,7 @@ namespace esphome
             {
                 NonNasaCommand20 command20;
                 NonNasaCommandC6 commandC6;
-                NonNasaCommandF8 commandF8;
+                NonNasaCommandRaw commandF8; // Unknown structure for now
                 NonNasaCommandRaw commandRaw;
             };
 
