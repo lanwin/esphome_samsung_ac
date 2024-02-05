@@ -45,20 +45,20 @@ namespace esphome
             str += "{";
             str += "src:" + src + ";";
             str += "dst:" + dst + ";";
-            str += "cmd:" + long_to_hex(cmd) + ";";
+            str += "cmd:" + long_to_hex((uint8_t)cmd) + ";";
             switch (cmd)
             {
-            case 0x20:
+            case NonNasaCommand::Cmd20:
             {
                 str += "command20:{" + command20.to_string() + "}";
                 break;
             }
-            case 0xc6:
+            case NonNasaCommand::CmdC6:
             {
                 str += "commandC6:{" + commandC6.to_string() + "}";
                 break;
             }
-            case 0xf8:
+            case NonNasaCommand::CmdF8:
             {
                 str += "commandF8:{" + commandF8.to_string() + "}";
                 break;
@@ -96,10 +96,10 @@ namespace esphome
             src = long_to_hex(data[1]);
             dst = long_to_hex(data[2]);
 
-            cmd = data[3];
+            cmd = (NonNasaCommand)data[3];
             switch (cmd)
             {
-            case 0x20: // temperatures
+            case NonNasaCommand::Cmd20: // temperatures
             {
                 command20.target_temp = data[4] - 55;
                 command20.room_temp = data[5] - 55;
@@ -115,9 +115,8 @@ namespace esphome
 
                 return DecodeResult::Ok;
             }
-            case 0xc6:
+            case NonNasaCommand::CmdC6:
             {
-                // makes only sens src == "c8" && dst == "d0"
                 commandC6.control_status = data[4];
                 return DecodeResult::Ok;
             }
@@ -343,7 +342,7 @@ namespace esphome
 
             target->register_address(nonpacket_.src);
 
-            if (nonpacket_.cmd == 0x20)
+            if (nonpacket_.cmd == NonNasaCommand::Cmd20)
             {
                 last_command20s_[nonpacket_.src] = nonpacket_.command20;
                 target->set_target_temperature(nonpacket_.src, nonpacket_.command20.target_temp);
@@ -352,8 +351,10 @@ namespace esphome
                 target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(nonpacket_.command20.mode));
                 target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(nonpacket_.command20.fanspeed));
             }
-            else if (nonpacket_.cmd == 0xf8) // After cmd F8 (srcc8 dstf0) is a lage gap in communication, time to send data
+            else if (nonpacket_.cmd == NonNasaCommand::CmdF8)
             {
+                // After cmd F8 (src:c8 dst:f0) is a lage gap in communication, time to send data
+
                 if (nonpacket_.src == "c8" && nonpacket_.dst == "f0")
                 {
                     while (nonnasa_requests.size() > 0)

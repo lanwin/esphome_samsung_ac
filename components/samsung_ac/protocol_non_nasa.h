@@ -73,12 +73,19 @@ namespace esphome
             }
         };
 
+        enum class NonNasaCommand : uint8_t
+        {
+            Cmd20 = 0x20,
+            CmdC6 = 0xc6,
+            CmdF8 = 0xF8,
+        };
+
         struct NonNasaDataPacket
         {
             std::string src;
             std::string dst;
 
-            uint8_t cmd;
+            NonNasaCommand cmd;
 
             NonNasaDataPacket()
             {
