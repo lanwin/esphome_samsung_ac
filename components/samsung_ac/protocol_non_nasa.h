@@ -70,7 +70,7 @@ namespace esphome
             {
                 std::vector<uint8_t> vec(std::begin(data), std::begin(data) + length);
                 return bytes_to_hex(vec);
-            }
+            };
         };
 
         enum class NonNasaCommand : uint8_t
