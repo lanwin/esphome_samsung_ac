@@ -364,6 +364,9 @@ namespace esphome
         void NasaProtocol::publish_mode_message(MessageTarget *target, const std::string &address, Mode value)
         {
             auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::ENUM_in_operation_mode, (int)value);
+            MessageSet power(MessageNumber::ENUM_in_operation_power);
+            power.value = 1;
+            packet.messages.push_back(power);
             auto data = packet.encode();
             target->publish_data(data);
         }
