@@ -75,6 +75,7 @@ namespace esphome
 
     void Samsung_AC::publish_data(std::vector<uint8_t> &data)
     {
+      ESP_LOGW(TAG, "write %s", bytes_to_hex(data).c_str());
       this->write_array(data);
       this->flush();
     }
@@ -97,9 +98,7 @@ namespace esphome
         if (send_queue_.size() > 0)
         {
           auto senddata = send_queue_.front();
-          ESP_LOGW(TAG, "write %s", bytes_to_hex(senddata).c_str());
-          this->write_array(senddata);
-          this->flush();
+          publish_data(senddata);
           send_queue_.pop();
         }
 
