@@ -125,12 +125,17 @@ public:
     }
 };
 
-DebugTarget test_process_data(const std::string &hex)
+void test_process_data(const std::string &hex, DebugTarget &target)
 {
     cout << "test: " << hex << std::endl;
-    DebugTarget target;
     auto bytes = hex_to_bytes(hex);
     assert(process_data(bytes, &target) == DataResult::Clear);
+}
+
+DebugTarget test_process_data(const std::string &hex)
+{
+    DebugTarget target;
+    test_process_data(hex, target);
     return target;
 }
 

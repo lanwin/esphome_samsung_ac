@@ -250,16 +250,23 @@ void test_target()
 
 void test_previous_data_is_used_correctly()
 {
+    debug_log_packets = true;
+
     // Sending package 20 on non nasa requiers to send the previous values
     // these values need to be stored for each address. This test makes sure
     // this process works.
     std::cout << "test_previous_data_is_used_correctly" << std::endl;
 
     DebugTarget target;
-    auto bytes = hex_to_bytes("3200c8204d51500001100051e434");
-    assert(process_data(bytes, &target) == DataResult::Clear);
+
+    // Test1
+
+    // prepare last values
+    test_process_data("3200c8204d51500001100051e434", target);
 
     get_protocol("00")->publish_power_message(&target, "00", false);
+    test_process_data("32c8f0f80345f0c913000000ac34", target); // trigger publish
+
     NonNasaRequest request1;
     request1.dst = "00";
     request1.room_temp = 26.000000;
@@ -267,12 +274,16 @@ void test_previous_data_is_used_correctly()
     request1.power = false;
     request1.fanspeed = NonNasaFanspeed::Auto;
     request1.mode = NonNasaMode::Heat;
-    assert_str(target.last_publish_data, bytes_to_hex(request1.encode()));
+    assert_str(bytes_to_hex(request1.encode()), target.last_publish_data);
 
-    bytes = hex_to_bytes("3201c8204f4f4efd821c004e8a34");
-    assert(process_data(bytes, &target) == DataResult::Clear);
+    // Test2
+
+    // prepare last values
+    test_process_data("3201c8204f4f4efd821c004e8a34", target);
 
     get_protocol("01")->publish_power_message(&target, "01", true);
+    test_process_data("32c8f0f80345f0c913000000ac34", target); // trigger publish
+
     NonNasaRequest request2;
     request2.dst = "01";
     request2.room_temp = 24.000000;
@@ -280,7 +291,7 @@ void test_previous_data_is_used_correctly()
     request2.power = true;
     request2.fanspeed = NonNasaFanspeed::High;
     request2.mode = NonNasaMode::Cool;
-    assert_str(target.last_publish_data, bytes_to_hex(request2.encode()));
+    assert_str(bytes_to_hex(request2.encode()), target.last_publish_data);
 }
 
 int main(int argc, char *argv[])
