@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include "esphome/core/log.h"
+#include "esphome/core/hal.h"
 #include "util.h"
 #include "protocol_non_nasa.h"
 
@@ -330,7 +331,7 @@ namespace esphome
                 target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(nonpacket_.command20.mode));
                 target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(nonpacket_.command20.fanspeed));
             }
-            else if (nonpacket_.cmd == 0xf8) //After cmd F8 (srcc8 dstf0) is a lage gap in communication, time to send data
+            else if (nonpacket_.cmd == 0xf8) // After cmd F8 (srcc8 dstf0) is a lage gap in communication, time to send data
             {
                 if (nonpacket_.src == "c8" && nonpacket_.dst == "f0")
                 {
@@ -340,7 +341,7 @@ namespace esphome
                     {
                         auto data = nonnasa_requests.front().encode();
                         target->publish_data(data);
-                        target->publish_data(data);  // WORKAROUND: Send data twice. I think its a timing problem, sending data to fast after cmd f8. A delay should work also
+                        target->publish_data(data); // WORKAROUND: Send data twice. I think its a timing problem, sending data to fast after cmd f8. A delay should work also
                         nonnasa_requests.pop();
                     }
                 }

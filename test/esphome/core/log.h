@@ -1,3 +1,4 @@
+#pragma once
 // Fake Log for Local Testing
 
 namespace esphome

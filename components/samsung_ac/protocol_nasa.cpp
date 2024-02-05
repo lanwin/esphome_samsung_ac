@@ -2,6 +2,7 @@
 #include <iostream>
 #include "esphome/core/log.h"
 #include "esphome/core/util.h"
+#include "esphome/core/hal.h"
 #include "util.h"
 #include "protocol_nasa.h"
 #include "debug_mqtt.h"
