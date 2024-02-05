@@ -361,7 +361,8 @@ namespace esphome
                     {
                         auto data = nonnasa_requests.front().encode();
                         target->publish_data(data);
-                        target->publish_data(data); // WORKAROUND: Send data twice. I think its a timing problem, sending data to fast after cmd f8. A delay should work also
+                        //target->publish_data(data); // WORKAROUND: Send data twice. I think its a timing problem, sending data to fast after cmd f8. A delay should work also
+                        delay(1);
                         nonnasa_requests.pop();
                     }
                 }
