@@ -5,8 +5,9 @@ esp32:
   board: m5stack-atom
 
 external_components:
-  - source: github://lanwin/esphome_samsung_ac@main
-    components: [samsung_ac]
+- source: 
+    type: local
+    path: /components
 
 samsung_ac:  
   debug_log_messages: false
