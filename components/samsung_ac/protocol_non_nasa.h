@@ -64,11 +64,11 @@ namespace esphome
 
         struct NonNasaCommandF3
         {
-            uint8_t inverter_max_frequency = 0;
-            float inverter_total_capacity_requirement = 0;
-            float inverter_current = 0;
-            float inverter_voltage = 0;
-            float inverter_power = 0;
+            uint8_t inverter_max_frequency_hz = 0;
+            float inverter_total_capacity_requirement_kw = 0;
+            float inverter_current_a = 0;
+            float inverter_voltage_v = 0;
+            float inverter_power_w = 0;
 
             std::string to_string();
         };
