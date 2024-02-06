@@ -1,3 +1,4 @@
 *.exe
 __pycache__
 .esphome
+test.exe
