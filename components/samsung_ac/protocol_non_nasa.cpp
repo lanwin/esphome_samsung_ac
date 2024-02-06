@@ -39,6 +39,17 @@ namespace esphome
             return str;
         }
 
+        std::string NonNasaCommandF3::to_string()
+        {
+            std::string str;
+            str += "inverter_max_frequency[Hz]:" + std::to_string(inverter_max_frequency_hz) + ";";
+            str += "inverter_total_capacity_requirement[kW]:" + std::to_string(inverter_total_capacity_requirement_kw) + ";";
+            str += "inverter_current[ADC]:" + std::to_string(inverter_current_a) + ";";
+            str += "inverter_voltage[VDC]:" + std::to_string(inverter_voltage_v) + ";";
+            str += "inverter_power[W]:" + std::to_string(inverter_power_w) + ";";
+            return str;
+        }
+
         std::string NonNasaDataPacket::to_string()
         {
             std::string str;
@@ -56,6 +67,11 @@ namespace esphome
             case NonNasaCommand::CmdC6:
             {
                 str += "commandC6:{" + commandC6.to_string() + "}";
+                break;
+            }
+            case NonNasaCommand::CmdF3:
+            {
+                str += "commandF3:{" + commandF3.to_string() + "}";
                 break;
             }
             case NonNasaCommand::CmdF8:
@@ -118,6 +134,20 @@ namespace esphome
             case NonNasaCommand::CmdC6:
             {
                 commandC6.control_status = data[4];
+                return DecodeResult::Ok;
+            }
+            case NonNasaCommand::CmdF3: // power consumption
+            {
+                // Maximum frequency for Inverter (compressor-motor of outdoor-unit) in Hz
+                commandF3.inverter_max_frequency_hz = data[4]; 
+                // Sum of required heating/cooling capacity ordered by the indoor-units in kW
+                commandF3.inverter_total_capacity_requirement_kw = (float)data[5] / 10; 
+                // DC-current to the inverter of outdoor-unit in A
+                commandF3.inverter_current_a = (float)data[8] / 10; 
+                // voltage of the DC-link to inverter in V
+                commandF3.inverter_voltage_v = (float)data[9] * 2; 
+                //Power consumption of the outdoo unit inverter in W
+                commandF3.inverter_power_w = commandF3.inverter_current_a * commandF3.inverter_voltage_v; 
                 return DecodeResult::Ok;
             }
             default:

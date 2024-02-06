@@ -62,6 +62,18 @@ namespace esphome
             };
         };
 
+        struct NonNasaCommandF3
+        {
+            uint8_t inverter_max_frequency_hz = 0;
+            float inverter_total_capacity_requirement_kw = 0;
+            float inverter_current_a = 0;
+            float inverter_voltage_v = 0;
+            float inverter_power_w = 0;
+
+            std::string to_string();
+        };
+
+
         struct NonNasaCommandRaw
         {
             uint8_t length;
@@ -78,6 +90,7 @@ namespace esphome
         {
             Cmd20 = 0x20,
             CmdC6 = 0xc6,
+            CmdF3 = 0xf3,
             CmdF8 = 0xF8,
         };
 
@@ -96,6 +109,7 @@ namespace esphome
             {
                 NonNasaCommand20 command20;
                 NonNasaCommandC6 commandC6;
+                NonNasaCommandF3 commandF3;
                 NonNasaCommandRaw commandF8; // Unknown structure for now
                 NonNasaCommandRaw commandRaw;
             };
