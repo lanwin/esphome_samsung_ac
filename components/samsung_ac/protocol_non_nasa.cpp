@@ -138,11 +138,11 @@ namespace esphome
             }
             case NonNasaCommand::CmdF3: // power consumption
             {
-                commandF3.inverter_max_frequency = data[4];
-                commandF3.inverter_total_capacity_requirement = (float)data[5] / 10;
-                commandF3.inverter_current = (float)data[8] / 10;
-                commandF3.inverter_voltage = (float)data[9] * 2;
-                commandF3.inverter_power = commandF3.inverter_current * commandF3.inverter_voltage;
+                commandF3.inverter_max_frequency = data[4]; // Maximum frequency for Inverter (compressor-motor of outdoor-unit) in Hz
+                commandF3.inverter_total_capacity_requirement = (float)data[5] / 10; // Sum of required heating/cooling capacity ordered by the indoor-units in W
+                commandF3.inverter_current = (float)data[8] / 10; // DC-current to the inverter of outdoor-unit in A
+                commandF3.inverter_voltage = (float)data[9] * 2; // voltage of the DC-link to inverter in V
+                commandF3.inverter_power = commandF3.inverter_current * commandF3.inverter_voltage; //Power consumption of the outdoo unit inverter in W
                 return DecodeResult::Ok;
             }
             default:
