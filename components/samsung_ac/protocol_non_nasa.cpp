@@ -69,6 +69,11 @@ namespace esphome
                 str += "commandC6:{" + commandC6.to_string() + "}";
                 break;
             }
+            case NonNasaCommand::CmdF3:
+            {
+                str += "commandF3:{" + commandF3.to_string() + "}";
+                break;
+            }
             case NonNasaCommand::CmdF8:
             {
                 str += "commandF8:{" + commandF8.to_string() + "}";
