@@ -188,13 +188,13 @@ namespace esphome
             switch (type)
             {
             case Enum:
-                return "Enum " + long_to_hex((uint16_t)messageNumber) + " " + std::to_string(value);
+                return "Enum " + long_to_hex((uint16_t)messageNumber) + " = " + std::to_string(value);
             case Variable:
-                return "Variable " + long_to_hex((uint16_t)messageNumber) + " " + std::to_string(value);
+                return "Variable " + long_to_hex((uint16_t)messageNumber) + " = " + std::to_string(value);
             case LongVariable:
-                return "LongVariable " + long_to_hex((uint16_t)messageNumber) + " " + std::to_string(value);
+                return "LongVariable " + long_to_hex((uint16_t)messageNumber) + " = " + std::to_string(value);
             case Structure:
-                return "Structure #" + long_to_hex((uint16_t)messageNumber) + " " + std::to_string(structure.size);
+                return "Structure #" + long_to_hex((uint16_t)messageNumber) + " = " + std::to_string(structure.size);
             default:
                 return "Unknown";
             }
@@ -335,13 +335,13 @@ namespace esphome
         std::string Packet::to_string()
         {
             std::string str;
-            str += "#Packet Sa:" + sa.to_string() + " Da:" + da.to_string() + " Command: " + commad.to_string() + "\n";
+            str += "#Packet Src:" + sa.to_string() + " Dst:" + da.to_string() + " " + commad.to_string() + "\n";
 
             for (int i = 0; i < messages.size(); i++)
             {
                 if (i > 0)
                     str += "\n";
-                str += " > Message: " + messages[i].to_string();
+                str += " > " + messages[i].to_string();
             }
 
             return str;
