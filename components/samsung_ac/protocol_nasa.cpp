@@ -341,7 +341,7 @@ namespace esphome
             {
                 if (i > 0)
                     str += "\n";
-                str += " > Message: " + messages[i].to_string();
+                str += " > " + messages[i].to_string();
             }
 
             return str;
