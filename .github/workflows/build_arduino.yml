@@ -8,4 +8,4 @@ jobs:
     - uses: esphome/build-action@v1.5.2
       id: esphome-build
       with:
-        yaml_file: .github/conf_arduiono.yml
+        yaml_file: .github/conf_arduino.yml
