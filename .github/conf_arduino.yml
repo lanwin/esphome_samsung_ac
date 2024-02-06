@@ -8,6 +8,12 @@ external_components:
 - source: 
     type: local
     path: /github/workspace/components
+    
+uart:
+  tx_pin: GPIO19
+  rx_pin: GPIO22
+  baud_rate: 9600
+  parity: EVEN
 
 samsung_ac:  
   debug_log_messages: false
