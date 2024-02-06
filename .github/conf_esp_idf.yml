@@ -1,10 +1,10 @@
 esphome:
-  name: arduino
+  name: espidf
   
 esp32:
   board: m5stack-atom
   framework:
-    type: arduino
+    type: esp-idf
 
 external_components:
 - source: 
