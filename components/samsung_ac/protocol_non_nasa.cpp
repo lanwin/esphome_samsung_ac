@@ -43,7 +43,7 @@ namespace esphome
         {
             std::string str;
             str += "inverter_max_frequency[Hz]:" + std::to_string(inverter_max_frequency_hz) + ";";
-            str += "inverter_total_capacity_requirement[kW]:" + std::to_string(inverter_total_capacity_requirement_w) + ";";
+            str += "inverter_total_capacity_requirement[kW]:" + std::to_string(inverter_total_capacity_requirement_kw) + ";";
             str += "inverter_current[ADC]:" + std::to_string(inverter_current_a) + ";";
             str += "inverter_voltage[VDC]:" + std::to_string(inverter_voltage_v) + ";";
             str += "inverter_power[W]:" + std::to_string(inverter_power_w) + ";";
@@ -140,7 +140,7 @@ namespace esphome
             {
                 // Maximum frequency for Inverter (compressor-motor of outdoor-unit) in Hz
                 commandF3.inverter_max_frequency_hz = data[4]; 
-                // Sum of required heating/cooling capacity ordered by the indoor-units in W
+                // Sum of required heating/cooling capacity ordered by the indoor-units in kW
                 commandF3.inverter_total_capacity_requirement_w = (float)data[5] / 10; 
                 // DC-current to the inverter of outdoor-unit in A
                 commandF3.inverter_current_a = (float)data[8] / 10; 
