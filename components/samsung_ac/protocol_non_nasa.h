@@ -58,7 +58,7 @@ namespace esphome
             bool control_status = false;
             std::string to_string()
             {
-                return "control_status:" + control_status;
+                return "control_status:" + std::to_string(control_status);
             };
         };
 
