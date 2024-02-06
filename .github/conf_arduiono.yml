@@ -1,0 +1,24 @@
+esphome:
+  name: "build_arduino"
+
+esp32:
+  board: m5stack-atom
+
+external_components:
+  - source: github://lanwin/esphome_samsung_ac@main
+    components: [samsung_ac]
+
+samsung_ac:  
+  debug_log_messages: false
+  debug_log_messages_raw: false
+
+  devices:
+  - address: "20.00.00"
+    climate:
+      name: "Test"  
+    room_temperature:
+      name: Test1_temp
+    target_temperature:
+      name: Test1_target
+    power:
+      name: Test1_power

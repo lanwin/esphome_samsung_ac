@@ -500,10 +500,24 @@ namespace esphome
                 target->set_mode(source, operation_mode_to_mode(message.value));
                 return;
             }
+            case MessageNumber::ENUM_in_fan_mode:
+            {
+                ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_mode %li", source.c_str(), dest.c_str(), message.value);
+                FanMode mode = FanMode::Unknown;
+                if (message.value == 0)
+                    mode = FanMode::Auto;
+                else if (message.value == 1)
+                    mode = FanMode::Low;
+                else if (message.value == 2)
+                    mode = FanMode::Mid;
+                else if (message.value == 3)
+                    mode = FanMode::Hight;
+                target->set_fanmode(source, mode);
+                return;
+            }
             case MessageNumber::ENUM_in_fan_mode_real:
             {
                 ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_mode_real %li", source.c_str(), dest.c_str(), message.value);
-                target->set_fanmode(source, fan_mode_real_to_fanmode(message.value));
                 return;
             }
             default:
