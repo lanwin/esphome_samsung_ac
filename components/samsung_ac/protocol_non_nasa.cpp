@@ -39,6 +39,16 @@ namespace esphome
             return str;
         }
 
+        std::string NonNasaCommandF3::to_string()
+        {
+            std::string str;
+            str += "inverter_max_frequency[Hz]:" + std::to_string(inverter_max_frequency) + ";";
+            str += "inverter_total_capacity_requirement[kW]:" + std::to_string(inverter_total_capacity_requirement) + ";";
+            str += "inverter_current[ADC]:" + std::to_string(inverter_current) + ";";
+            str += "inverter_voltage[VDC]:" + std::to_string(inverter_voltage) + ";";
+            return str;
+        }
+
         std::string NonNasaDataPacket::to_string()
         {
             std::string str;
