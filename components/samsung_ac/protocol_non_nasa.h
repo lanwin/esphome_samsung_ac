@@ -68,6 +68,7 @@ namespace esphome
             float inverter_total_capacity_requirement = 0;
             float inverter_current = 0;
             float inverter_voltage = 0;
+            float inverter_power = 0;
 
             std::string to_string();
         };
