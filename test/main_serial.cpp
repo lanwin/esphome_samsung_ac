@@ -6,15 +6,75 @@
 using namespace std;
 using namespace esphome::samsung_ac;
 
+std::string GetPacketType(PacketType type)
+{
+    switch (type)
+    {
+    case PacketType::StandBy:
+        return "StandBy";
+    case PacketType::Normal:
+        return "Normal";
+    case PacketType::Gathering:
+        return "Gathering";
+    case PacketType::Install:
+        return "Install";
+    case PacketType::Download:
+        return "Download";
+    default:
+        return "Unknown";
+    }
+}
+
+std::string GetDataType(DataType type)
+{
+    switch (type)
+    {
+    case DataType::Undefined:
+        return "Undefined";
+    case DataType::Read:
+        return "Read";
+    case DataType::Write:
+        return "Write";
+    case DataType::Request:
+        return "Request";
+    case DataType::Notification:
+        return "Notification";
+    case DataType::Response:
+        return "Response";
+    case DataType::Ack:
+        return "Ack";
+    case DataType::Nack:
+        return "Nack";
+    default:
+        return "Unknown";
+    }
+}
+
+std::string GetMessageSetType(MessageSetType type)
+{
+    switch (type)
+    {
+    case MessageSetType::Enum:
+        return "Enum";
+    case MessageSetType::Variable:
+        return "Variable";
+    case MessageSetType::LongVariable:
+        return "LongVariable";
+    case MessageSetType::Structure:
+        return "Structure";
+    default:
+        return "Unknown";
+    }
+}
 void process_data(std::vector<uint8_t> &data)
 {
     Packet packet;
     if (packet.decode(data) != DecodeResult::Ok)
         return;
 
-    if (packet.sa.to_string() != "20.00.02" &&
+    /*if (packet.sa.to_string() != "20.00.02" &&
         packet.da.to_string() != "20.00.02")
-        return;
+        return;*/
 
     // if (packet.commad.dataType == DataType::Notification)
     //   return;
@@ -22,9 +82,46 @@ void process_data(std::vector<uint8_t> &data)
     cout << packet.to_string() << endl;
 }
 
+void dump_csv(std::vector<uint8_t> &data)
+{
+    Packet packet;
+    if (packet.decode(data) != DecodeResult::Ok)
+        return;
+
+    SYSTEMTIME time;
+    GetSystemTime(&time);
+    auto ticks = GetTickCount();
+
+    for (const auto msg : packet.messages)
+    {
+        cout << ticks << ";";
+        cout << "\"" << packet.sa.to_string() << "\";";
+        cout << "\"" << packet.da.to_string() << "\";";
+        cout << GetPacketType(packet.commad.packetType) << ";";
+        cout << GetDataType(packet.commad.dataType) << ";";
+
+        cout << GetMessageSetType(msg.type) << ";";
+
+        cout << long_to_hex((uint16_t)msg.messageNumber) << ";";
+
+        if (msg.type == MessageSetType::Structure)
+        {
+            cout << "0;";
+        }
+        else
+        {
+            cout << std::to_string((uint8_t)msg.value) << ";";
+        }
+
+        // cout << packet << endl;
+
+        cout << endl;
+    }
+}
+
 int main(int argc, char *argv[])
 {
-    HANDLE hComm = CreateFileA("COM5", GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+    HANDLE hComm = CreateFileA("COM8", GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
 
     if (hComm == INVALID_HANDLE_VALUE)
         throw new std::invalid_argument("com port kann nicht geöffnet werden");
@@ -65,7 +162,7 @@ int main(int argc, char *argv[])
                 continue; // endbyte not found
             receiving_ = false;
 
-            process_data(data_);
+            dump_csv(data_);
         }
     } while (true);
 
