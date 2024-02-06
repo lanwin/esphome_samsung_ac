@@ -46,7 +46,7 @@ namespace esphome
             str += "inverter_total_capacity_requirement[kW]:" + std::to_string(inverter_total_capacity_requirement) + ";";
             str += "inverter_current[ADC]:" + std::to_string(inverter_current) + ";";
             str += "inverter_voltage[VDC]:" + std::to_string(inverter_voltage) + ";";
-            str += "inverter_voltage[W]:" + std::to_string(inverter_power) + ";";
+            str += "inverter_power[W]:" + std::to_string(inverter_power) + ";";
             return str;
         }
 
