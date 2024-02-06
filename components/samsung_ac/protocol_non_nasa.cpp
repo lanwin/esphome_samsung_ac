@@ -142,7 +142,7 @@ namespace esphome
                 commandF3.inverter_total_capacity_requirement = (float)data[5] / 10;
                 commandF3.inverter_current = (float)data[8] / 10;
                 commandF3.inverter_voltage = (float)data[9] * 2;
-                commandF3.inverter_power = inverter_current * inverter_voltage;
+                commandF3.inverter_power = commandF3.inverter_current * commandF3.inverter_voltage;
                 return DecodeResult::Ok;
             }
             default:
