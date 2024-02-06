@@ -130,6 +130,15 @@ namespace esphome
                 commandC6.control_status = data[4];
                 return DecodeResult::Ok;
             }
+            case NonNasaCommand::CmdF3: // power consumption
+            {
+                commandF3.inverter_max_frequency = data[4];
+                commandF3.inverter_total_capacity_requirement = (float)data[5] / 10;
+                commandF3.inverter_current = (float)data[8] / 10;
+                commandF3.inverter_voltage = (float)data[9] * 2;
+                commandF3.inverter_power = inverter_current * inverter_voltage;
+                return DecodeResult::Ok;
+            }
             default:
             {
                 commandRaw.length = data.size() - 4 - 1;
