@@ -80,6 +80,7 @@ namespace esphome
         {
         public:
             opt<bool> power;
+            opt<Mode> mode;
         };
 
         class Protocol

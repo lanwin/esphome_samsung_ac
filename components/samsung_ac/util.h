@@ -20,6 +20,7 @@ namespace esphome
         std::vector<uint8_t> hex_to_bytes(const std::string &hex);
         void print_bits_8(uint8_t value);
 
+        // esphome optional did not work in tests and std::optional is not available in c++ 14.
         template <typename T>
         using opt = std::experimental::optional<T>;
         using nullopt_t = std::experimental::nullopt_t;
