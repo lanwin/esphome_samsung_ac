@@ -37,7 +37,7 @@ namespace esphome
             Stop = 31
         };
 
-        struct NonNasaCommand20
+        struct NonNasaCommand20 // from indoor units
         {
             uint8_t target_temp = 0;
             uint8_t room_temp = 0;
@@ -53,6 +53,27 @@ namespace esphome
             std::string to_string();
         };
 
+        struct NonNasaCommandC0 // from outdoor unit
+        {
+            uint8_t outdoor_unit_operation_mode = 0;
+            bool outdoor_unit_4_way_valve = false;
+            bool outdoor_unit_hot_gas_bypass = false;
+            bool outdoor_unit_compressor = false;
+            bool outdoor_unit_ac_fan = false;
+            uint8_t outdoor_unit_outdoor_temp_c = 0;
+            uint8_t outdoor_unit_discharge_temp_c = 0;
+            uint8_t outdoor_unit_condenser_mid_temp_c = 0;
+
+            std::string to_string();
+        };
+
+        struct NonNasaCommandC1 // from outdoor unit
+        {
+            uint8_t outdoor_unit_sump_temp_c = 0;
+
+            std::string to_string();
+        };
+
         struct NonNasaCommandC6
         {
             bool control_status = false;
@@ -62,7 +83,34 @@ namespace esphome
             };
         };
 
-        struct NonNasaCommandF3
+        struct NonNasaCommandF0 // from outdoor unit
+        {
+            bool outdoor_unit_freeze_protection = false;
+            bool outdoor_unit_heating_overload = false;
+            bool outdoor_unit_defrost_control = false;
+            bool outdoor_unit_discharge_protection = false;
+            bool outdoor_unit_current_control = false;
+            uint8_t inverter_order_frequency_hz = 0;
+            uint8_t inverter_target_frequency_hz = 0;
+            uint8_t inverter_current_frequency_hz = 0;
+            bool outdoor_unit_bldc_fan = false;
+            uint8_t outdoor_unit_error_code = 0;
+
+            std::string to_string();
+        };
+
+        struct NonNasaCommandF1 // from outdoor unit
+        {
+            uint16_t outdoor_unit_EEV_A = 0;
+            uint16_t outdoor_unit_EEV_B = 0;
+            uint16_t outdoor_unit_EEV_C = 0;
+            uint16_t outdoor_unit_EEV_D = 0;
+
+            std::string to_string();
+        };
+
+
+        struct NonNasaCommandF3 // from outdoor unit
         {
             uint8_t inverter_max_frequency_hz = 0;
             float inverter_total_capacity_requirement_kw = 0;
@@ -72,7 +120,6 @@ namespace esphome
 
             std::string to_string();
         };
-
 
         struct NonNasaCommandRaw
         {
@@ -89,8 +136,12 @@ namespace esphome
         enum class NonNasaCommand : uint8_t
         {
             Cmd20 = 0x20,
+            CmdC0 = 0xc0,
+            CmdC1 = 0xc1,
             CmdC6 = 0xc6,
-            CmdF3 = 0xf3,
+            CmdF0 = 0xf0,
+            CmdF1 = 0xf1,
+            CmdF3 = 0xf3,       
             CmdF8 = 0xF8,
         };
 
@@ -108,7 +159,11 @@ namespace esphome
             union
             {
                 NonNasaCommand20 command20;
+                NonNasaCommandC0 commandC0;
+                NonNasaCommandC1 commandC1;
                 NonNasaCommandC6 commandC6;
+                NonNasaCommandF0 commandF0;
+                NonNasaCommandF1 commandF1;
                 NonNasaCommandF3 commandF3;
                 NonNasaCommandRaw commandF8; // Unknown structure for now
                 NonNasaCommandRaw commandRaw;
