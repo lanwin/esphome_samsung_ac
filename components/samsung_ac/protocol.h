@@ -1,5 +1,6 @@
 #pragma once
 
+#include "esphome/core/optional.h"
 #include "util.h"
 
 namespace esphome
@@ -79,8 +80,8 @@ namespace esphome
         class ProtocolRequest
         {
         public:
-            opt<bool> power;
-            opt<Mode> mode;
+            optional<bool> power;
+            optional<Mode> mode;
         };
 
         class Protocol

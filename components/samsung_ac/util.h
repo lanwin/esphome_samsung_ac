@@ -6,7 +6,6 @@
 #include <bitset>
 #include <optional>
 #include <functional>
-#include <experimental/optional>
 
 namespace esphome
 {
@@ -19,12 +18,5 @@ namespace esphome
         std::string bytes_to_hex(const std::vector<uint8_t> &data);
         std::vector<uint8_t> hex_to_bytes(const std::string &hex);
         void print_bits_8(uint8_t value);
-
-        // esphome optional did not work in tests and std::optional is not available in c++ 14.
-        template <typename T>
-        using opt = std::experimental::optional<T>;
-        using opt_null_t = std::experimental::nullopt_t;
-        constexpr auto nullopt = std::experimental::nullopt;
-
     } // namespace samsung_ac
 } // namespace esphome
