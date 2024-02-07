@@ -76,7 +76,7 @@ namespace esphome
       }
     }
 
-    climate::ClimateFanMode fanmode_to_climatefanmode(FanMode fanmode)
+    optional<climate::ClimateFanMode> fanmode_to_climatefanmode(FanMode fanmode)
     {
       switch (fanmode)
       {
@@ -84,11 +84,24 @@ namespace esphome
         return climate::ClimateFanMode::CLIMATE_FAN_LOW;
       case FanMode::Mid:
         return climate::ClimateFanMode::CLIMATE_FAN_MIDDLE;
-      case FanMode::Hight:
+      case FanMode::High:
         return climate::ClimateFanMode::CLIMATE_FAN_HIGH;
-      default:
+      case FanMode::Turbo:
+        return nullopt;
       case FanMode::Auto:
+      default:
         return climate::ClimateFanMode::CLIMATE_FAN_AUTO;
+      }
+    }
+
+    std::string fanmode_to_custom_climatefanmode(FanMode fanmode)
+    {
+      switch (fanmode)
+      {
+      case FanMode::Turbo:
+        return "Turbo";
+      default:
+        return "";
       }
     }
 
@@ -101,13 +114,20 @@ namespace esphome
       case climate::ClimateFanMode::CLIMATE_FAN_MIDDLE:
         return FanMode::Mid;
       case climate::ClimateFanMode::CLIMATE_FAN_HIGH:
-        return FanMode::Hight;
+        return FanMode::High;
       case climate::ClimateFanMode::CLIMATE_FAN_AUTO:
       default:
         return FanMode::Auto;
       }
     }
-    
+
+    FanMode customfanmode_to_fanmode(const std::string &value)
+    {
+      if (value == "Turbo")
+        return FanMode::Turbo;
+      return FanMode::Auto;
+    }
+
     AltMode preset_to_altmode(climate::ClimatePreset preset)
     {
       switch (preset)
