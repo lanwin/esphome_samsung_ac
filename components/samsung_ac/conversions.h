@@ -17,5 +17,10 @@ namespace esphome
     climate::ClimateFanMode fanmode_to_climatefanmode(FanMode fanmode);
     FanMode climatefanmode_to_fanmode(climate::ClimateFanMode fanmode);
 
+    optional<climate::ClimatePreset> altmode_to_preset(AltMode mode);
+    std::string altmode_to_custompreset(AltMode mode);
+    AltMode preset_to_altmode(climate::ClimatePreset preset);
+    AltMode custompreset_to_altmode(const std::string &value);
+
   } // namespace samsung_ac
 } // namespace esphome

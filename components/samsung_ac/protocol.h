@@ -41,6 +41,18 @@ namespace esphome
             Off = 5
         };
 
+
+        enum class AltMode
+        {
+            Unknown = -1,
+            None = 0,
+            Sleep = 1,
+            Quiet = 2,
+            Fast = 3,
+            LongReach = 4,
+            Windfree = 5
+        };
+
         class MessageTarget
         {
         public:
@@ -53,6 +65,7 @@ namespace esphome
             virtual void set_target_temperature(const std::string address, float value) = 0;
             virtual void set_mode(const std::string address, Mode mode) = 0;
             virtual void set_fanmode(const std::string address, FanMode fanmode) = 0;
+            virtual void set_altmode(const std::string address, AltMode fanmode) = 0;
         };
 
         class Protocol
@@ -62,6 +75,7 @@ namespace esphome
             virtual void publish_target_temp_message(MessageTarget *target, const std::string &address, float value) = 0;
             virtual void publish_mode_message(MessageTarget *target, const std::string &address, Mode value) = 0;
             virtual void publish_fanmode_message(MessageTarget *target, const std::string &address, FanMode value) = 0;
+            virtual void publish_altmode_message(MessageTarget *target, const std::string &address, AltMode value) = 0;
         };
 
         enum class DataResult

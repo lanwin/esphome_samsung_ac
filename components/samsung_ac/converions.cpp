@@ -107,6 +107,60 @@ namespace esphome
         return FanMode::Auto;
       }
     }
+    
+    AltMode preset_to_altmode(climate::ClimatePreset preset)
+    {
+      switch (preset)
+      {
+      case climate::ClimatePreset::CLIMATE_PRESET_SLEEP:
+        return AltMode::Sleep;
+      case climate::ClimatePreset::CLIMATE_PRESET_NONE:
+      default:
+        return AltMode::None;
+      }
+    }
 
+    AltMode custompreset_to_altmode(const std::string &value)
+    {
+      if (value == "Quiet")
+        return AltMode::Quiet;
+      if (value == "Fast")
+        return AltMode::Fast;
+      if (value == "Long Reach")
+        return AltMode::LongReach;
+      if (value == "WindFree")
+        return AltMode::Windfree;
+      return AltMode::Unknown;
+    }
+
+    optional<climate::ClimatePreset> altmode_to_preset(AltMode mode)
+    {
+      switch (mode)
+      {
+      case AltMode::None:
+        return climate::ClimatePreset::CLIMATE_PRESET_NONE;
+      case AltMode::Sleep:
+        return climate::ClimatePreset::CLIMATE_PRESET_SLEEP;
+      default:
+        return nullopt;
+      };
+    }
+
+    std::string altmode_to_custompreset(AltMode mode)
+    {
+      switch (mode)
+      {
+      case AltMode::Quiet:
+        return "Quiet";
+      case AltMode::Fast:
+        return "Fast";
+      case AltMode::LongReach:
+        return "Long Reach";
+      case AltMode::Windfree:
+        return "WindFree";
+      default:
+        return "";
+      };
+    }
   } // namespace samsung_ac
 } // namespace esphome

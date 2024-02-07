@@ -103,6 +103,13 @@ namespace esphome
           dev->publish_fanmode(fanmode);
       }
 
+      void /*MessageTarget::*/ set_altmode(const std::string address, AltMode altmode) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->publish_altmode(altmode);
+      }
+
     protected:
       Samsung_AC_Device *find_device(const std::string address)
       {

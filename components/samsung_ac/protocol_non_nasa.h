@@ -146,6 +146,7 @@ namespace esphome
             void publish_target_temp_message(MessageTarget *target, const std::string &address, float value) override;
             void publish_mode_message(MessageTarget *target, const std::string &address, Mode value) override;
             void publish_fanmode_message(MessageTarget *target, const std::string &address, FanMode value) override;
+            void publish_altmode_message(MessageTarget *target, const std::string &address, AltMode value) override;
         };
     } // namespace samsung_ac
 } // namespace esphome

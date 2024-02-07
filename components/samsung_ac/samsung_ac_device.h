@@ -9,6 +9,7 @@
 #include "esphome/components/climate/climate.h"
 #include "protocol.h"
 #include "samsung_ac.h"
+#include "conversions.h"
 
 namespace esphome
 {
@@ -166,6 +167,22 @@ namespace esphome
         }
       }
 
+      void publish_altmode(AltMode value)
+      {
+        if (climate != nullptr)
+        {
+          auto preset = altmode_to_preset(value);
+          if (preset.has_value()) {
+            climate->preset = preset;
+            climate->custom_preset.reset();
+          } else {
+            climate->preset.reset();
+            climate->custom_preset = altmode_to_custompreset(value);
+          }
+          climate->publish_state();
+        }
+      }
+
       void publish_room_temperature(float value)
       {
         if (room_temperature != nullptr)
@@ -186,6 +203,7 @@ namespace esphome
       void write_target_temperature(float value);
       void write_mode(Mode value);
       void write_fanmode(FanMode value);
+      void write_altmode(AltMode value);
       void write_power(bool value);
 
     protected:
