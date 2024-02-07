@@ -199,7 +199,7 @@ namespace esphome
 
                 return DecodeResult::Ok;
             }
-            case NonNasaCommand::CmdC0: // temperatures
+            case NonNasaCommand::CmdC0: // outdoor unit data
             {
                 commandC0.outdoor_unit_operation_mode = data[4]; // modes need to be specified
                 commandC0.outdoor_unit_4_way_valve = data[6] & 0b10000000;
@@ -209,7 +209,11 @@ namespace esphome
                 commandC0.outdoor_unit_outdoor_temp_c = data[8] - 55;
                 commandC0.outdoor_unit_discharge_temp_c = data[10] - 55;
                 commandC0.outdoor_unit_condenser_mid_temp_c = data[11] - 55;
-                    
+                return DecodeResult::Ok;
+            }
+            case NonNasaCommand::CmdC1: // outdoor unit data
+            {
+                commandC1.outdoor_unit_sump_temp_c = data[8] - 55;
                 return DecodeResult::Ok;
             }
             case NonNasaCommand::CmdC6:
