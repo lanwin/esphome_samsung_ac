@@ -23,7 +23,7 @@ namespace esphome
         // esphome optional did not work in tests and std::optional is not available in c++ 14.
         template <typename T>
         using opt = std::experimental::optional<T>;
-        using nullopt_t = std::experimental::nullopt_t;
+        using opt_null_t = std::experimental::nullopt_t;
         constexpr auto nullopt = std::experimental::nullopt;
 
     } // namespace samsung_ac
