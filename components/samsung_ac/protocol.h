@@ -1,7 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <iostream>
+#include "util.h"
 
 namespace esphome
 {
@@ -41,7 +40,6 @@ namespace esphome
             Off = 5
         };
 
-
         enum class AltMode
         {
             Unknown = -1,
@@ -76,6 +74,12 @@ namespace esphome
             virtual void set_altmode(const std::string address, AltMode fanmode) = 0;
             virtual void set_swing_vertical(const std::string address, bool vertical) = 0;
             virtual void set_swing_horizontal(const std::string address, bool horizontal) = 0;
+        };
+
+        class ProtocolRequest
+        {
+        public:
+            opt<bool> power;
         };
 
         class Protocol
