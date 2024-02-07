@@ -112,9 +112,29 @@ namespace esphome
                 str += "command20:{" + command20.to_string() + "}";
                 break;
             }
+            case NonNasaCommand::CmdC0:
+            {
+                str += "commandC0:{" + commandC0.to_string() + "}";
+                break;
+            }
+            case NonNasaCommand::CmdC1:
+            {
+                str += "commandC1:{" + commandC1.to_string() + "}";
+                break;
+            }
             case NonNasaCommand::CmdC6:
             {
                 str += "commandC6:{" + commandC6.to_string() + "}";
+                break;
+            }
+            case NonNasaCommand::CmdF0:
+            {
+                str += "commandF0:{" + commandF0.to_string() + "}";
+                break;
+            }
+            case NonNasaCommand::CmdF1:
+            {
+                str += "commandF1:{" + commandF1.to_string() + "}";
                 break;
             }
             case NonNasaCommand::CmdF3:
