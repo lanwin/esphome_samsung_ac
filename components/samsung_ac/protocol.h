@@ -77,7 +77,7 @@ namespace esphome
             virtual void set_swing_horizontal(const std::string address, bool horizontal) = 0;
         };
 
-        class ProtocolRequest
+        struct ProtocolRequest
         {
         public:
             optional<bool> power;
@@ -87,6 +87,7 @@ namespace esphome
         class Protocol
         {
         public:
+            virtual void publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request) = 0;
             virtual void publish_power_message(MessageTarget *target, const std::string &address, bool value) = 0;
             virtual void publish_target_temp_message(MessageTarget *target, const std::string &address, float value) = 0;
             virtual void publish_mode_message(MessageTarget *target, const std::string &address, Mode value) = 0;

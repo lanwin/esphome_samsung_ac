@@ -139,15 +139,15 @@ namespace esphome
             case NonNasaCommand::CmdF3: // power consumption
             {
                 // Maximum frequency for Inverter (compressor-motor of outdoor-unit) in Hz
-                commandF3.inverter_max_frequency_hz = data[4]; 
+                commandF3.inverter_max_frequency_hz = data[4];
                 // Sum of required heating/cooling capacity ordered by the indoor-units in kW
-                commandF3.inverter_total_capacity_requirement_kw = (float)data[5] / 10; 
+                commandF3.inverter_total_capacity_requirement_kw = (float)data[5] / 10;
                 // DC-current to the inverter of outdoor-unit in A
-                commandF3.inverter_current_a = (float)data[8] / 10; 
+                commandF3.inverter_current_a = (float)data[8] / 10;
                 // voltage of the DC-link to inverter in V
-                commandF3.inverter_voltage_v = (float)data[9] * 2; 
-                //Power consumption of the outdoo unit inverter in W
-                commandF3.inverter_power_w = commandF3.inverter_current_a * commandF3.inverter_voltage_v; 
+                commandF3.inverter_voltage_v = (float)data[9] * 2;
+                // Power consumption of the outdoo unit inverter in W
+                commandF3.inverter_power_w = commandF3.inverter_current_a * commandF3.inverter_voltage_v;
                 return DecodeResult::Ok;
             }
             default:
@@ -329,6 +329,11 @@ namespace esphome
         void NonNasaProtocol::publish_swing_mode_message(MessageTarget *target, const std::string &address, SwingMode value)
         {
             // TODO
+        }
+
+        void NonNasaProtocol::publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request)
+        {
+            // Todo
         }
 
         Mode nonnasa_mode_to_mode(NonNasaMode value)

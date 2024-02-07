@@ -439,6 +439,33 @@ namespace esphome
             target->publish_data(data);
         }
 
+        void NasaProtocol::publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request)
+        {
+            Packet packet = Packet::createa_partial(Address::parse(address), DataType::Request);
+
+            if (request.mode)
+            {
+                request.power = true; // ensure system turns on when mode is set
+
+                MessageSet mode(MessageNumber::ENUM_in_operation_mode);
+                mode.value = (int)request.mode.value();
+                packet.messages.push_back(mode);
+            }
+
+            if (request.power)
+            {
+                MessageSet power(MessageNumber::ENUM_in_operation_power);
+                power.value = request.power.value() ? 1 : 0;
+                packet.messages.push_back(power);
+            }
+
+            if (packet.messages.size() == 0)
+                return;
+
+            auto data = packet.encode();
+            target->publish_data(data);
+        }
+
         Mode operation_mode_to_mode(int value)
         {
             switch (value)
