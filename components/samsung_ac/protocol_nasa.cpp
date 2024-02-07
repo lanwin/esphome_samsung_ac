@@ -380,8 +380,10 @@ namespace esphome
                 return 1;
             case FanMode::Mid:
                 return 2;
-            case FanMode::Hight:
+            case FanMode::High:
                 return 3;
+            case FanMode::Turbo:
+                return 4;
             case FanMode::Auto:
             default:
                 return 0;
@@ -466,9 +468,10 @@ namespace esphome
                 return FanMode::Low;
             case 2: // Mid
                 return FanMode::Mid;
-            case 3: // Hight
+            case 3: // High
+                return FanMode::High;
             case 4: // Turbo
-                return FanMode::Hight;
+                return FanMode::Turbo;
             case 10: // AutoLow
             case 11: // AutoMid
             case 12: // AutoHigh
@@ -573,7 +576,9 @@ namespace esphome
                 else if (message.value == 2)
                     mode = FanMode::Mid;
                 else if (message.value == 3)
-                    mode = FanMode::Hight;
+                    mode = FanMode::High;
+                else if (message.value == 4)
+                    mode = FanMode::Turbo;
                 target->set_fanmode(source, mode);
                 return;
             }

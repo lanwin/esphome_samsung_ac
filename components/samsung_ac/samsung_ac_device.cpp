@@ -44,6 +44,10 @@ namespace esphome
 
       traits.set_supported_fan_modes(fan);
 
+      std::set<std::string> customFan;
+      customFan.insert("Turbo");
+      traits.set_supported_custom_fan_modes(customFan);
+
       std::set<climate::ClimatePreset> preset;
       preset.insert(climate::ClimatePreset::CLIMATE_PRESET_NONE);
       preset.insert(climate::ClimatePreset::CLIMATE_PRESET_SLEEP);
@@ -91,6 +95,12 @@ namespace esphome
       if (fanmodeOpt.has_value())
       {
         device->write_fanmode(climatefanmode_to_fanmode(fanmodeOpt.value()));
+      }
+
+      auto customFanmodeOpt = call.get_custom_fan_mode();
+      if (customFanmodeOpt.has_value())
+      {
+        device->write_fanmode(customfanmode_to_fanmode(customFanmodeOpt.value()));
       }
 
       auto presetOpt = call.get_preset();

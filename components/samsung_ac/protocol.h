@@ -36,8 +36,8 @@ namespace esphome
             Auto = 0,
             Low = 1,
             Mid = 2,
-            Hight = 3,
-            // Turbo = 4,
+            High = 3,
+            Turbo = 4,
             Off = 5
         };
 

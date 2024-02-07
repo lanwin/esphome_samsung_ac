@@ -163,6 +163,15 @@ namespace esphome
         if (climate != nullptr)
         {
           climate->fan_mode = fanmode_to_climatefanmode(value);
+
+          auto fanmode = fanmode_to_climatefanmode(value);
+          if (fanmode.has_value()) {
+            climate->fan_mode = fanmode;
+            climate->custom_fan_mode.reset();
+          } else {
+            climate->fan_mode.reset();
+            climate->custom_fan_mode = fanmode_to_custom_climatefanmode(value);
+          }
           climate->publish_state();
         }
       }

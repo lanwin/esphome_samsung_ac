@@ -302,7 +302,7 @@ namespace esphome
         {
             switch (value)
             {
-            case FanMode::Hight:
+            case FanMode::High:
                 return NonNasaFanspeed::High;
             case FanMode::Mid:
                 return NonNasaFanspeed::Medium;
@@ -357,7 +357,7 @@ namespace esphome
             {
             case NonNasaFanspeed::Fresh:
             case NonNasaFanspeed::High:
-                return FanMode::Hight;
+                return FanMode::High;
             case NonNasaFanspeed::Medium:
                 return FanMode::Mid;
             case NonNasaFanspeed::Low:
