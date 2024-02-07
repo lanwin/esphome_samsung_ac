@@ -86,6 +86,10 @@ public:
         last_set_fanmode_mode = fanmode;
     }
 
+    void set_altmode(const std::string address, AltMode fanmode)
+    {
+    }
+
     void assert_only_address(const std::string address)
     {
         assert(last_register_address == address);
