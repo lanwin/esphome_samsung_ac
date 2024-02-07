@@ -66,7 +66,7 @@ namespace esphome
             str += "ou_freeze_protection:" + std::to_string(outdoor_unit_freeze_protection ? 1 : 0) + ";";
             str += "ou_heating_overload:" + std::to_string(outdoor_unit_heating_overload ? 1 : 0) + ";";
             str += "ou_defrost_control:" + std::to_string(outdoor_unit_defrost_control ? 1 : 0) + ";";
-            str += "ou_discharge_protection:" + std::to_string(outdoor_unit_discharge_protectionn ? 1 : 0) + ";";
+            str += "ou_discharge_protection:" + std::to_string(outdoor_unit_discharge_protection ? 1 : 0) + ";";
             str += "ou_current_control:" + std::to_string(outdoor_unit_current_control ? 1 : 0) + ";";
             str += "inverter_order_frequency[Hz]:" + std::to_string(inverter_order_frequency_hz) + ";";
             str += "inverter_target_frequency[Hz]:" + std::to_string(inverter_target_frequency_hz) + ";";
@@ -79,7 +79,7 @@ namespace esphome
         std::string NonNasaCommandF1::to_string()
         {
             std::string str;
-            str += "Electronic Expansion Valves: "
+            str += "Electronic Expansion Valves: ";
             str += "EEV_A:" + std::to_string(outdoor_unit_EEV_A) + ";";
             str += "EEV_B:" + std::to_string(outdoor_unit_EEV_B) + ";";
             str += "EEV_C:" + std::to_string(outdoor_unit_EEV_C) + ";";
@@ -237,10 +237,10 @@ namespace esphome
             }
             case NonNasaCommand::CmdF1: // outdoor unit eev-values
             {
-                commandF1.outdoor_unit_EEV_A = (data[4] * 256) + data[5]);
-                commandF1.outdoor_unit_EEV_B = (data[6] * 256) + data[7]);
-                commandF1.outdoor_unit_EEV_C = (data[8] * 256) + data[9]);
-                commandF1.outdoor_unit_EEV_D = (data[10] * 256) + data[11]);
+                commandF1.outdoor_unit_EEV_A = (data[4] * 256) + data[5];
+                commandF1.outdoor_unit_EEV_B = (data[6] * 256) + data[7];
+                commandF1.outdoor_unit_EEV_C = (data[8] * 256) + data[9];
+                commandF1.outdoor_unit_EEV_D = (data[10] * 256) + data[11];
                 return DecodeResult::Ok;
             }
             case NonNasaCommand::CmdF3: // power consumption
