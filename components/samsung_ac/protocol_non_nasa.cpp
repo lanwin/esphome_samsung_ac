@@ -221,18 +221,32 @@ namespace esphome
                 commandC6.control_status = data[4];
                 return DecodeResult::Ok;
             }
+            case NonNasaCommand::CmdF0: // outdoor unit data
+            {
+                commandF0.outdoor_unit_freeze_protection = data[4] & 0b10000000;
+                commandF0.outdoor_unit_heating_overload = data[4] & 0b01000000;
+                commandF0.outdoor_unit_defrost_control = data[4] & 0b00100000;
+                commandF0.outdoor_unit_discharge_protection = data[4] & 0b00010000;
+                commandF0.outdoor_unit_current_control = data[4] & 0b00001000;
+                commandF0.inverter_order_frequency_hz = data[5];
+                commandF0.inverter_target_frequency_hz = data[6];
+                commandF0.inverter_current_frequency_hz = data[7];
+                commandF0.outdoor_unit_bldc_fan = data[8] & 0b00000011; // not sure if correct, i have no ou with BLDC-fan
+                commandF0.outdoor_unit_error_code = data[10];
+                return DecodeResult::Ok;
+            }
             case NonNasaCommand::CmdF3: // power consumption
             {
                 // Maximum frequency for Inverter (compressor-motor of outdoor-unit) in Hz
-                commandF3.inverter_max_frequency_hz = data[4]; 
+                commandF3.inverter_max_frequency_hz = data[4];
                 // Sum of required heating/cooling capacity ordered by the indoor-units in kW
-                commandF3.inverter_total_capacity_requirement_kw = (float)data[5] / 10; 
+                commandF3.inverter_total_capacity_requirement_kw = (float)data[5] / 10;
                 // DC-current to the inverter of outdoor-unit in A
-                commandF3.inverter_current_a = (float)data[8] / 10; 
+                commandF3.inverter_current_a = (float)data[8] / 10;
                 // voltage of the DC-link to inverter in V
-                commandF3.inverter_voltage_v = (float)data[9] * 2; 
+                commandF3.inverter_voltage_v = (float)data[9] * 2;
                 //Power consumption of the outdoo unit inverter in W
-                commandF3.inverter_power_w = commandF3.inverter_current_a * commandF3.inverter_voltage_v; 
+                commandF3.inverter_power_w = commandF3.inverter_current_a * commandF3.inverter_voltage_v;
                 return DecodeResult::Ok;
             }
             default:
