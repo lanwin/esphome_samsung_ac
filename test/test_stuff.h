@@ -90,6 +90,14 @@ public:
     {
     }
 
+    void set_swing_vertical(const std::string address, bool vertical)
+    {
+    }
+
+    void set_swing_horizontal(const std::string address, bool horizontal)
+    {
+    }
+
     void assert_only_address(const std::string address)
     {
         assert(last_register_address == address);
