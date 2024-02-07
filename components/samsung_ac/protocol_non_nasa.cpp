@@ -333,7 +333,18 @@ namespace esphome
 
         void NonNasaProtocol::publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request)
         {
-            // Todo
+            auto req = NonNasaRequest::create(address);
+
+            if (request.mode)
+            {
+                request.power = true; // ensure system turns on when mode is set
+                req.mode = mode_to_nonnasa_mode(request.mode.value());
+            }
+
+            if (request.power)
+                req.power = request.power.value();
+
+            nonnasa_requests.push(req);
         }
 
         Mode nonnasa_mode_to_mode(NonNasaMode value)
