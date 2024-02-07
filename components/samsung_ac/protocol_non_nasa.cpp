@@ -235,6 +235,14 @@ namespace esphome
                 commandF0.outdoor_unit_error_code = data[10];
                 return DecodeResult::Ok;
             }
+            case NonNasaCommand::CmdF1: // outdoor unit eev-values
+            {
+                commandF1.outdoor_unit_EEV_A = (data[4] * 256) + data[5]);
+                commandF1.outdoor_unit_EEV_B = (data[6] * 256) + data[7]);
+                commandF1.outdoor_unit_EEV_C = (data[8] * 256) + data[9]);
+                commandF1.outdoor_unit_EEV_D = (data[10] * 256) + data[11]);
+                return DecodeResult::Ok;
+            }
             case NonNasaCommand::CmdF3: // power consumption
             {
                 // Maximum frequency for Inverter (compressor-motor of outdoor-unit) in Hz
