@@ -110,6 +110,20 @@ namespace esphome
           dev->publish_altmode(altmode);
       }
 
+      void /*MessageTarget::*/ set_swing_vertical(const std::string address, bool vertical) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->publish_swing_vertical(vertical);
+      }
+
+      void /*MessageTarget::*/ set_swing_horizontal(const std::string address, bool horizontal) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->publish_swing_horizontal(horizontal);
+      }
+
     protected:
       Samsung_AC_Device *find_device(const std::string address)
       {

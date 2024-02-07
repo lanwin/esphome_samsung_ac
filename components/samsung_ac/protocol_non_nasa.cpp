@@ -326,6 +326,11 @@ namespace esphome
             // TODO
         }
 
+        void NonNasaProtocol::publish_swing_mode_message(MessageTarget *target, const std::string &address, SwingMode value)
+        {
+            // TODO
+        }
+
         Mode nonnasa_mode_to_mode(NonNasaMode value)
         {
             switch (value)
@@ -387,6 +392,9 @@ namespace esphome
                 target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(nonpacket_.command20.fanspeed));
                 // TODO
                 target->set_altmode(nonpacket_.src, AltMode::None);
+                // TODO
+                target->set_swing_horizontal(nonpacket_.src, false);
+                target->set_swing_vertical(nonpacket_.src, false);
             }
             else if (nonpacket_.cmd == NonNasaCommand::CmdF8)
             {

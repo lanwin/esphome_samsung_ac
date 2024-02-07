@@ -424,6 +424,19 @@ namespace esphome
             target->publish_data(data);
         }
 
+        void NasaProtocol::publish_swing_mode_message(MessageTarget *target, const std::string &address, SwingMode value)
+        {
+            auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::ENUM_in_louver_hl_swing, static_cast<uint8_t>(value) & 1);
+            ESP_LOGW(TAG, "publish_swing_mode_message %s", packet.to_string().c_str());
+
+            MessageSet lr_swing(MessageNumber::ENUM_in_louver_lr_swing);
+            lr_swing.value = (static_cast<uint8_t>(value) >> 1) & 1;
+            packet.messages.push_back(lr_swing);
+
+            auto data = packet.encode();
+            target->publish_data(data);
+        }
+
         Mode operation_mode_to_mode(int value)
         {
             switch (value)
@@ -573,6 +586,18 @@ namespace esphome
             {
                 ESP_LOGW(TAG, "s:%s d:%s ENUM_in_alt_mode %li", source.c_str(), dest.c_str(), message.value);
                 target->set_altmode(source, altmode_to_nasa_altmode(message.value));
+                return;
+            }
+            case MessageNumber::ENUM_in_louver_hl_swing:
+            {
+                ESP_LOGW(TAG, "s:%s d:%s ENUM_in_louver_hl_swing %li", source.c_str(), dest.c_str(), message.value);
+                target->set_swing_vertical(source, message.value == 1);
+                return;
+            }
+            case MessageNumber::ENUM_in_louver_lr_swing:
+            {
+                ESP_LOGW(TAG, "s:%s d:%s ENUM_in_louver_lr_swing %li", source.c_str(), dest.c_str(), message.value);
+                target->set_swing_horizontal(source, message.value == 1);
                 return;
             }
             default:
