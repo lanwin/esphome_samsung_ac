@@ -183,6 +183,30 @@ namespace esphome
         }
       }
 
+      void publish_swing_vertical(bool value)
+      {
+        if (climate != nullptr)
+        {
+          climate->swing_mode = combine(climate->swing_mode, 1, value);
+          climate->publish_state();
+        }
+      }
+
+      void publish_swing_horizontal(bool value)
+      {
+        if (climate != nullptr)
+        {
+          climate->swing_mode = combine(climate->swing_mode, 2, value);
+          climate->publish_state();
+        }
+      }
+
+      climate::ClimateSwingMode combine(climate::ClimateSwingMode climateSwingMode, uint8_t mask, bool value)
+      {
+        uint8_t swingMode = static_cast<uint8_t>(climateswingmode_to_swingmode(climateSwingMode));
+        return swingmode_to_climateswingmode(static_cast<SwingMode>(value ? (swingMode | mask) : (swingMode & ~mask)));
+      }
+
       void publish_room_temperature(float value)
       {
         if (room_temperature != nullptr)
@@ -204,6 +228,7 @@ namespace esphome
       void write_mode(Mode value);
       void write_fanmode(FanMode value);
       void write_altmode(AltMode value);
+      void write_swing_mode(SwingMode value);
       void write_power(bool value);
 
     protected:

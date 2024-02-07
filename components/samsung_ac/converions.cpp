@@ -162,5 +162,38 @@ namespace esphome
         return "";
       };
     }
+
+    climate::ClimateSwingMode swingmode_to_climateswingmode(SwingMode swingMode)
+    {
+      switch (swingMode)
+      {
+      case SwingMode::Horizontal:
+        return climate::ClimateSwingMode::CLIMATE_SWING_HORIZONTAL;
+      case SwingMode::Vertical:
+        return climate::ClimateSwingMode::CLIMATE_SWING_VERTICAL;
+      case SwingMode::All:
+        return climate::ClimateSwingMode::CLIMATE_SWING_BOTH;
+      case SwingMode::Fix:
+      default:
+        return climate::ClimateSwingMode::CLIMATE_SWING_OFF;
+      }
+    }
+
+    SwingMode climateswingmode_to_swingmode(climate::ClimateSwingMode swingMode)
+    {
+      switch (swingMode)
+      {
+      case climate::ClimateSwingMode::CLIMATE_SWING_HORIZONTAL:
+        return SwingMode::Horizontal;
+      case climate::ClimateSwingMode::CLIMATE_SWING_VERTICAL:
+        return SwingMode::Vertical;
+      case climate::ClimateSwingMode::CLIMATE_SWING_BOTH:
+        return SwingMode::All;
+      case climate::ClimateSwingMode::CLIMATE_SWING_OFF:
+      default:
+        return SwingMode::Fix;
+      }
+    }
+
   } // namespace samsung_ac
 } // namespace esphome

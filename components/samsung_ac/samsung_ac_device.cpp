@@ -56,6 +56,13 @@ namespace esphome
       customPreset.insert("WindFree");
       traits.set_supported_custom_presets(customPreset);
 
+      std::set<climate::ClimateSwingMode> swingMode;
+      swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_OFF);
+      swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_HORIZONTAL);
+      swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_VERTICAL);
+      swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_BOTH);
+      traits.set_supported_swing_modes(swingMode);
+
       return traits;
     }
 
@@ -97,6 +104,13 @@ namespace esphome
       {
         device->write_altmode(custompreset_to_altmode(customPresetOpt.value()));
       }
+
+      auto swingModeOpt = call.get_swing_mode();
+      if (swingModeOpt.has_value())
+      {
+        device->write_swing_mode(climateswingmode_to_swingmode(swingModeOpt.value()));
+      }
+
     }
 
     void Samsung_AC_Device::write_target_temperature(float value)
@@ -117,6 +131,11 @@ namespace esphome
     void Samsung_AC_Device::write_altmode(AltMode value)
     {
       protocol->publish_altmode_message(samsung_ac, address, value);
+    }
+
+    void Samsung_AC_Device::write_swing_mode(SwingMode value)
+    {
+      protocol->publish_swing_mode_message(samsung_ac, address, value);
     }
 
     void Samsung_AC_Device::write_power(bool value)

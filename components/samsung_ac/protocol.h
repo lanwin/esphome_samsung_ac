@@ -53,6 +53,14 @@ namespace esphome
             Windfree = 5
         };
 
+        enum class SwingMode : uint8_t
+        {
+            Fix = 0,
+            Vertical = 1,
+            Horizontal = 2,
+            All = 3
+        };
+
         class MessageTarget
         {
         public:
@@ -66,6 +74,8 @@ namespace esphome
             virtual void set_mode(const std::string address, Mode mode) = 0;
             virtual void set_fanmode(const std::string address, FanMode fanmode) = 0;
             virtual void set_altmode(const std::string address, AltMode fanmode) = 0;
+            virtual void set_swing_vertical(const std::string address, bool vertical) = 0;
+            virtual void set_swing_horizontal(const std::string address, bool horizontal) = 0;
         };
 
         class Protocol
@@ -76,6 +86,7 @@ namespace esphome
             virtual void publish_mode_message(MessageTarget *target, const std::string &address, Mode value) = 0;
             virtual void publish_fanmode_message(MessageTarget *target, const std::string &address, FanMode value) = 0;
             virtual void publish_altmode_message(MessageTarget *target, const std::string &address, AltMode value) = 0;
+            virtual void publish_swing_mode_message(MessageTarget *target, const std::string &address, SwingMode value) = 0;
         };
 
         enum class DataResult
