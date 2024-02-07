@@ -396,6 +396,34 @@ namespace esphome
             target->publish_data(data);
         }
 
+        int altmode_to_nasa_altmode(AltMode mode)
+        {
+            switch (mode)
+            {
+            case AltMode::Sleep:
+                return 1;
+            case AltMode::Quiet:
+                return 2;
+            case AltMode::Fast:
+                return 3;
+            case AltMode::LongReach:
+                return 6;
+            case AltMode::Windfree:
+                return 9;
+            case AltMode::None:
+            default:
+                return 0;
+            }
+        }
+
+        void NasaProtocol::publish_altmode_message(MessageTarget *target, const std::string &address, AltMode value)
+        {
+            auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::ENUM_in_alt_mode, altmode_to_nasa_altmode(value));
+            ESP_LOGW(TAG, "publish_altmode_message %s", packet.to_string().c_str());
+            auto data = packet.encode();
+            target->publish_data(data);
+        }
+
         Mode operation_mode_to_mode(int value)
         {
             switch (value)
@@ -443,6 +471,27 @@ namespace esphome
             case 19: // NaturalHigh
             default:
                 return FanMode::Unknown;
+            }
+        }
+
+        AltMode altmode_to_nasa_altmode(int value)
+        {
+            switch (value)
+            {
+            case 0:
+                return AltMode::None;
+            case 1:
+                return AltMode::Sleep;
+            case 2:
+                return AltMode::Quiet;
+            case 3:
+                return AltMode::Fast;
+            case 6:
+                return AltMode::LongReach;
+            case 9:
+                return AltMode::Windfree;
+            default:
+                return AltMode::Unknown;
             }
         }
 
@@ -518,6 +567,12 @@ namespace esphome
             case MessageNumber::ENUM_in_fan_mode_real:
             {
                 ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_mode_real %li", source.c_str(), dest.c_str(), message.value);
+                return;
+            }
+            case MessageNumber::ENUM_in_alt_mode:
+            {
+                ESP_LOGW(TAG, "s:%s d:%s ENUM_in_alt_mode %li", source.c_str(), dest.c_str(), message.value);
+                target->set_altmode(source, altmode_to_nasa_altmode(message.value));
                 return;
             }
             default:

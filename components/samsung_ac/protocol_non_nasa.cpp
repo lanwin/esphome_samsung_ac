@@ -321,6 +321,11 @@ namespace esphome
             nonnasa_requests.push(request);
         }
 
+        void NonNasaProtocol::publish_altmode_message(MessageTarget *target, const std::string &address, AltMode value)
+        {
+            // TODO
+        }
+
         Mode nonnasa_mode_to_mode(NonNasaMode value)
         {
             switch (value)
@@ -380,6 +385,8 @@ namespace esphome
                 target->set_power(nonpacket_.src, nonpacket_.command20.power);
                 target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(nonpacket_.command20.mode));
                 target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(nonpacket_.command20.fanspeed));
+                // TODO
+                target->set_altmode(nonpacket_.src, AltMode::None);
             }
             else if (nonpacket_.cmd == NonNasaCommand::CmdF8)
             {

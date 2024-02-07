@@ -1,6 +1,7 @@
 #include "esphome/core/log.h"
 #include "samsung_ac.h"
 #include "util.h"
+#include "conversions.h"
 #include <vector>
 
 namespace esphome
@@ -43,42 +44,19 @@ namespace esphome
 
       traits.set_supported_fan_modes(fan);
 
+      std::set<climate::ClimatePreset> preset;
+      preset.insert(climate::ClimatePreset::CLIMATE_PRESET_NONE);
+      preset.insert(climate::ClimatePreset::CLIMATE_PRESET_SLEEP);
+      traits.set_supported_presets(preset);
+
+      std::set<std::string> customPreset;
+      customPreset.insert("Quiet");
+      customPreset.insert("Fast");
+      customPreset.insert("Long Reach");
+      customPreset.insert("WindFree");
+      traits.set_supported_custom_presets(customPreset);
+
       return traits;
-    }
-
-    Mode climatemode_to_mode(climate::ClimateMode mode)
-    {
-      switch (mode)
-      {
-      case climate::ClimateMode::CLIMATE_MODE_COOL:
-        return Mode::Cool;
-      case climate::ClimateMode::CLIMATE_MODE_HEAT:
-        return Mode::Heat;
-      case climate::ClimateMode::CLIMATE_MODE_FAN_ONLY:
-        return Mode::Fan;
-      case climate::ClimateMode::CLIMATE_MODE_DRY:
-        return Mode::Dry;
-      case climate::ClimateMode::CLIMATE_MODE_AUTO:
-        return Mode::Auto;
-      default:
-        return Mode::Unknown;
-      }
-    }
-
-    FanMode climatefanmode_to_fanmode(climate::ClimateFanMode fanmode)
-    {
-      switch (fanmode)
-      {
-      case climate::ClimateFanMode::CLIMATE_FAN_LOW:
-        return FanMode::Low;
-      case climate::ClimateFanMode::CLIMATE_FAN_MIDDLE:
-        return FanMode::Mid;
-      case climate::ClimateFanMode::CLIMATE_FAN_HIGH:
-        return FanMode::Hight;
-      case climate::ClimateFanMode::CLIMATE_FAN_AUTO:
-      default:
-        return FanMode::Auto;
-      }
     }
 
     void Samsung_AC_Climate::control(const climate::ClimateCall &call)
@@ -107,6 +85,18 @@ namespace esphome
       {
         device->write_fanmode(climatefanmode_to_fanmode(fanmodeOpt.value()));
       }
+
+      auto presetOpt = call.get_preset();
+      if (presetOpt.has_value())
+      {
+        device->write_altmode(preset_to_altmode(presetOpt.value()));
+      }
+
+      auto customPresetOpt = call.get_custom_preset();
+      if (customPresetOpt.has_value())
+      {
+        device->write_altmode(custompreset_to_altmode(customPresetOpt.value()));
+      }
     }
 
     void Samsung_AC_Device::write_target_temperature(float value)
@@ -122,6 +112,11 @@ namespace esphome
     void Samsung_AC_Device::write_fanmode(FanMode value)
     {
       protocol->publish_fanmode_message(samsung_ac, address, value);
+    }
+
+    void Samsung_AC_Device::write_altmode(AltMode value)
+    {
+      protocol->publish_altmode_message(samsung_ac, address, value);
     }
 
     void Samsung_AC_Device::write_power(bool value)

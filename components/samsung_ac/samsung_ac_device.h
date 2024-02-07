@@ -9,6 +9,7 @@
 #include "esphome/components/climate/climate.h"
 #include "protocol.h"
 #include "samsung_ac.h"
+#include "conversions.h"
 
 namespace esphome
 {
@@ -38,40 +39,6 @@ namespace esphome
     class Samsung_AC_Mode_Select : public select::Select
     {
     public:
-      Mode str_to_mode(const std::string &value)
-      {
-        if (value == "Auto")
-          return Mode::Auto;
-        if (value == "Cool")
-          return Mode::Cool;
-        if (value == "Dry")
-          return Mode::Dry;
-        if (value == "Fan")
-          return Mode::Fan;
-        if (value == "Heat")
-          return Mode::Heat;
-        return Mode::Unknown;
-      }
-
-      std::string mode_to_str(Mode mode)
-      {
-        switch (mode)
-        {
-        case Mode::Auto:
-          return "Auto";
-        case Mode::Cool:
-          return "Cool";
-        case Mode::Dry:
-          return "Dry";
-        case Mode::Fan:
-          return "Fan";
-        case Mode::Heat:
-          return "Heat";
-        default:
-          return "";
-        };
-      }
-
       void publish_state_(Mode mode)
       {
         this->publish_state(mode_to_str(mode));
@@ -200,6 +167,22 @@ namespace esphome
         }
       }
 
+      void publish_altmode(AltMode value)
+      {
+        if (climate != nullptr)
+        {
+          auto preset = altmode_to_preset(value);
+          if (preset.has_value()) {
+            climate->preset = preset;
+            climate->custom_preset.reset();
+          } else {
+            climate->preset.reset();
+            climate->custom_preset = altmode_to_custompreset(value);
+          }
+          climate->publish_state();
+        }
+      }
+
       void publish_room_temperature(float value)
       {
         if (room_temperature != nullptr)
@@ -220,46 +203,12 @@ namespace esphome
       void write_target_temperature(float value);
       void write_mode(Mode value);
       void write_fanmode(FanMode value);
+      void write_altmode(AltMode value);
       void write_power(bool value);
 
     protected:
       Protocol *protocol{nullptr};
       Samsung_AC *samsung_ac{nullptr};
-
-      optional<climate::ClimateMode> mode_to_climatemode(Mode mode)
-      {
-        switch (mode)
-        {
-        case Mode::Auto:
-          return climate::ClimateMode::CLIMATE_MODE_AUTO;
-        case Mode::Cool:
-          return climate::ClimateMode::CLIMATE_MODE_COOL;
-        case Mode::Dry:
-          return climate::ClimateMode::CLIMATE_MODE_DRY;
-        case Mode::Fan:
-          return climate::ClimateMode::CLIMATE_MODE_FAN_ONLY;
-        case Mode::Heat:
-          return climate::ClimateMode::CLIMATE_MODE_HEAT;
-        default:
-          return nullopt;
-        }
-      }
-
-      climate::ClimateFanMode fanmode_to_climatefanmode(FanMode fanmode)
-      {
-        switch (fanmode)
-        {
-        case FanMode::Low:
-          return climate::ClimateFanMode::CLIMATE_FAN_LOW;
-        case FanMode::Mid:
-          return climate::ClimateFanMode::CLIMATE_FAN_MIDDLE;
-        case FanMode::Hight:
-          return climate::ClimateFanMode::CLIMATE_FAN_HIGH;
-        default:
-        case FanMode::Auto:
-          return climate::ClimateFanMode::CLIMATE_FAN_AUTO;
-        }
-      }
 
       void calc_and_publish_mode()
       {
