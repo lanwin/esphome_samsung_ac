@@ -245,7 +245,7 @@ void test_target()
     target.assert_values("00", false, 26.000000, 22.000000, Mode::Heat, FanMode::Auto);
 
     target = test_process_data("3200c8204f4f4efd821c004e8b34");
-    target.assert_values("00", true, 24.000000, 24.000000, Mode::Cool, FanMode::Hight);
+    target.assert_values("00", true, 24.000000, 24.000000, Mode::Cool, FanMode::High);
 }
 
 void test_previous_data_is_used_correctly()
