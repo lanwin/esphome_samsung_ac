@@ -28,51 +28,51 @@ namespace esphome
         std::string NonNasaCommand20::to_string()
         {
             std::string str;
-            str += "target_temp:" + std::to_string(target_temp) + ";";
-            str += "room_temp:" + std::to_string(room_temp) + ";";
-            str += "pipe_in:" + std::to_string(pipe_in) + ";";
-            str += "pipe_out:" + std::to_string(pipe_out) + ";";
-            str += "power:" + std::to_string(power ? 1 : 0) + ";";
-            str += "wind_direction:" + std::to_string((uint8_t)wind_direction) + ";";
-            str += "fanspeed:" + std::to_string((uint8_t)fanspeed) + ";";
-            str += "mode:" + long_to_hex((uint8_t)mode) + ";";
+            str += "target_temp:" + std::to_string(target_temp) + "; ";
+            str += "room_temp:" + std::to_string(room_temp) + "; ";
+            str += "pipe_in:" + std::to_string(pipe_in) + "; ";
+            str += "pipe_out:" + std::to_string(pipe_out) + "; ";
+            str += "power:" + std::to_string(power ? 1 : 0) + "; ";
+            str += "wind_direction:" + std::to_string((uint8_t)wind_direction) + "; ";
+            str += "fanspeed:" + std::to_string((uint8_t)fanspeed) + "; ";
+            str += "mode:" + long_to_hex((uint8_t)mode);
             return str;
         }
 
         std::string NonNasaCommandC0::to_string()
         {
             std::string str;
-            str += "ou_operation_mode:" + long_to_hex((uint8_t)outdoor_unit_operation_mode) + ";";
-            str += "ou_4way_valve:" + std::to_string(outdoor_unit_4_way_valve ? 1 : 0) + ";";
-            str += "ou_hot_gas_bypass:" + std::to_string(outdoor_unit_hot_gas_bypass ? 1 : 0) + ";";
-            str += "ou_compressor:" + std::to_string(outdoor_unit_compressor ? 1 : 0) + ";";
-            str += "ou_ac_fan:" + std::to_string(outdoor_unit_ac_fan ? 1 : 0) + ";";
-            str += "ou_outdoor_temp[°C]:" + std::to_string(outdoor_unit_outdoor_temp_c) + ";";
-            str += "ou_discharge_temp[°C]:" + std::to_string(outdoor_unit_discharge_temp_c) + ";";
-            str += "ou_condenser_mid_temp[°C]:" + std::to_string(outdoor_unit_condenser_mid_temp_c) + ";";
+            str += "ou_operation_mode:" + long_to_hex((uint8_t)outdoor_unit_operation_mode) + "; ";
+            str += "ou_4way_valve:" + std::to_string(outdoor_unit_4_way_valve ? 1 : 0) + "; ";
+            str += "ou_hot_gas_bypass:" + std::to_string(outdoor_unit_hot_gas_bypass ? 1 : 0) + "; ";
+            str += "ou_compressor:" + std::to_string(outdoor_unit_compressor ? 1 : 0) + "; ";
+            str += "ou_ac_fan:" + std::to_string(outdoor_unit_ac_fan ? 1 : 0) + "; ";
+            str += "ou_outdoor_temp[°C]:" + std::to_string(outdoor_unit_outdoor_temp_c) + "; ";
+            str += "ou_discharge_temp[°C]:" + std::to_string(outdoor_unit_discharge_temp_c) + "; ";
+            str += "ou_condenser_mid_temp[°C]:" + std::to_string(outdoor_unit_condenser_mid_temp_c);
             return str;
         }
 
         std::string NonNasaCommandC1::to_string()
         {
             std::string str;
-            str += "ou_sump_temp[°C]:" + std::to_string(outdoor_unit_sump_temp_c) + ";";
+            str += "ou_sump_temp[°C]:" + std::to_string(outdoor_unit_sump_temp_c);
             return str;
         }
 
         std::string NonNasaCommandF0::to_string()
         {
             std::string str;
-            str += "ou_freeze_protection:" + std::to_string(outdoor_unit_freeze_protection ? 1 : 0) + ";";
-            str += "ou_heating_overload:" + std::to_string(outdoor_unit_heating_overload ? 1 : 0) + ";";
-            str += "ou_defrost_control:" + std::to_string(outdoor_unit_defrost_control ? 1 : 0) + ";";
-            str += "ou_discharge_protection:" + std::to_string(outdoor_unit_discharge_protection ? 1 : 0) + ";";
-            str += "ou_current_control:" + std::to_string(outdoor_unit_current_control ? 1 : 0) + ";";
-            str += "inverter_order_frequency[Hz]:" + std::to_string(inverter_order_frequency_hz) + ";";
-            str += "inverter_target_frequency[Hz]:" + std::to_string(inverter_target_frequency_hz) + ";";
-            str += "inverter_current_frequency[Hz]:" + std::to_string(inverter_current_frequency_hz) + ";";
-            str += "ou_bldc_fan:" + std::to_string(outdoor_unit_bldc_fan ? 1 : 0) + ";";
-            str += "ou_error_code:" + long_to_hex((uint8_t)outdoor_unit_error_code) + ";";
+            str += "ou_freeze_protection:" + std::to_string(outdoor_unit_freeze_protection ? 1 : 0) + "; ";
+            str += "ou_heating_overload:" + std::to_string(outdoor_unit_heating_overload ? 1 : 0) + "; ";
+            str += "ou_defrost_control:" + std::to_string(outdoor_unit_defrost_control ? 1 : 0) + "; ";
+            str += "ou_discharge_protection:" + std::to_string(outdoor_unit_discharge_protection ? 1 : 0) + "; ";
+            str += "ou_current_control:" + std::to_string(outdoor_unit_current_control ? 1 : 0) + "; ";
+            str += "inverter_order_frequency[Hz]:" + std::to_string(inverter_order_frequency_hz) + "; ";
+            str += "inverter_target_frequency[Hz]:" + std::to_string(inverter_target_frequency_hz) + "; ";
+            str += "inverter_current_frequency[Hz]:" + std::to_string(inverter_current_frequency_hz) + "; ";
+            str += "ou_bldc_fan:" + std::to_string(outdoor_unit_bldc_fan ? 1 : 0) + "; ";
+            str += "ou_error_code:" + long_to_hex((uint8_t)outdoor_unit_error_code);
             return str;
         }
 
@@ -80,21 +80,21 @@ namespace esphome
         {
             std::string str;
             str += "Electronic Expansion Valves: ";
-            str += "EEV_A:" + std::to_string(outdoor_unit_EEV_A) + ";";
-            str += "EEV_B:" + std::to_string(outdoor_unit_EEV_B) + ";";
-            str += "EEV_C:" + std::to_string(outdoor_unit_EEV_C) + ";";
-            str += "EEV_D:" + std::to_string(outdoor_unit_EEV_D) + ";";
+            str += "EEV_A:" + std::to_string(outdoor_unit_EEV_A) + "; ";
+            str += "EEV_B:" + std::to_string(outdoor_unit_EEV_B) + "; ";
+            str += "EEV_C:" + std::to_string(outdoor_unit_EEV_C) + "; ";
+            str += "EEV_D:" + std::to_string(outdoor_unit_EEV_D);
             return str;
         }
 
         std::string NonNasaCommandF3::to_string()
         {
             std::string str;
-            str += "inverter_max_frequency[Hz]:" + std::to_string(inverter_max_frequency_hz) + ";";
-            str += "inverter_total_capacity_requirement[kW]:" + std::to_string(inverter_total_capacity_requirement_kw) + ";";
-            str += "inverter_current[ADC]:" + std::to_string(inverter_current_a) + ";";
-            str += "inverter_voltage[VDC]:" + std::to_string(inverter_voltage_v) + ";";
-            str += "inverter_power[W]:" + std::to_string(inverter_power_w) + ";";
+            str += "inverter_max_frequency[Hz]:" + std::to_string(inverter_max_frequency_hz) + "; ";
+            str += "inverter_total_capacity_requirement[kW]:" + std::to_string(inverter_total_capacity_requirement_kw) + "; ";
+            str += "inverter_current[ADC]:" + std::to_string(inverter_current_a) + "; ";
+            str += "inverter_voltage[VDC]:" + std::to_string(inverter_voltage_v) + "; ";
+            str += "inverter_power[W]:" + std::to_string(inverter_power_w);
             return str;
         }
 
