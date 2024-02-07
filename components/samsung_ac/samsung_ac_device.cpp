@@ -46,41 +46,6 @@ namespace esphome
       return traits;
     }
 
-    Mode climatemode_to_mode(climate::ClimateMode mode)
-    {
-      switch (mode)
-      {
-      case climate::ClimateMode::CLIMATE_MODE_COOL:
-        return Mode::Cool;
-      case climate::ClimateMode::CLIMATE_MODE_HEAT:
-        return Mode::Heat;
-      case climate::ClimateMode::CLIMATE_MODE_FAN_ONLY:
-        return Mode::Fan;
-      case climate::ClimateMode::CLIMATE_MODE_DRY:
-        return Mode::Dry;
-      case climate::ClimateMode::CLIMATE_MODE_AUTO:
-        return Mode::Auto;
-      default:
-        return Mode::Unknown;
-      }
-    }
-
-    FanMode climatefanmode_to_fanmode(climate::ClimateFanMode fanmode)
-    {
-      switch (fanmode)
-      {
-      case climate::ClimateFanMode::CLIMATE_FAN_LOW:
-        return FanMode::Low;
-      case climate::ClimateFanMode::CLIMATE_FAN_MIDDLE:
-        return FanMode::Mid;
-      case climate::ClimateFanMode::CLIMATE_FAN_HIGH:
-        return FanMode::Hight;
-      case climate::ClimateFanMode::CLIMATE_FAN_AUTO:
-      default:
-        return FanMode::Auto;
-      }
-    }
-
     void Samsung_AC_Climate::control(const climate::ClimateCall &call)
     {
       traits();
