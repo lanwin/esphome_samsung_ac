@@ -459,6 +459,13 @@ namespace esphome
                 packet.messages.push_back(power);
             }
 
+            if (request.alt_mode)
+            {
+                MessageSet altmode(MessageNumber::ENUM_in_alt_mode);
+                altmode.value = altmode_to_nasa_altmode(request.alt_mode.value());
+                packet.messages.push_back(altmode);
+            }
+
             if (request.swing_mode)
             {
                 MessageSet hl_swing(MessageNumber::ENUM_in_louver_hl_swing);
