@@ -425,12 +425,12 @@ namespace esphome
 
         void NonNasaProtocol::publish_altmode_message(MessageTarget *target, const std::string &address, AltMode value)
         {
-            // TODO
+            ESP_LOGW(TAG, "change altmode is currently not implemented");
         }
 
         void NonNasaProtocol::publish_swing_mode_message(MessageTarget *target, const std::string &address, SwingMode value)
         {
-            // TODO
+            ESP_LOGW(TAG, "change swingmode is currently not implemented");
         }
 
         Mode nonnasa_mode_to_mode(NonNasaMode value)
