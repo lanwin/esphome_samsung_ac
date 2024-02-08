@@ -28,25 +28,73 @@ namespace esphome
         std::string NonNasaCommand20::to_string()
         {
             std::string str;
-            str += "target_temp:" + std::to_string(target_temp) + ";";
-            str += "room_temp:" + std::to_string(room_temp) + ";";
-            str += "pipe_in:" + std::to_string(pipe_in) + ";";
-            str += "pipe_out:" + std::to_string(pipe_out) + ";";
-            str += "power:" + std::to_string(power ? 1 : 0) + ";";
-            str += "wind_direction:" + std::to_string((uint8_t)wind_direction) + ";";
-            str += "fanspeed:" + std::to_string((uint8_t)fanspeed) + ";";
-            str += "mode:" + long_to_hex((uint8_t)mode) + ";";
+            str += "target_temp:" + std::to_string(target_temp) + "; ";
+            str += "room_temp:" + std::to_string(room_temp) + "; ";
+            str += "pipe_in:" + std::to_string(pipe_in) + "; ";
+            str += "pipe_out:" + std::to_string(pipe_out) + "; ";
+            str += "power:" + std::to_string(power ? 1 : 0) + "; ";
+            str += "wind_direction:" + std::to_string((uint8_t)wind_direction) + "; ";
+            str += "fanspeed:" + std::to_string((uint8_t)fanspeed) + "; ";
+            str += "mode:" + long_to_hex((uint8_t)mode);
+            return str;
+        }
+
+        std::string NonNasaCommandC0::to_string()
+        {
+            std::string str;
+            str += "ou_operation_mode:" + long_to_hex((uint8_t)outdoor_unit_operation_mode) + "; ";
+            str += "ou_4way_valve:" + std::to_string(outdoor_unit_4_way_valve ? 1 : 0) + "; ";
+            str += "ou_hot_gas_bypass:" + std::to_string(outdoor_unit_hot_gas_bypass ? 1 : 0) + "; ";
+            str += "ou_compressor:" + std::to_string(outdoor_unit_compressor ? 1 : 0) + "; ";
+            str += "ou_ac_fan:" + std::to_string(outdoor_unit_ac_fan ? 1 : 0) + "; ";
+            str += "ou_outdoor_temp[°C]:" + std::to_string(outdoor_unit_outdoor_temp_c) + "; ";
+            str += "ou_discharge_temp[°C]:" + std::to_string(outdoor_unit_discharge_temp_c) + "; ";
+            str += "ou_condenser_mid_temp[°C]:" + std::to_string(outdoor_unit_condenser_mid_temp_c);
+            return str;
+        }
+
+        std::string NonNasaCommandC1::to_string()
+        {
+            std::string str;
+            str += "ou_sump_temp[°C]:" + std::to_string(outdoor_unit_sump_temp_c);
+            return str;
+        }
+
+        std::string NonNasaCommandF0::to_string()
+        {
+            std::string str;
+            str += "ou_freeze_protection:" + std::to_string(outdoor_unit_freeze_protection ? 1 : 0) + "; ";
+            str += "ou_heating_overload:" + std::to_string(outdoor_unit_heating_overload ? 1 : 0) + "; ";
+            str += "ou_defrost_control:" + std::to_string(outdoor_unit_defrost_control ? 1 : 0) + "; ";
+            str += "ou_discharge_protection:" + std::to_string(outdoor_unit_discharge_protection ? 1 : 0) + "; ";
+            str += "ou_current_control:" + std::to_string(outdoor_unit_current_control ? 1 : 0) + "; ";
+            str += "inverter_order_frequency[Hz]:" + std::to_string(inverter_order_frequency_hz) + "; ";
+            str += "inverter_target_frequency[Hz]:" + std::to_string(inverter_target_frequency_hz) + "; ";
+            str += "inverter_current_frequency[Hz]:" + std::to_string(inverter_current_frequency_hz) + "; ";
+            str += "ou_bldc_fan:" + std::to_string(outdoor_unit_bldc_fan ? 1 : 0) + "; ";
+            str += "ou_error_code:" + long_to_hex((uint8_t)outdoor_unit_error_code);
+            return str;
+        }
+
+        std::string NonNasaCommandF1::to_string()
+        {
+            std::string str;
+            str += "Electronic Expansion Valves: ";
+            str += "EEV_A:" + std::to_string(outdoor_unit_EEV_A) + "; ";
+            str += "EEV_B:" + std::to_string(outdoor_unit_EEV_B) + "; ";
+            str += "EEV_C:" + std::to_string(outdoor_unit_EEV_C) + "; ";
+            str += "EEV_D:" + std::to_string(outdoor_unit_EEV_D);
             return str;
         }
 
         std::string NonNasaCommandF3::to_string()
         {
             std::string str;
-            str += "inverter_max_frequency[Hz]:" + std::to_string(inverter_max_frequency_hz) + ";";
-            str += "inverter_total_capacity_requirement[kW]:" + std::to_string(inverter_total_capacity_requirement_kw) + ";";
-            str += "inverter_current[ADC]:" + std::to_string(inverter_current_a) + ";";
-            str += "inverter_voltage[VDC]:" + std::to_string(inverter_voltage_v) + ";";
-            str += "inverter_power[W]:" + std::to_string(inverter_power_w) + ";";
+            str += "inverter_max_frequency[Hz]:" + std::to_string(inverter_max_frequency_hz) + "; ";
+            str += "inverter_total_capacity_requirement[kW]:" + std::to_string(inverter_total_capacity_requirement_kw) + "; ";
+            str += "inverter_current[ADC]:" + std::to_string(inverter_current_a) + "; ";
+            str += "inverter_voltage[VDC]:" + std::to_string(inverter_voltage_v) + "; ";
+            str += "inverter_power[W]:" + std::to_string(inverter_power_w);
             return str;
         }
 
@@ -64,19 +112,34 @@ namespace esphome
                 str += "command20:{" + command20.to_string() + "}";
                 break;
             }
+            case NonNasaCommand::CmdC0:
+            {
+                str += "commandC0:{" + commandC0.to_string() + "}";
+                break;
+            }
+            case NonNasaCommand::CmdC1:
+            {
+                str += "commandC1:{" + commandC1.to_string() + "}";
+                break;
+            }
             case NonNasaCommand::CmdC6:
             {
                 str += "commandC6:{" + commandC6.to_string() + "}";
                 break;
             }
+            case NonNasaCommand::CmdF0:
+            {
+                str += "commandF0:{" + commandF0.to_string() + "}";
+                break;
+            }
+            case NonNasaCommand::CmdF1:
+            {
+                str += "commandF1:{" + commandF1.to_string() + "}";
+                break;
+            }
             case NonNasaCommand::CmdF3:
             {
                 str += "commandF3:{" + commandF3.to_string() + "}";
-                break;
-            }
-            case NonNasaCommand::CmdF8:
-            {
-                str += "commandF8:{" + commandF8.to_string() + "}";
                 break;
             }
             default:
@@ -131,23 +194,62 @@ namespace esphome
 
                 return DecodeResult::Ok;
             }
+            case NonNasaCommand::CmdC0: // outdoor unit data
+            {
+                commandC0.outdoor_unit_operation_mode = data[4]; // modes need to be specified
+                commandC0.outdoor_unit_4_way_valve = data[6] & 0b10000000;
+                commandC0.outdoor_unit_hot_gas_bypass = data[6] & 0b00100000;
+                commandC0.outdoor_unit_compressor = data[6] & 0b00000100;
+                commandC0.outdoor_unit_ac_fan = data[7] & 0b00000011;
+                commandC0.outdoor_unit_outdoor_temp_c = data[8] - 55;
+                commandC0.outdoor_unit_discharge_temp_c = data[10] - 55;
+                commandC0.outdoor_unit_condenser_mid_temp_c = data[11] - 55;
+                return DecodeResult::Ok;
+            }
+            case NonNasaCommand::CmdC1: // outdoor unit data
+            {
+                commandC1.outdoor_unit_sump_temp_c = data[8] - 55;
+                return DecodeResult::Ok;
+            }
             case NonNasaCommand::CmdC6:
             {
                 commandC6.control_status = data[4];
                 return DecodeResult::Ok;
             }
+            case NonNasaCommand::CmdF0: // outdoor unit data
+            {
+                commandF0.outdoor_unit_freeze_protection = data[4] & 0b10000000;
+                commandF0.outdoor_unit_heating_overload = data[4] & 0b01000000;
+                commandF0.outdoor_unit_defrost_control = data[4] & 0b00100000;
+                commandF0.outdoor_unit_discharge_protection = data[4] & 0b00010000;
+                commandF0.outdoor_unit_current_control = data[4] & 0b00001000;
+                commandF0.inverter_order_frequency_hz = data[5];
+                commandF0.inverter_target_frequency_hz = data[6];
+                commandF0.inverter_current_frequency_hz = data[7];
+                commandF0.outdoor_unit_bldc_fan = data[8] & 0b00000011; // not sure if correct, i have no ou with BLDC-fan
+                commandF0.outdoor_unit_error_code = data[10];
+                return DecodeResult::Ok;
+            }
+            case NonNasaCommand::CmdF1: // outdoor unit eev-values
+            {
+                commandF1.outdoor_unit_EEV_A = (data[4] * 256) + data[5];
+                commandF1.outdoor_unit_EEV_B = (data[6] * 256) + data[7];
+                commandF1.outdoor_unit_EEV_C = (data[8] * 256) + data[9];
+                commandF1.outdoor_unit_EEV_D = (data[10] * 256) + data[11];
+                return DecodeResult::Ok;
+            }
             case NonNasaCommand::CmdF3: // power consumption
             {
                 // Maximum frequency for Inverter (compressor-motor of outdoor-unit) in Hz
-                commandF3.inverter_max_frequency_hz = data[4]; 
+                commandF3.inverter_max_frequency_hz = data[4];
                 // Sum of required heating/cooling capacity ordered by the indoor-units in kW
-                commandF3.inverter_total_capacity_requirement_kw = (float)data[5] / 10; 
+                commandF3.inverter_total_capacity_requirement_kw = (float)data[5] / 10;
                 // DC-current to the inverter of outdoor-unit in A
-                commandF3.inverter_current_a = (float)data[8] / 10; 
+                commandF3.inverter_current_a = (float)data[8] / 10;
                 // voltage of the DC-link to inverter in V
-                commandF3.inverter_voltage_v = (float)data[9] * 2; 
+                commandF3.inverter_voltage_v = (float)data[9] * 2;
                 //Power consumption of the outdoo unit inverter in W
-                commandF3.inverter_power_w = commandF3.inverter_current_a * commandF3.inverter_voltage_v; 
+                commandF3.inverter_power_w = commandF3.inverter_current_a * commandF3.inverter_voltage_v;
                 return DecodeResult::Ok;
             }
             default:
