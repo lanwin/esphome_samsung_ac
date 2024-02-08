@@ -264,7 +264,9 @@ void test_previous_data_is_used_correctly()
     // prepare last values
     test_process_data("3200c8204d51500001100051e434", target);
 
-    get_protocol("00")->publish_power_message(&target, "00", false);
+    ProtocolRequest req1;
+    req1.power = false;
+    get_protocol("00")->publish_request(&target, "00", req1);
     test_process_data("32c8f0f80345f0c913000000ac34", target); // trigger publish
 
     NonNasaRequest request1;
@@ -281,7 +283,9 @@ void test_previous_data_is_used_correctly()
     // prepare last values
     test_process_data("3201c8204f4f4efd821c004e8a34", target);
 
-    get_protocol("01")->publish_power_message(&target, "01", true);
+    ProtocolRequest req2;
+    req2.power = true;
+    get_protocol("01")->publish_request(&target, "01", req2);
     test_process_data("32c8f0f80345f0c913000000ac34", target); // trigger publish
 
     NonNasaRequest request2;

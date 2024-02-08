@@ -42,40 +42,8 @@ void test_process_data()
 {
 }
 
-Packet test_foo(ProtocolRequest request, const std::string &address)
-{
-    Packet packet = Packet::createa_partial(Address::parse(address), DataType::Request);
-
-    if (request.mode)
-    {
-        request.power = true; // ensure system turns on when mode is set
-
-        MessageSet mode(MessageNumber::ENUM_in_operation_mode);
-        mode.value = (int)request.mode.value();
-        packet.messages.push_back(mode);
-    }
-
-    if (request.power)
-    {
-        MessageSet power(MessageNumber::ENUM_in_operation_power);
-        power.value = request.power.value() ? 1 : 0;
-        packet.messages.push_back(power);
-    }
-
-    return packet;
-}
-
 int main(int argc, char *argv[])
 {
-    ProtocolRequest request;
-    request.power = true;
-    request.mode = Mode::Heat;
-
-    auto p = test_foo(request, "");
-
-    std::cout << p.to_string() << std::endl;
-
-    return 0;
     test_nasa_1();
     test_nasa_2();
     test_process_data();
