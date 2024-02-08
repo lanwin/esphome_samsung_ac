@@ -359,20 +359,6 @@ namespace esphome
 
         std::queue<NonNasaRequest> nonnasa_requests;
 
-        void NonNasaProtocol::publish_power_message(MessageTarget *target, const std::string &address, bool value)
-        {
-            auto request = NonNasaRequest::create(address);
-            request.power = value;
-            nonnasa_requests.push(request);
-        }
-
-        void NonNasaProtocol::publish_target_temp_message(MessageTarget *target, const std::string &address, float value)
-        {
-            auto request = NonNasaRequest::create(address);
-            request.target_temp = value;
-            nonnasa_requests.push(request);
-        }
-
         NonNasaMode mode_to_nonnasa_mode(Mode value)
         {
             switch (value)
@@ -392,14 +378,6 @@ namespace esphome
             }
         }
 
-        void NonNasaProtocol::publish_mode_message(MessageTarget *target, const std::string &address, Mode value)
-        {
-            auto request = NonNasaRequest::create(address);
-            request.power = true;
-            request.mode = mode_to_nonnasa_mode(value);
-            nonnasa_requests.push(request);
-        }
-
         NonNasaFanspeed fanmode_to_nonnasa_fanspeed(FanMode value)
         {
             switch (value)
@@ -414,23 +392,6 @@ namespace esphome
             default:
                 return NonNasaFanspeed::Auto;
             }
-        }
-
-        void NonNasaProtocol::publish_fanmode_message(MessageTarget *target, const std::string &address, FanMode value)
-        {
-            auto request = NonNasaRequest::create(address);
-            request.fanspeed = fanmode_to_nonnasa_fanspeed(value);
-            nonnasa_requests.push(request);
-        }
-
-        void NonNasaProtocol::publish_altmode_message(MessageTarget *target, const std::string &address, AltMode value)
-        {
-            ESP_LOGW(TAG, "change altmode is currently not implemented");
-        }
-
-        void NonNasaProtocol::publish_swing_mode_message(MessageTarget *target, const std::string &address, SwingMode value)
-        {
-            ESP_LOGW(TAG, "change swingmode is currently not implemented");
         }
 
         void NonNasaProtocol::publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request)

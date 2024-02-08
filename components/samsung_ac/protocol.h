@@ -92,12 +92,6 @@ namespace esphome
         {
         public:
             virtual void publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request) = 0;
-            virtual void publish_power_message(MessageTarget *target, const std::string &address, bool value) = 0;
-            virtual void publish_target_temp_message(MessageTarget *target, const std::string &address, float value) = 0;
-            virtual void publish_mode_message(MessageTarget *target, const std::string &address, Mode value) = 0;
-            virtual void publish_fanmode_message(MessageTarget *target, const std::string &address, FanMode value) = 0;
-            virtual void publish_altmode_message(MessageTarget *target, const std::string &address, AltMode value) = 0;
-            virtual void publish_swing_mode_message(MessageTarget *target, const std::string &address, SwingMode value) = 0;
         };
 
         enum class DataResult
