@@ -459,6 +459,13 @@ namespace esphome
                 packet.messages.push_back(power);
             }
 
+            if (request.fan_mode)
+            {
+                MessageSet fanmode(MessageNumber::ENUM_in_fan_mode);
+                fanmode.value = fanmode_to_nasa_fanmode(request.fan_mode.value());
+                packet.messages.push_back(fanmode);
+            }
+
             if (request.alt_mode)
             {
                 MessageSet altmode(MessageNumber::ENUM_in_alt_mode);

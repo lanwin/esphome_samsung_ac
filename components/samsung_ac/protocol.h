@@ -82,6 +82,7 @@ namespace esphome
         public:
             optional<bool> power;
             optional<Mode> mode;
+            optional<FanMode> fan_mode;
             optional<SwingMode> swing_mode;
             optional<AltMode> alt_mode;
         };
