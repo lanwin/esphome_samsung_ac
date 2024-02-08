@@ -65,63 +65,63 @@ namespace esphome
       {
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
-          dev->publish_room_temperature(value);
+          dev->update_room_temperature(value);
       }
 
       void /*MessageTarget::*/ set_room_humidity(const std::string address, float value) override
       {
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
-          dev->publish_room_humidity(value);
+          dev->update_room_humidity(value);
       }
 
       void /*MessageTarget::*/ set_target_temperature(const std::string address, float value) override
       {
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
-          dev->publish_target_temperature(value);
+          dev->update_target_temperature(value);
       }
 
       void /*MessageTarget::*/ set_power(const std::string address, bool value) override
       {
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
-          dev->publish_power(value);
+          dev->update_power(value);
       }
 
       void /*MessageTarget::*/ set_mode(const std::string address, Mode mode) override
       {
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
-          dev->publish_mode(mode);
+          dev->update_mode(mode);
       }
 
       void /*MessageTarget::*/ set_fanmode(const std::string address, FanMode fanmode) override
       {
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
-          dev->publish_fanmode(fanmode);
+          dev->update_fanmode(fanmode);
       }
 
       void /*MessageTarget::*/ set_altmode(const std::string address, AltMode altmode) override
       {
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
-          dev->publish_altmode(altmode);
+          dev->update_altmode(altmode);
       }
 
       void /*MessageTarget::*/ set_swing_vertical(const std::string address, bool vertical) override
       {
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
-          dev->publish_swing_vertical(vertical);
+          dev->update_swing_vertical(vertical);
       }
 
       void /*MessageTarget::*/ set_swing_horizontal(const std::string address, bool horizontal) override
       {
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
-          dev->publish_swing_horizontal(horizontal);
+          dev->update_swing_horizontal(horizontal);
       }
 
     protected:

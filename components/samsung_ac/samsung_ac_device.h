@@ -132,7 +132,7 @@ namespace esphome
         climate->device = this;
       }
 
-      void publish_target_temperature(float value)
+      void update_target_temperature(float value)
       {
         if (target_temperature != nullptr)
           target_temperature->publish_state(value);
@@ -146,7 +146,7 @@ namespace esphome
       optional<bool> _cur_power;
       optional<Mode> _cur_mode;
 
-      void publish_power(bool value)
+      void update_power(bool value)
       {
         _cur_power = value;
         if (power != nullptr)
@@ -155,7 +155,7 @@ namespace esphome
           calc_and_publish_mode();
       }
 
-      void publish_mode(Mode value)
+      void update_mode(Mode value)
       {
         _cur_mode = value;
         if (mode != nullptr)
@@ -164,7 +164,7 @@ namespace esphome
           calc_and_publish_mode();
       }
 
-      void publish_fanmode(FanMode value)
+      void update_fanmode(FanMode value)
       {
         if (climate != nullptr)
         {
@@ -185,7 +185,7 @@ namespace esphome
         }
       }
 
-      void publish_altmode(AltMode value)
+      void update_altmode(AltMode value)
       {
         if (climate != nullptr)
         {
@@ -204,7 +204,7 @@ namespace esphome
         }
       }
 
-      void publish_swing_vertical(bool value)
+      void update_swing_vertical(bool value)
       {
         if (climate != nullptr)
         {
@@ -213,7 +213,7 @@ namespace esphome
         }
       }
 
-      void publish_swing_horizontal(bool value)
+      void update_swing_horizontal(bool value)
       {
         if (climate != nullptr)
         {
@@ -222,13 +222,7 @@ namespace esphome
         }
       }
 
-      climate::ClimateSwingMode combine(climate::ClimateSwingMode climateSwingMode, uint8_t mask, bool value)
-      {
-        uint8_t swingMode = static_cast<uint8_t>(climateswingmode_to_swingmode(climateSwingMode));
-        return swingmode_to_climateswingmode(static_cast<SwingMode>(value ? (swingMode | mask) : (swingMode & ~mask)));
-      }
-
-      void publish_room_temperature(float value)
+      void update_room_temperature(float value)
       {
         if (room_temperature != nullptr)
           room_temperature->publish_state(value);
@@ -239,7 +233,7 @@ namespace esphome
         }
       }
 
-      void publish_room_humidity(float value)
+      void update_room_humidity(float value)
       {
         if (room_humidity != nullptr)
           room_humidity->publish_state(value);
@@ -253,6 +247,12 @@ namespace esphome
     protected:
       Protocol *protocol{nullptr};
       MessageTarget *target{nullptr};
+
+      climate::ClimateSwingMode combine(climate::ClimateSwingMode climateSwingMode, uint8_t mask, bool value)
+      {
+        uint8_t swingMode = static_cast<uint8_t>(climateswingmode_to_swingmode(climateSwingMode));
+        return swingmode_to_climateswingmode(static_cast<SwingMode>(value ? (swingMode | mask) : (swingMode & ~mask)));
+      }
 
       void calc_and_publish_mode()
       {
