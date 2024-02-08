@@ -68,10 +68,10 @@ namespace esphome
     class Samsung_AC_Device
     {
     public:
-      Samsung_AC_Device(const std::string &address, Samsung_AC *samsung_ac)
+      Samsung_AC_Device(const std::string &address, MessageTarget *target)
       {
         this->address = address;
-        this->samsung_ac = samsung_ac;
+        this->target = target;
         this->protocol = get_protocol(address);
       }
 
@@ -247,12 +247,12 @@ namespace esphome
 
       void publish_request(ProtocolRequest &request)
       {
-        protocol->publish_request((MessageTarget *)samsung_ac, address, request);
+        protocol->publish_request(target, address, request);
       }
 
     protected:
       Protocol *protocol{nullptr};
-      Samsung_AC *samsung_ac{nullptr};
+      MessageTarget *target{nullptr};
 
       void calc_and_publish_mode()
       {

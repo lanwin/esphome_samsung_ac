@@ -443,6 +443,8 @@ namespace esphome
 
             ESP_LOGW(TAG, "publish packet %s", packet.to_string().c_str());
 
+            out.push_back(packet);
+
             auto data = packet.encode();
             target->publish_data(data);
         }
