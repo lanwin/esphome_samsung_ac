@@ -459,6 +459,13 @@ namespace esphome
                 packet.messages.push_back(power);
             }
 
+            if (request.target_temp)
+            {
+                MessageSet targettemp(MessageNumber::VAR_in_temp_target_f);
+                targettemp.value = request.target_temp.value() * 10.0;
+                packet.messages.push_back(targettemp);
+            }
+
             if (request.fan_mode)
             {
                 MessageSet fanmode(MessageNumber::ENUM_in_fan_mode);
