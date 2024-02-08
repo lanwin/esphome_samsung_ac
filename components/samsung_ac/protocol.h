@@ -82,6 +82,7 @@ namespace esphome
         public:
             optional<bool> power;
             optional<Mode> mode;
+            optional<SwingMode> swing_mode;
         };
 
         class Protocol

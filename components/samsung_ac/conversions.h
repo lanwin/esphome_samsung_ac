@@ -26,6 +26,5 @@ namespace esphome
 
     climate::ClimateSwingMode swingmode_to_climateswingmode(SwingMode swingMode);
     SwingMode climateswingmode_to_swingmode(climate::ClimateSwingMode swingMode);
-    
   } // namespace samsung_ac
 } // namespace esphome

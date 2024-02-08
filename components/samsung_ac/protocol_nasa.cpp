@@ -459,8 +459,21 @@ namespace esphome
                 packet.messages.push_back(power);
             }
 
+            if (request.swing_mode)
+            {
+                MessageSet hl_swing(MessageNumber::ENUM_in_louver_hl_swing);
+                hl_swing.value = static_cast<uint8_t>(request.swing_mode.value()) & 1;
+                packet.messages.push_back(hl_swing);
+
+                MessageSet lr_swing(MessageNumber::ENUM_in_louver_lr_swing);
+                lr_swing.value = (static_cast<uint8_t>(request.swing_mode.value()) >> 1) & 1;
+                packet.messages.push_back(lr_swing);
+            }
+
             if (packet.messages.size() == 0)
                 return;
+
+            ESP_LOGW(TAG, "publish packet %s", packet.to_string().c_str());
 
             auto data = packet.encode();
             target->publish_data(data);
