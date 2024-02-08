@@ -248,7 +248,7 @@ namespace esphome
                 commandF3.inverter_current_a = (float)data[8] / 10;
                 // voltage of the DC-link to inverter in V
                 commandF3.inverter_voltage_v = (float)data[9] * 2;
-                //Power consumption of the outdoo unit inverter in W
+                // Power consumption of the outdoo unit inverter in W
                 commandF3.inverter_power_w = commandF3.inverter_current_a * commandF3.inverter_voltage_v;
                 return DecodeResult::Ok;
             }
@@ -475,6 +475,17 @@ namespace esphome
             return nonpacket_.decode(data);
         }
 
+        void send_packages(MessageTarget *target, uint8_t delay_ms)
+        {
+            while (nonnasa_requests.size() > 0)
+            {
+                delay(delay_ms);
+                auto data = nonnasa_requests.front().encode();
+                target->publish_data(data);
+                nonnasa_requests.pop();
+            }
+        }
+
         void process_non_nasa_packet(MessageTarget *target)
         {
             if (debug_log_packets)
@@ -501,19 +512,20 @@ namespace esphome
             else if (nonpacket_.cmd == NonNasaCommand::CmdF8)
             {
                 // After cmd F8 (src:c8 dst:f0) is a lage gap in communication, time to send data
-
                 if (nonpacket_.src == "c8" && nonpacket_.dst == "f0")
                 {
-                    while (nonnasa_requests.size() > 0)
-                    {
-                        auto data = nonnasa_requests.front().encode();
-                        // the communication needs a delay from cmdf8 to send the data.
-                        // series of test-delay-times: 1ms: no reaction, 7ms reactions half the time, 10ms very often a reaction (95%) -> delay on 20ms should be safe
-                        // the gap is around ~300ms
-                        delay(20);
-                        target->publish_data(data);
-                        nonnasa_requests.pop();
-                    }
+                    // the communication needs a delay from cmdf8 to send the data.
+                    // series of test-delay-times: 1ms: no reaction, 7ms reactions half the time, 10ms very often a reaction (95%) -> delay on 20ms should be safe
+                    // the gap is around ~300ms
+                    send_packages(target, 20);
+                }
+            }
+            else if (nonpacket_.cmd == NonNasaCommand::CmdC6)
+            {
+                // If the control status is set we can send also
+                if (nonpacket_.src == "c8" && nonpacket_.dst == "d0" && nonpacket_.commandC6.control_status == true)
+                {
+                    send_packages(target, 20);
                 }
             }
         }
