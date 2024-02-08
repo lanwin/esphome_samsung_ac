@@ -475,7 +475,7 @@ namespace esphome
             return nonpacket_.decode(data);
         }
 
-        void send_packages(MessageTarget *target, uint8_t delay_ms)
+        void send_requests(MessageTarget *target, uint8_t delay_ms)
         {
             while (nonnasa_requests.size() > 0)
             {
@@ -517,7 +517,7 @@ namespace esphome
                     // the communication needs a delay from cmdf8 to send the data.
                     // series of test-delay-times: 1ms: no reaction, 7ms reactions half the time, 10ms very often a reaction (95%) -> delay on 20ms should be safe
                     // the gap is around ~300ms
-                    send_packages(target, 20);
+                    send_requests(target, 20);
                 }
             }
             else if (nonpacket_.cmd == NonNasaCommand::CmdC6)
@@ -525,7 +525,7 @@ namespace esphome
                 // If the control status is set we can send also
                 if (nonpacket_.src == "c8" && nonpacket_.dst == "d0" && nonpacket_.commandC6.control_status == true)
                 {
-                    send_packages(target, 20);
+                    send_requests(target, 20);
                 }
             }
         }
