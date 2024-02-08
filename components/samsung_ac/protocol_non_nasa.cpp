@@ -446,6 +446,22 @@ namespace esphome
             if (request.power)
                 req.power = request.power.value();
 
+            if (request.target_temp)
+                req.target_temp = request.target_temp.value();
+
+            if (request.fan_mode)
+                req.fanspeed = fanmode_to_nonnasa_fanspeed(request.fan_mode.value());
+
+            if (request.alt_mode)
+            {
+                ESP_LOGW(TAG, "change altmode is currently not implemented");
+            }
+
+            if (request.swing_mode)
+            {
+                ESP_LOGW(TAG, "change swingmode is currently not implemented");
+            }
+
             nonnasa_requests.push(req);
         }
 
