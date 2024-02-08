@@ -98,7 +98,9 @@ namespace esphome
         power = switch_;
         power->write_state_ = [this](bool value)
         {
-          write_power(value);
+          ProtocolRequest request;
+          request.power = value;
+          publish_request(request);
         };
       }
 
@@ -107,7 +109,9 @@ namespace esphome
         mode = select;
         mode->write_state_ = [this](Mode value)
         {
-          write_mode(value);
+          ProtocolRequest request;
+          request.mode = value;
+          publish_request(request);
         };
       }
 
@@ -116,7 +120,9 @@ namespace esphome
         target_temperature = number;
         target_temperature->write_state_ = [this](float value)
         {
-          write_target_temperature(value);
+          ProtocolRequest request;
+          request.target_temp = value;
+          publish_request(request);
         };
       };
 
@@ -165,10 +171,13 @@ namespace esphome
           climate->fan_mode = fanmode_to_climatefanmode(value);
 
           auto fanmode = fanmode_to_climatefanmode(value);
-          if (fanmode.has_value()) {
+          if (fanmode.has_value())
+          {
             climate->fan_mode = fanmode;
             climate->custom_fan_mode.reset();
-          } else {
+          }
+          else
+          {
             climate->fan_mode.reset();
             climate->custom_fan_mode = fanmode_to_custom_climatefanmode(value);
           }
@@ -181,10 +190,13 @@ namespace esphome
         if (climate != nullptr)
         {
           auto preset = altmode_to_preset(value);
-          if (preset.has_value()) {
+          if (preset.has_value())
+          {
             climate->preset = preset;
             climate->custom_preset.reset();
-          } else {
+          }
+          else
+          {
             climate->preset.reset();
             climate->custom_preset = altmode_to_custompreset(value);
           }
@@ -233,12 +245,10 @@ namespace esphome
           room_humidity->publish_state(value);
       }
 
-      void write_target_temperature(float value);
-      void write_mode(Mode value);
-      void write_fanmode(FanMode value);
-      void write_altmode(AltMode value);
-      void write_swing_mode(SwingMode value);
-      void write_power(bool value);
+      void publish_request(ProtocolRequest &request)
+      {
+        protocol->publish_request((MessageTarget *)samsung_ac, address, request);
+      }
 
     protected:
       Protocol *protocol{nullptr};
