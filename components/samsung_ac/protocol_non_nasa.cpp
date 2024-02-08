@@ -359,20 +359,6 @@ namespace esphome
 
         std::queue<NonNasaRequest> nonnasa_requests;
 
-        void NonNasaProtocol::publish_power_message(MessageTarget *target, const std::string &address, bool value)
-        {
-            auto request = NonNasaRequest::create(address);
-            request.power = value;
-            nonnasa_requests.push(request);
-        }
-
-        void NonNasaProtocol::publish_target_temp_message(MessageTarget *target, const std::string &address, float value)
-        {
-            auto request = NonNasaRequest::create(address);
-            request.target_temp = value;
-            nonnasa_requests.push(request);
-        }
-
         NonNasaMode mode_to_nonnasa_mode(Mode value)
         {
             switch (value)
@@ -392,14 +378,6 @@ namespace esphome
             }
         }
 
-        void NonNasaProtocol::publish_mode_message(MessageTarget *target, const std::string &address, Mode value)
-        {
-            auto request = NonNasaRequest::create(address);
-            request.power = true;
-            request.mode = mode_to_nonnasa_mode(value);
-            nonnasa_requests.push(request);
-        }
-
         NonNasaFanspeed fanmode_to_nonnasa_fanspeed(FanMode value)
         {
             switch (value)
@@ -416,21 +394,36 @@ namespace esphome
             }
         }
 
-        void NonNasaProtocol::publish_fanmode_message(MessageTarget *target, const std::string &address, FanMode value)
+        void NonNasaProtocol::publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request)
         {
-            auto request = NonNasaRequest::create(address);
-            request.fanspeed = fanmode_to_nonnasa_fanspeed(value);
-            nonnasa_requests.push(request);
-        }
+            auto req = NonNasaRequest::create(address);
 
-        void NonNasaProtocol::publish_altmode_message(MessageTarget *target, const std::string &address, AltMode value)
-        {
-            ESP_LOGW(TAG, "change altmode is currently not implemented");
-        }
+            if (request.mode)
+            {
+                request.power = true; // ensure system turns on when mode is set
+                req.mode = mode_to_nonnasa_mode(request.mode.value());
+            }
 
-        void NonNasaProtocol::publish_swing_mode_message(MessageTarget *target, const std::string &address, SwingMode value)
-        {
-            ESP_LOGW(TAG, "change swingmode is currently not implemented");
+            if (request.power)
+                req.power = request.power.value();
+
+            if (request.target_temp)
+                req.target_temp = request.target_temp.value();
+
+            if (request.fan_mode)
+                req.fanspeed = fanmode_to_nonnasa_fanspeed(request.fan_mode.value());
+
+            if (request.alt_mode)
+            {
+                ESP_LOGW(TAG, "change altmode is currently not implemented");
+            }
+
+            if (request.swing_mode)
+            {
+                ESP_LOGW(TAG, "change swingmode is currently not implemented");
+            }
+
+            nonnasa_requests.push(req);
         }
 
         Mode nonnasa_mode_to_mode(NonNasaMode value)

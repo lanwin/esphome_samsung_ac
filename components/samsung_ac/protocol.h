@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
-#include <iostream>
+#include "esphome/core/optional.h"
+#include "util.h"
 
 namespace esphome
 {
@@ -41,7 +41,6 @@ namespace esphome
             Off = 5
         };
 
-
         enum class AltMode
         {
             Unknown = -1,
@@ -78,15 +77,21 @@ namespace esphome
             virtual void set_swing_horizontal(const std::string address, bool horizontal) = 0;
         };
 
+        struct ProtocolRequest
+        {
+        public:
+            optional<bool> power;
+            optional<Mode> mode;
+            optional<float> target_temp;
+            optional<FanMode> fan_mode;
+            optional<SwingMode> swing_mode;
+            optional<AltMode> alt_mode;
+        };
+
         class Protocol
         {
         public:
-            virtual void publish_power_message(MessageTarget *target, const std::string &address, bool value) = 0;
-            virtual void publish_target_temp_message(MessageTarget *target, const std::string &address, float value) = 0;
-            virtual void publish_mode_message(MessageTarget *target, const std::string &address, Mode value) = 0;
-            virtual void publish_fanmode_message(MessageTarget *target, const std::string &address, FanMode value) = 0;
-            virtual void publish_altmode_message(MessageTarget *target, const std::string &address, AltMode value) = 0;
-            virtual void publish_swing_mode_message(MessageTarget *target, const std::string &address, SwingMode value) = 0;
+            virtual void publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request) = 0;
         };
 
         enum class DataResult

@@ -3,6 +3,7 @@
 #include <bitset>
 #include <cassert>
 #include <optional>
+#include <experimental/optional>
 
 #include "../components/samsung_ac/util.h"
 #include "../components/samsung_ac/protocol.h"

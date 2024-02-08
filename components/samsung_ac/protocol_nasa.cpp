@@ -347,30 +347,6 @@ namespace esphome
             return str;
         }
 
-        void NasaProtocol::publish_power_message(MessageTarget *target, const std::string &address, bool value)
-        {
-            auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::ENUM_in_operation_power, value ? 1 : 0);
-            auto data = packet.encode();
-            target->publish_data(data);
-        }
-
-        void NasaProtocol::publish_target_temp_message(MessageTarget *target, const std::string &address, float value)
-        {
-            auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::VAR_in_temp_target_f, value * 10.0);
-            auto data = packet.encode();
-            target->publish_data(data);
-        }
-
-        void NasaProtocol::publish_mode_message(MessageTarget *target, const std::string &address, Mode value)
-        {
-            auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::ENUM_in_operation_mode, (int)value);
-            MessageSet power(MessageNumber::ENUM_in_operation_power);
-            power.value = 1;
-            packet.messages.push_back(power);
-            auto data = packet.encode();
-            target->publish_data(data);
-        }
-
         int fanmode_to_nasa_fanmode(FanMode mode)
         {
             // This stuff did not exists in XML only in Remcode.dll
@@ -388,14 +364,6 @@ namespace esphome
             default:
                 return 0;
             }
-        }
-
-        void NasaProtocol::publish_fanmode_message(MessageTarget *target, const std::string &address, FanMode value)
-        {
-            auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::ENUM_in_fan_mode, fanmode_to_nasa_fanmode(value));
-            ESP_LOGW(TAG, "publish_fanmode_message %s", packet.to_string().c_str());
-            auto data = packet.encode();
-            target->publish_data(data);
         }
 
         int altmode_to_nasa_altmode(AltMode mode)
@@ -418,22 +386,64 @@ namespace esphome
             }
         }
 
-        void NasaProtocol::publish_altmode_message(MessageTarget *target, const std::string &address, AltMode value)
+        void NasaProtocol::publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request)
         {
-            auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::ENUM_in_alt_mode, altmode_to_nasa_altmode(value));
-            ESP_LOGW(TAG, "publish_altmode_message %s", packet.to_string().c_str());
-            auto data = packet.encode();
-            target->publish_data(data);
-        }
+            Packet packet = Packet::createa_partial(Address::parse(address), DataType::Request);
 
-        void NasaProtocol::publish_swing_mode_message(MessageTarget *target, const std::string &address, SwingMode value)
-        {
-            auto packet = Packet::create(Address::parse(address), DataType::Request, MessageNumber::ENUM_in_louver_hl_swing, static_cast<uint8_t>(value) & 1);
-            ESP_LOGW(TAG, "publish_swing_mode_message %s", packet.to_string().c_str());
+            if (request.mode)
+            {
+                request.power = true; // ensure system turns on when mode is set
 
-            MessageSet lr_swing(MessageNumber::ENUM_in_louver_lr_swing);
-            lr_swing.value = (static_cast<uint8_t>(value) >> 1) & 1;
-            packet.messages.push_back(lr_swing);
+                MessageSet mode(MessageNumber::ENUM_in_operation_mode);
+                mode.value = (int)request.mode.value();
+                packet.messages.push_back(mode);
+            }
+
+            if (request.power)
+            {
+                MessageSet power(MessageNumber::ENUM_in_operation_power);
+                power.value = request.power.value() ? 1 : 0;
+                packet.messages.push_back(power);
+            }
+
+            if (request.target_temp)
+            {
+                MessageSet targettemp(MessageNumber::VAR_in_temp_target_f);
+                targettemp.value = request.target_temp.value() * 10.0;
+                packet.messages.push_back(targettemp);
+            }
+
+            if (request.fan_mode)
+            {
+                MessageSet fanmode(MessageNumber::ENUM_in_fan_mode);
+                fanmode.value = fanmode_to_nasa_fanmode(request.fan_mode.value());
+                packet.messages.push_back(fanmode);
+            }
+
+            if (request.alt_mode)
+            {
+                MessageSet altmode(MessageNumber::ENUM_in_alt_mode);
+                altmode.value = altmode_to_nasa_altmode(request.alt_mode.value());
+                packet.messages.push_back(altmode);
+            }
+
+            if (request.swing_mode)
+            {
+                MessageSet hl_swing(MessageNumber::ENUM_in_louver_hl_swing);
+                hl_swing.value = static_cast<uint8_t>(request.swing_mode.value()) & 1;
+                packet.messages.push_back(hl_swing);
+
+                MessageSet lr_swing(MessageNumber::ENUM_in_louver_lr_swing);
+                lr_swing.value = (static_cast<uint8_t>(request.swing_mode.value()) >> 1) & 1;
+                packet.messages.push_back(lr_swing);
+            }
+
+            if (packet.messages.size() == 0)
+                return;
+
+            ESP_LOGW(TAG, "publish packet %s", packet.to_string().c_str());
+
+            out.push_back(packet);
 
             auto data = packet.encode();
             target->publish_data(data);

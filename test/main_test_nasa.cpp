@@ -42,8 +42,6 @@ void test_process_data()
 {
 }
 
-//
-
 int main(int argc, char *argv[])
 {
     test_nasa_1();

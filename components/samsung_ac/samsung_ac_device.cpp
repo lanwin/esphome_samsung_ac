@@ -74,83 +74,56 @@ namespace esphome
     {
       traits();
 
+      ProtocolRequest request;
+
       auto targetTempOpt = call.get_target_temperature();
       if (targetTempOpt.has_value())
-        device->write_target_temperature(targetTempOpt.value());
+        request.target_temp = targetTempOpt.value();
 
       auto modeOpt = call.get_mode();
       if (modeOpt.has_value())
       {
         if (modeOpt.value() == climate::ClimateMode::CLIMATE_MODE_OFF)
         {
-          device->write_power(false);
+          request.power = false;
         }
         else
         {
-          device->write_mode(climatemode_to_mode(modeOpt.value()));
+          request.mode = climatemode_to_mode(modeOpt.value());
         }
       }
 
       auto fanmodeOpt = call.get_fan_mode();
       if (fanmodeOpt.has_value())
       {
-        device->write_fanmode(climatefanmode_to_fanmode(fanmodeOpt.value()));
+        request.fan_mode = climatefanmode_to_fanmode(fanmodeOpt.value());
       }
 
       auto customFanmodeOpt = call.get_custom_fan_mode();
       if (customFanmodeOpt.has_value())
       {
-        device->write_fanmode(customfanmode_to_fanmode(customFanmodeOpt.value()));
+        request.fan_mode = customfanmode_to_fanmode(customFanmodeOpt.value());
       }
 
       auto presetOpt = call.get_preset();
       if (presetOpt.has_value())
       {
-        device->write_altmode(preset_to_altmode(presetOpt.value()));
+        request.alt_mode = preset_to_altmode(presetOpt.value());
       }
 
       auto customPresetOpt = call.get_custom_preset();
       if (customPresetOpt.has_value())
       {
-        device->write_altmode(custompreset_to_altmode(customPresetOpt.value()));
+        request.alt_mode = custompreset_to_altmode(customPresetOpt.value());
       }
 
       auto swingModeOpt = call.get_swing_mode();
       if (swingModeOpt.has_value())
       {
-        device->write_swing_mode(climateswingmode_to_swingmode(swingModeOpt.value()));
+        request.swing_mode = climateswingmode_to_swingmode(swingModeOpt.value());
       }
 
-    }
-
-    void Samsung_AC_Device::write_target_temperature(float value)
-    {
-      protocol->publish_target_temp_message(samsung_ac, address, value);
-    }
-
-    void Samsung_AC_Device::write_mode(Mode value)
-    {
-      protocol->publish_mode_message(samsung_ac, address, value);
-    }
-
-    void Samsung_AC_Device::write_fanmode(FanMode value)
-    {
-      protocol->publish_fanmode_message(samsung_ac, address, value);
-    }
-
-    void Samsung_AC_Device::write_altmode(AltMode value)
-    {
-      protocol->publish_altmode_message(samsung_ac, address, value);
-    }
-
-    void Samsung_AC_Device::write_swing_mode(SwingMode value)
-    {
-      protocol->publish_swing_mode_message(samsung_ac, address, value);
-    }
-
-    void Samsung_AC_Device::write_power(bool value)
-    {
-      protocol->publish_power_message(samsung_ac, address, value);
+      device->publish_request(request);
     }
   } // namespace samsung_ac
 } // namespace esphome
