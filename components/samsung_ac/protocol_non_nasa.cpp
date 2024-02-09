@@ -504,7 +504,7 @@ namespace esphome
             }
             else if (nonpacket_.cmd == NonNasaCommand::CmdF8)
             {
-                // After cmd F8 (src:c8 dst:f0) is a lage gap in communication, time to send data
+                // After cmd F8 (src:c8 dst:f0) is a lage gap in communication, time to send data. Some systems did not sent that.
                 if (nonpacket_.src == "c8" && nonpacket_.dst == "f0")
                 {
                     // the communication needs a delay from cmdf8 to send the data.
@@ -515,7 +515,7 @@ namespace esphome
             }
             else if (nonpacket_.cmd == NonNasaCommand::CmdC6)
             {
-                // If the control status is set we can send also
+                // Some systems send a control message. It seems its possible to request that (SNET does that).
                 if (nonpacket_.src == "c8" && nonpacket_.dst == "d0" && nonpacket_.commandC6.control_status == true)
                 {
                     send_requests(target, 20);
