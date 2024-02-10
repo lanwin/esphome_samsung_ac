@@ -660,6 +660,7 @@ namespace esphome
                     //  LVAR_OUT_CONTROL_WATTMETER_ALL_UNIT_ACCUM
                     double kwh = (double)message.value / (double)1000;
                     ESP_LOGW(TAG, "s:%s d:%s LVAR_OUT_CONTROL_WATTMETER_ALL_UNIT_ACCUM %fkwh", source.c_str(), dest.c_str(), kwh);
+                    target->set_accumulated_power(source, kwh);
                     return;
                 }
                 if ((uint16_t)message.messageNumber == 0x8413)

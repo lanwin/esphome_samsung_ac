@@ -60,6 +60,15 @@ public:
         last_set_water_temperature_value = value;
     }
 
+    std::string last_set_accumulated_power_address;
+    float last_set_accumulated_power_value;
+    void set_accumulated_power(const std::string address, float value)
+    {
+        cout << "> " << address << " set_accumulated_power=" << to_string(value) << endl;
+        last_set_accumulated_power_address = address;
+        last_set_accumulated_power_value = value;
+    }
+
     std::string last_set_target_temperature_address;
     float last_set_target_temperature_value;
     void set_target_temperature(const std::string address, float value)

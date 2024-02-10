@@ -75,6 +75,13 @@ namespace esphome
           dev->update_water_temperature(value);
       }
 
+      void /*MessageTarget::*/ set_accumulated_power(const std::string address, float value) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->update_accumulated_power(value);
+      }
+
       void /*MessageTarget::*/ set_room_humidity(const std::string address, float value) override
       {
         Samsung_AC_Device *dev = find_device(address);

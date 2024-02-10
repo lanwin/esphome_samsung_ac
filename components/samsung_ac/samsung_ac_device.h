@@ -78,6 +78,7 @@ namespace esphome
       std::string address;
       sensor::Sensor *room_temperature{nullptr};
       sensor::Sensor *water_temperature{nullptr};
+      sensor::Sensor *accumulated_power{nullptr};
       sensor::Sensor *room_humidity{nullptr};
       Samsung_AC_Number *target_temperature{nullptr};
       Samsung_AC_Switch *power{nullptr};
@@ -92,6 +93,11 @@ namespace esphome
       void set_water_temperature_sensor(sensor::Sensor *sensor)
       {
         water_temperature = sensor;
+      }
+
+      void set_accumulated_power_sensor(sensor::Sensor *sensor)
+      {
+        accumulated_power = sensor;
       }
 
       void set_room_humidity_sensor(sensor::Sensor *sensor)
@@ -243,6 +249,12 @@ namespace esphome
       {
         if (water_temperature != nullptr)
           water_temperature->publish_state(value);
+      }
+
+      void update_accumulated_power(float value)
+      {
+        if (accumulated_power != nullptr)
+          accumulated_power->publish_state(value);
       }
 
       void update_room_humidity(float value)

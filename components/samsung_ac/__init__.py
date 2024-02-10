@@ -4,12 +4,15 @@ from esphome.components import uart, sensor, switch, select, number, climate
 from esphome.const import (
     CONF_ID,
     DEVICE_CLASS_TEMPERATURE,
+    DEVICE_CLASS_ENERGY,
     STATE_CLASS_MEASUREMENT,
+    STATE_CLASS_TOTAL_INCREASING,
     DEVICE_CLASS_HUMIDITY,
     CONF_UNIT_OF_MEASUREMENT,
     CONF_DEVICE_CLASS,
     UNIT_CELSIUS,
     UNIT_PERCENT,
+    UNIT_KILOWATT_HOURS,
 )
 from esphome.core import CORE
 
@@ -50,6 +53,7 @@ CONF_DEVICE_ROOM_TEMPERATURE = "room_temperature"
 CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
 CONF_DEVICE_TARGET_TEMPERATURE = "target_temperature"
 CONF_DEVICE_WATER_TEMPERATURE = "water_temperature"
+CONF_DEVICE_POWER_TOTAL = "power_total"
 CONF_DEVICE_POWER = "power"
 CONF_DEVICE_MODE = "mode"
 CONF_DEVICE_CLIMATE = "climate"
@@ -70,6 +74,12 @@ DEVICE_SCHEMA = (
                 accuracy_decimals=1,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
+            ),
+            cv.Optional(CONF_DEVICE_POWER_TOTAL): sensor.sensor_schema(
+                unit_of_measurement=UNIT_KILOWATT_HOURS,
+                accuracy_decimals=3,
+                device_class=DEVICE_CLASS_ENERGY,
+                state_class=STATE_CLASS_TOTAL_INCREASING,
             ),
             cv.Optional(CONF_DEVICE_ROOM_HUMIDITY): sensor.sensor_schema(
                 unit_of_measurement=UNIT_PERCENT,
@@ -138,6 +148,11 @@ async def to_code(config):
             conf = device[CONF_DEVICE_WATER_TEMPERATURE]
             sens = await sensor.new_sensor(conf)
             cg.add(var_dev.set_water_temperature_sensor(sens))
+
+        if CONF_DEVICE_POWER_TOTAL in device:
+            conf = device[CONF_DEVICE_POWER_TOTAL]
+            sens = await sensor.new_sensor(conf)
+            cg.add(var_dev.set_accumulated_power_sensor(sens))
 
         if CONF_DEVICE_ROOM_HUMIDITY in device:
             conf = device[CONF_DEVICE_ROOM_HUMIDITY]
