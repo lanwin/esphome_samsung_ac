@@ -699,6 +699,14 @@ namespace esphome
                     ESP_LOGW(TAG, "s:%s d:%s NASA_OUTDOOR_CONTROL_WATTMETER_TOTAL_SUM_ACCUM %f", source.c_str(), dest.c_str(), value);
                     return;
                 }
+                if ((uint16_t)message.messageNumber == 0x8204)
+                { // VAR_OUTDOOR_TEMP
+                    double temp = (double)message.value / (double)10;
+                    ESP_LOGW(TAG, "s:%s d:%s VAR_OUTDOOR_TEMP %li", source.c_str(), dest.c_str(), message.value);
+                    // possibly outdoor temperature?
+                    target->set_outdoor_temperature(source, temp);
+                    return;
+                }
             }
             }
         }
