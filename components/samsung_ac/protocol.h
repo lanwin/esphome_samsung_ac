@@ -69,7 +69,11 @@ namespace esphome
             virtual void set_power(const std::string address, bool value) = 0;
             virtual void set_room_temperature(const std::string address, float value) = 0;
             virtual void set_target_temperature(const std::string address, float value) = 0;
+<<<<<<< HEAD
             virtual void set_outdoor_temperature(const std::string address, float value) = 0;
+=======
+            virtual void set_target_water_temperature(const std::string address, float value) = 0;
+>>>>>>> dd1e7a1 (Add target water temperature)
             virtual void set_mode(const std::string address, Mode mode) = 0;
             virtual void set_fanmode(const std::string address, FanMode fanmode) = 0;
             virtual void set_altmode(const std::string address, AltMode altmode) = 0;
@@ -85,6 +89,7 @@ namespace esphome
             optional<bool> power;
             optional<Mode> mode;
             optional<float> target_temp;
+            optional<float> target_water_temp;
             optional<FanMode> fan_mode;
             optional<SwingMode> swing_mode;
             optional<AltMode> alt_mode;
