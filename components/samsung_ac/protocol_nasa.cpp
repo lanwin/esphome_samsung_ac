@@ -623,6 +623,8 @@ namespace esphome
                     // VAR_IN_TEMP_WATER_TANK_F
                     double temp = (double)message.value / (double)10;
                     ESP_LOGW(TAG, "s:%s d:%s VAR_IN_TEMP_WATER_TANK_F %f", source.c_str(), dest.c_str(), temp);
+                    target->set_water_temperature(source, temp);
+
                     return;
                 }
                 if ((uint16_t)message.messageNumber == 0x4065)

@@ -49,6 +49,7 @@ CONF_DEVICE_ADDRESS = "address"
 CONF_DEVICE_ROOM_TEMPERATURE = "room_temperature"
 CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
 CONF_DEVICE_TARGET_TEMPERATURE = "target_temperature"
+CONF_DEVICE_WATER_TEMPERATURE = "water_temperature"
 CONF_DEVICE_POWER = "power"
 CONF_DEVICE_MODE = "mode"
 CONF_DEVICE_CLIMATE = "climate"
@@ -59,6 +60,12 @@ DEVICE_SCHEMA = (
             cv.GenerateID(CONF_DEVICE_ID): cv.declare_id(Samsung_AC_Device),
             cv.Required(CONF_DEVICE_ADDRESS): cv.string,
             cv.Optional(CONF_DEVICE_ROOM_TEMPERATURE): sensor.sensor_schema(
+                unit_of_measurement=UNIT_CELSIUS,
+                accuracy_decimals=1,
+                device_class=DEVICE_CLASS_TEMPERATURE,
+                state_class=STATE_CLASS_MEASUREMENT,
+            ),
+            cv.Optional(CONF_DEVICE_WATER_TEMPERATURE): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=1,
                 device_class=DEVICE_CLASS_TEMPERATURE,
@@ -126,6 +133,11 @@ async def to_code(config):
             conf = device[CONF_DEVICE_ROOM_TEMPERATURE]
             sens = await sensor.new_sensor(conf)
             cg.add(var_dev.set_room_temperature_sensor(sens))
+
+        if CONF_DEVICE_WATER_TEMPERATURE in device:
+            conf = device[CONF_DEVICE_WATER_TEMPERATURE]
+            sens = await sensor.new_sensor(conf)
+            cg.add(var_dev.set_water_temperature_sensor(sens))
 
         if CONF_DEVICE_ROOM_HUMIDITY in device:
             conf = device[CONF_DEVICE_ROOM_HUMIDITY]
