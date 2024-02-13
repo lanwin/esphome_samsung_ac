@@ -80,6 +80,7 @@ namespace esphome
             ENUM_in_state_humidity_percent = 0x4038,
             VAR_in_temp_room_f = 0x4203,
             VAR_in_temp_target_f = 0x4201,
+            VAR_in_temp_water_tank_f = 0x4237,
         };
 
         struct Address
