@@ -85,4 +85,6 @@ samsung_ac:
       # Only supported on NASA based heatpumps
       water_temperature:
         name: "Warm water"
+      outdoor_temperature: # Should be used with outdoor device address
+        name: "Outdoor temperature"
 
