@@ -1,5 +1,6 @@
 #include <queue>
 #include <iostream>
+#include <set>
 #include "esphome/core/log.h"
 #include "esphome/core/util.h"
 #include "esphome/core/hal.h"
@@ -521,7 +522,7 @@ namespace esphome
             }
         }
 
-        void process_messageset(std::string source, std::string dest, MessageSet &message, MessageTarget *target)
+        void process_messageset(std::string source, std::string dest, MessageSet &message, optional<std::set<uint16_t>> &custom, MessageTarget *target)
         {
             if (debug_mqtt_connected())
             {
@@ -537,6 +538,11 @@ namespace esphome
                 {
                     debug_mqtt_publish("samsung_ac/nasa/var_long/" + long_to_hex((uint16_t)message.messageNumber), std::to_string(message.value));
                 }
+            }
+
+            if (custom.has_value() && custom.value().find((uint16_t) message.messageNumber) != custom.value().end())
+            {
+                target->set_custom_sensor(source, (uint16_t) message.messageNumber, (float) message.value);
             }
 
             switch (message.messageNumber)
@@ -770,9 +776,10 @@ namespace esphome
             if (packet_.commad.dataType != DataType::Notification)
                 return;
 
+            optional<std::set<uint16_t>> custom = target->get_custom_sensors(source);
             for (auto &message : packet_.messages)
             {
-                process_messageset(source, dest, message, target);
+                process_messageset(source, dest, message, custom, target);
             }
         }
 

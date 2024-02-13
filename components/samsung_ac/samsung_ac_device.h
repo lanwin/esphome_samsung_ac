@@ -65,6 +65,12 @@ namespace esphome
       }
     };
 
+    struct Samsung_AC_Sensor
+    {
+      uint16_t message_number;
+      sensor::Sensor *sensor;
+    };
+
     class Samsung_AC_Device
     {
     public:
@@ -84,6 +90,7 @@ namespace esphome
       Samsung_AC_Switch *power{nullptr};
       Samsung_AC_Mode_Select *mode{nullptr};
       Samsung_AC_Climate *climate{nullptr};
+      std::vector<Samsung_AC_Sensor> custom_sensors;
 
       void set_room_temperature_sensor(sensor::Sensor *sensor)
       {
@@ -103,6 +110,22 @@ namespace esphome
       void set_room_humidity_sensor(sensor::Sensor *sensor)
       {
         room_humidity = sensor;
+      }
+
+      void add_custom_sensor(int message_number, sensor::Sensor *sensor)
+      {
+        Samsung_AC_Sensor cust_sensor;
+        cust_sensor.message_number = (uint16_t) message_number;
+        cust_sensor.sensor = sensor;
+        custom_sensors.push_back(std::move(cust_sensor));
+      }
+
+      std::set<uint16_t> get_custom_sensors()
+      {
+        std::set<uint16_t> numbers;
+        for (auto &sensor: custom_sensors)
+          numbers.insert(sensor.message_number);
+        return numbers;
       }
 
       void set_power_switch(Samsung_AC_Switch *switch_)
@@ -261,6 +284,13 @@ namespace esphome
       {
         if (room_humidity != nullptr)
           room_humidity->publish_state(value);
+      }
+
+      void update_custom_sensor(uint16_t message_number, float value)
+      {
+        for (auto &sensor: custom_sensors)
+          if (sensor.message_number == message_number)
+            sensor.sensor->publish_state(value);
       }
 
       void publish_request(ProtocolRequest &request)

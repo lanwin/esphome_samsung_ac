@@ -8,10 +8,14 @@ from esphome.const import (
     DEVICE_CLASS_HUMIDITY,
     CONF_UNIT_OF_MEASUREMENT,
     CONF_DEVICE_CLASS,
+    CONF_FILTERS,
     UNIT_CELSIUS,
     UNIT_PERCENT,
 )
-from esphome.core import CORE
+from esphome.core import (
+    CORE, 
+    Lambda
+)
 
 CODEOWNERS = ["matthias882", "lanwin"]
 DEPENDENCIES = ["uart"]
@@ -54,6 +58,47 @@ CONF_DEVICE_OUTDOOR_TEMPERATURE = "outdoor_temperature"
 CONF_DEVICE_POWER = "power"
 CONF_DEVICE_MODE = "mode"
 CONF_DEVICE_CLIMATE = "climate"
+CONF_DEVICE_CUSTOM = "custom_sensor"
+CONF_RAW_FILTERS = "raw_filters"
+CONF_DEVICE_MESSAGE = "message"
+CUSTOM_SENSOR_SCHEMA = sensor.sensor_schema().extend({
+    cv.Required(CONF_DEVICE_MESSAGE): cv.hex_int,
+})
+
+def custom_sensor_schema(
+    message: int,
+    unit_of_measurement: str = sensor._UNDEF,
+    icon: str = sensor._UNDEF,
+    accuracy_decimals: int = sensor._UNDEF,
+    device_class: str = sensor._UNDEF,
+    state_class: str = sensor._UNDEF,
+    entity_category: str = sensor._UNDEF,
+    raw_filters = []
+):
+    return sensor.sensor_schema(
+        unit_of_measurement=unit_of_measurement,
+        icon=icon,
+        accuracy_decimals=accuracy_decimals,
+        device_class=device_class,
+        state_class=state_class,
+        entity_category=entity_category,
+    ).extend({
+        cv.Optional(CONF_DEVICE_MESSAGE, default=message): cv.hex_int,
+        cv.Optional(CONF_RAW_FILTERS, default=raw_filters): sensor.validate_filters
+    })
+
+def temperature_sensor_schema(message: int):
+    return custom_sensor_schema(
+        message=message,
+        unit_of_measurement=UNIT_CELSIUS,
+        accuracy_decimals=1,
+        device_class=DEVICE_CLASS_TEMPERATURE,
+        state_class=STATE_CLASS_MEASUREMENT,
+        raw_filters=[
+            { "lambda": Lambda("return (int16_t)x;") },
+            { "multiply": 0.1 }
+        ],
+    )
 
 DEVICE_SCHEMA = (
     cv.Schema(
@@ -88,6 +133,7 @@ DEVICE_SCHEMA = (
             cv.Optional(CONF_DEVICE_POWER): switch.switch_schema(Samsung_AC_Switch),
             cv.Optional(CONF_DEVICE_MODE): SELECT_MODE_SCHEMA,
             cv.Optional(CONF_DEVICE_CLIMATE): CLIMATE_SCHEMA,
+            cv.Optional(CONF_DEVICE_CUSTOM, default=[]): cv.ensure_list(CUSTOM_SENSOR_SCHEMA),
         }
     )
 )
@@ -177,6 +223,11 @@ async def to_code(config):
             var_cli = cg.new_Pvariable(conf[CONF_ID])
             await climate.register_climate(var_cli, conf)
             cg.add(var_dev.set_climate(var_cli))
+        
+        if CONF_DEVICE_CUSTOM in device:
+            for cust_sens in device[CONF_DEVICE_CUSTOM]:
+                sens = await sensor.new_sensor(cust_sens)
+                cg.add(var_dev.add_custom_sensor(cust_sens[CONF_DEVICE_MESSAGE], sens))
 
         cg.add(var.register_device(var_dev))
 
