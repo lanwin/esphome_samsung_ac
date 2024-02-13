@@ -46,7 +46,7 @@ uart:
 
 # Import custom component from GitHub
 external_components:
-  - source: github://lanwin/esphome_samsung_ac@main
+  - source: github://lanwin/esphome_samsung_ac@stable # use @main if you want the latest development (possibly unstable?)
     components: [samsung_ac]
 
 # Configuration of AC component
