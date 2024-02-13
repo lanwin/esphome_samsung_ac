@@ -138,6 +138,21 @@ namespace esphome
           dev->update_swing_horizontal(horizontal);
       }
 
+      optional<std::set<uint16_t>> /*MessageTarget::*/ get_custom_sensors(const std::string address) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          return optional<std::set<uint16_t>>(dev->get_custom_sensors());
+        return optional<std::set<uint16_t>>();
+      }
+      
+      void /*MessageTarget::*/ set_custom_sensor(const std::string address, uint16_t message_number, float value) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->update_custom_sensor(message_number, value);
+      }
+
     protected:
       Samsung_AC_Device *find_device(const std::string address)
       {

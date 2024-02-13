@@ -3,6 +3,7 @@
 #include "util.h"
 #include "conversions.h"
 #include <vector>
+#include <set>
 
 namespace esphome
 {

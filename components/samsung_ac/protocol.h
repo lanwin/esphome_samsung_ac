@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include "esphome/core/optional.h"
 #include "util.h"
 
@@ -77,6 +78,8 @@ namespace esphome
             virtual void set_altmode(const std::string address, AltMode fanmode) = 0;
             virtual void set_swing_vertical(const std::string address, bool vertical) = 0;
             virtual void set_swing_horizontal(const std::string address, bool horizontal) = 0;
+            virtual optional<std::set<uint16_t>> get_custom_sensors(const std::string address) = 0;
+            virtual void set_custom_sensor(const std::string address, uint16_t message_number, float value) = 0;
         };
 
         struct ProtocolRequest
