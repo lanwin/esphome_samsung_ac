@@ -82,3 +82,7 @@ samsung_ac:
       room_humidity:
         name: "Kitchen humidity"
 
+      # Only supported on NASA based heatpumps
+      water_temperature:
+        name: "Warm water"
+
