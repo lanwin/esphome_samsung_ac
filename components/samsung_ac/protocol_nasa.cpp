@@ -622,6 +622,13 @@ namespace esphome
                 target->set_water_temperature(source, temp);
                 return;
             }
+            case MessageNumber::VAR_out_sensor_airout:
+            {
+                double temp = (double)message.value / (double)10;
+                ESP_LOGW(TAG, "s:%s d:%s VAR_out_sensor_airout %li", source.c_str(), dest.c_str(), message.value);
+                target->set_outdoor_temperature(source, temp);
+                return;
+            }
 
             default:
             {
@@ -695,14 +702,6 @@ namespace esphome
                 {
                     double value = (double)message.value;
                     ESP_LOGW(TAG, "s:%s d:%s NASA_OUTDOOR_CONTROL_WATTMETER_TOTAL_SUM_ACCUM %f", source.c_str(), dest.c_str(), value);
-                    return;
-                }
-                if ((uint16_t)message.messageNumber == 0x8204)
-                { // VAR_OUTDOOR_TEMP
-                    double temp = (double)message.value / (double)10;
-                    ESP_LOGW(TAG, "s:%s d:%s VAR_OUTDOOR_TEMP %li", source.c_str(), dest.c_str(), message.value);
-                    // possibly outdoor temperature?
-                    target->set_outdoor_temperature(source, temp);
                     return;
                 }
             }
