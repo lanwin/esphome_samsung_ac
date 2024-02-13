@@ -51,9 +51,7 @@ CLIMATE_SCHEMA = (
 CONF_DEVICE_ID = "samsung_ac_device_id"
 CONF_DEVICE_ADDRESS = "address"
 CONF_DEVICE_ROOM_TEMPERATURE = "room_temperature"
-CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
 CONF_DEVICE_TARGET_TEMPERATURE = "target_temperature"
-CONF_DEVICE_WATER_TEMPERATURE = "water_temperature"
 CONF_DEVICE_OUTDOOR_TEMPERATURE = "outdoor_temperature"
 CONF_DEVICE_POWER = "power"
 CONF_DEVICE_MODE = "mode"
@@ -61,6 +59,10 @@ CONF_DEVICE_CLIMATE = "climate"
 CONF_DEVICE_CUSTOM = "custom_sensor"
 CONF_RAW_FILTERS = "raw_filters"
 CONF_DEVICE_MESSAGE = "message"
+
+CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
+CONF_DEVICE_WATER_TEMPERATURE = "water_temperature"
+
 CUSTOM_SENSOR_SCHEMA = sensor.sensor_schema().extend({
     cv.Required(CONF_DEVICE_MESSAGE): cv.hex_int,
 })
@@ -100,6 +102,15 @@ def temperature_sensor_schema(message: int):
         ],
     )
 
+def humidity_sensor_schema(message: int):
+    return custom_sensor_schema(
+        message=message,
+        unit_of_measurement=UNIT_PERCENT,
+        accuracy_decimals=0,
+        device_class=DEVICE_CLASS_HUMIDITY,
+        state_class=STATE_CLASS_MEASUREMENT,
+    )
+
 DEVICE_SCHEMA = (
     cv.Schema(
         {
@@ -111,32 +122,30 @@ DEVICE_SCHEMA = (
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
-            cv.Optional(CONF_DEVICE_WATER_TEMPERATURE): sensor.sensor_schema(
-                unit_of_measurement=UNIT_CELSIUS,
-                accuracy_decimals=1,
-                device_class=DEVICE_CLASS_TEMPERATURE,
-                state_class=STATE_CLASS_MEASUREMENT,
-            ),
             cv.Optional(CONF_DEVICE_OUTDOOR_TEMPERATURE): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=1,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
-            cv.Optional(CONF_DEVICE_ROOM_HUMIDITY): sensor.sensor_schema(
-                unit_of_measurement=UNIT_PERCENT,
-                accuracy_decimals=0,
-                device_class=DEVICE_CLASS_HUMIDITY,
-                state_class=STATE_CLASS_MEASUREMENT,
-            ),
+
             cv.Optional(CONF_DEVICE_TARGET_TEMPERATURE): NUMBER_SCHEMA,
             cv.Optional(CONF_DEVICE_POWER): switch.switch_schema(Samsung_AC_Switch),
             cv.Optional(CONF_DEVICE_MODE): SELECT_MODE_SCHEMA,
             cv.Optional(CONF_DEVICE_CLIMATE): CLIMATE_SCHEMA,
             cv.Optional(CONF_DEVICE_CUSTOM, default=[]): cv.ensure_list(CUSTOM_SENSOR_SCHEMA),
+
+            # keep CUSTOM_SENSOR_KEYS in sync with these
+            cv.Optional(CONF_DEVICE_WATER_TEMPERATURE): temperature_sensor_schema(0x4237),
+            cv.Optional(CONF_DEVICE_ROOM_HUMIDITY): humidity_sensor_schema(0x4038),
         }
     )
 )
+
+CUSTOM_SENSOR_KEYS = [
+    CONF_DEVICE_WATER_TEMPERATURE,
+    CONF_DEVICE_ROOM_HUMIDITY,
+]
 
 CONF_DEVICES = "devices"
 
@@ -192,16 +201,6 @@ async def to_code(config):
             sens = await sensor.new_sensor(conf)
             cg.add(var_dev.set_outdoor_temperature_sensor(sens))
 
-        if CONF_DEVICE_WATER_TEMPERATURE in device:
-            conf = device[CONF_DEVICE_WATER_TEMPERATURE]
-            sens = await sensor.new_sensor(conf)
-            cg.add(var_dev.set_water_temperature_sensor(sens))
-
-        if CONF_DEVICE_ROOM_HUMIDITY in device:
-            conf = device[CONF_DEVICE_ROOM_HUMIDITY]
-            sens = await sensor.new_sensor(conf)
-            cg.add(var_dev.set_room_humidity_sensor(sens))
-
         if CONF_DEVICE_TARGET_TEMPERATURE in device:
             conf = device[CONF_DEVICE_TARGET_TEMPERATURE]
             conf[CONF_UNIT_OF_MEASUREMENT] = UNIT_CELSIUS
@@ -228,6 +227,15 @@ async def to_code(config):
             for cust_sens in device[CONF_DEVICE_CUSTOM]:
                 sens = await sensor.new_sensor(cust_sens)
                 cg.add(var_dev.add_custom_sensor(cust_sens[CONF_DEVICE_MESSAGE], sens))
+        
+        for key in CUSTOM_SENSOR_KEYS:
+            if key in device:
+                conf = device[key]
+                # combine raw filters with any user-defined filters
+                conf_copy = conf.copy()
+                conf_copy[CONF_FILTERS] = (conf[CONF_RAW_FILTERS] if CONF_RAW_FILTERS in conf else []) +  (conf[CONF_FILTERS] if CONF_FILTERS in conf else [])
+                sens = await sensor.new_sensor(conf_copy)
+                cg.add(var_dev.add_custom_sensor(conf[CONF_DEVICE_MESSAGE], sens))
 
         cg.add(var.register_device(var_dev))
 
