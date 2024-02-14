@@ -367,26 +367,6 @@ namespace esphome
             }
         }
 
-        int altmode_to_nasa_altmode(AltMode mode)
-        {
-            switch (mode)
-            {
-            case AltMode::Sleep:
-                return 1;
-            case AltMode::Quiet:
-                return 2;
-            case AltMode::Fast:
-                return 3;
-            case AltMode::LongReach:
-                return 6;
-            case AltMode::Windfree:
-                return 9;
-            case AltMode::None:
-            default:
-                return 0;
-            }
-        }
-
         void NasaProtocol::publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request)
         {
             Packet packet = Packet::createa_partial(Address::parse(address), DataType::Request);
@@ -424,7 +404,7 @@ namespace esphome
             if (request.alt_mode)
             {
                 MessageSet altmode(MessageNumber::ENUM_in_alt_mode);
-                altmode.value = altmode_to_nasa_altmode(request.alt_mode.value());
+                altmode.value = request.alt_mode.value();
                 packet.messages.push_back(altmode);
             }
 
@@ -498,27 +478,6 @@ namespace esphome
             case 19: // NaturalHigh
             default:
                 return FanMode::Unknown;
-            }
-        }
-
-        AltMode altmode_to_nasa_altmode(int value)
-        {
-            switch (value)
-            {
-            case 0:
-                return AltMode::None;
-            case 1:
-                return AltMode::Sleep;
-            case 2:
-                return AltMode::Quiet;
-            case 3:
-                return AltMode::Fast;
-            case 6:
-                return AltMode::LongReach;
-            case 9:
-                return AltMode::Windfree;
-            default:
-                return AltMode::Unknown;
             }
         }
 
@@ -605,7 +564,7 @@ namespace esphome
             case MessageNumber::ENUM_in_alt_mode:
             {
                 ESP_LOGW(TAG, "s:%s d:%s ENUM_in_alt_mode %li", source.c_str(), dest.c_str(), message.value);
-                target->set_altmode(source, altmode_to_nasa_altmode(message.value));
+                target->set_altmode(source, message.value);
                 return;
             }
             case MessageNumber::ENUM_in_louver_hl_swing:

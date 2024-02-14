@@ -497,7 +497,7 @@ namespace esphome
                 target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(nonpacket_.command20.mode));
                 target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(nonpacket_.command20.fanspeed));
                 // TODO
-                target->set_altmode(nonpacket_.src, AltMode::None);
+                target->set_altmode(nonpacket_.src, 0);
                 // TODO
                 target->set_swing_horizontal(nonpacket_.src, false);
                 target->set_swing_vertical(nonpacket_.src, false);

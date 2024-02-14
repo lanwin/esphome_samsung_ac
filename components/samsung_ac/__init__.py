@@ -50,6 +50,13 @@ CLIMATE_SCHEMA = (
 
 CONF_DEVICE_ID = "samsung_ac_device_id"
 CONF_DEVICE_ADDRESS = "address"
+CONF_CAPABILITIES = "capabilities"
+CONF_HORIZONTAL_SWING = "horizontal_swing"
+CONF_VERTICAL_SWING = "vertical_swing"
+CONF_PRESETS = "presets"
+CONF_PRESET_NAME = "name"
+CONF_PRESET_ENABLED = "enabled"
+CONF_PRESET_VALUE = "value"
 CONF_DEVICE_ROOM_TEMPERATURE = "room_temperature"
 CONF_DEVICE_TARGET_TEMPERATURE = "target_temperature"
 CONF_DEVICE_OUTDOOR_TEMPERATURE = "outdoor_temperature"
@@ -62,6 +69,36 @@ CONF_DEVICE_MESSAGE = "message"
 
 CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
 CONF_DEVICE_WATER_TEMPERATURE = "water_temperature"
+
+def preset_entry(
+  name: str,
+  value: int,
+  displayName: str
+): return (
+    cv.Optional(name, default=False), cv.Any(cv.boolean, cv.All({
+        cv.Optional(CONF_PRESET_ENABLED, default=False): cv.boolean,
+        cv.Optional(CONF_PRESET_NAME, default=displayName): cv.string,
+        cv.Optional(CONF_PRESET_VALUE, default=value): cv.int_
+    }))
+)
+
+PRESETS = {
+    "sleep": {"value": 1, "displayName": "Sleep"},
+    "quiet": {"value": 2, "displayName": "Quiet"},
+    "fast": {"value": 3, "displayName": "Fast"},
+    "longreach": {"value": 6, "displayName": "LongReach"},
+    "windfree": {"value": 9, "displayName": "WindFree"},
+}
+
+CAPABILITIES_SCHEMA = (
+    cv.Schema({
+        cv.Optional(CONF_HORIZONTAL_SWING, default=False): cv.boolean,
+        cv.Optional(CONF_VERTICAL_SWING, default=False): cv.boolean,
+        cv.Optional(CONF_PRESETS): cv.Schema(dict(
+            [preset_entry(name, PRESETS[name]["value"], PRESETS[name]["displayName"]) for name in PRESETS]
+        ))
+    })
+)
 
 CUSTOM_SENSOR_SCHEMA = sensor.sensor_schema().extend({
     cv.Required(CONF_DEVICE_MESSAGE): cv.hex_int,
@@ -115,6 +152,7 @@ DEVICE_SCHEMA = (
     cv.Schema(
         {
             cv.GenerateID(CONF_DEVICE_ID): cv.declare_id(Samsung_AC_Device),
+            cv.Optional(CONF_CAPABILITIES): CAPABILITIES_SCHEMA,
             cv.Required(CONF_DEVICE_ADDRESS): cv.string,
             cv.Optional(CONF_DEVICE_ROOM_TEMPERATURE): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
@@ -168,6 +206,7 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_DEBUG_MQTT_PASSWORD, default=""): cv.string,
             cv.Optional(CONF_DEBUG_LOG_MESSAGES, default=False): cv.boolean,
             cv.Optional(CONF_DEBUG_LOG_MESSAGES_RAW, default=False): cv.boolean,
+            cv.Optional(CONF_CAPABILITIES): CAPABILITIES_SCHEMA,
             cv.Required(CONF_DEVICES): cv.ensure_list(DEVICE_SCHEMA),
         }
     )
@@ -186,6 +225,50 @@ async def to_code(config):
         var_dev = cg.new_Pvariable(
             device[CONF_DEVICE_ID], device[CONF_DEVICE_ADDRESS], var)
 
+        # setup capabilities
+        if CONF_CAPABILITIES in device and CONF_VERTICAL_SWING in device[CONF_CAPABILITIES]:
+            cg.add(var_dev.set_supports_vertical_swing(device[CONF_CAPABILITIES][CONF_VERTICAL_SWING]))
+        elif CONF_CAPABILITIES in config and CONF_VERTICAL_SWING in config[CONF_CAPABILITIES]:
+            cg.add(var_dev.set_supports_vertical_swing(config[CONF_CAPABILITIES][CONF_VERTICAL_SWING]))
+        
+        if CONF_CAPABILITIES in device and CONF_HORIZONTAL_SWING in device[CONF_CAPABILITIES]:
+            cg.add(var_dev.set_supports_horizontal_swing(device[CONF_CAPABILITIES][CONF_HORIZONTAL_SWING]))
+        elif CONF_CAPABILITIES in config and CONF_HORIZONTAL_SWING in config[CONF_CAPABILITIES]:
+            cg.add(var_dev.set_supports_horizontal_swing(config[CONF_CAPABILITIES][CONF_HORIZONTAL_SWING]))
+        
+
+        none_added = False
+        for preset in PRESETS:
+            device_preset_conf = device[CONF_CAPABILITIES][CONF_PRESETS][preset] if (
+                CONF_CAPABILITIES in device 
+                and CONF_PRESETS in device[CONF_CAPABILITIES] 
+                and preset in device[CONF_CAPABILITIES][CONF_PRESETS]) else None
+            global_preset_conf = config[CONF_CAPABILITIES][CONF_PRESETS][preset] if (
+                CONF_CAPABILITIES in config 
+                and CONF_PRESETS in config[CONF_CAPABILITIES] 
+                and preset in config[CONF_CAPABILITIES][CONF_PRESETS]) else None
+            
+            preset_conf = global_preset_conf if device_preset_conf is None else device_preset_conf
+            preset_dict = isinstance(preset_conf, dict)
+            if preset_conf == True or (preset_dict and preset_conf[CONF_PRESET_ENABLED] == True):
+                if not none_added:
+                    none_added = True
+                    cg.add(var_dev.add_alt_mode("None", 0))
+
+                cg.add(var_dev.add_alt_mode(
+                    preset_conf[CONF_PRESET_NAME] if preset_dict and CONF_PRESET_NAME in preset_conf else PRESETS[preset]["displayName"], 
+                    preset_conf[CONF_PRESET_VALUE] if preset_dict and CONF_PRESET_VALUE in preset_conf else PRESETS[preset]["value"]
+                ))
+
+#        if CONF_CAPABILITIES in device and CONF_ALT_MODES in device[CONF_CAPABILITIES]:
+#            cg.add(var_dev.add_alt_mode("None", 0))
+#            for alt in device[CONF_CAPABILITIES][CONF_ALT_MODES]:
+#                cg.add(var_dev.add_alt_mode(alt[CONF_ALT_MODE_NAME], alt[CONF_ALT_MODE_VALUE]))
+#        elif CONF_CAPABILITIES in config and CONF_ALT_MODES in config[CONF_CAPABILITIES]:
+#            cg.add(var_dev.add_alt_mode("None", 0))
+#            for alt in config[CONF_CAPABILITIES][CONF_ALT_MODES]:
+#                cg.add(var_dev.add_alt_mode(alt[CONF_ALT_MODE_NAME], alt[CONF_ALT_MODE_VALUE]))
+        
         if CONF_DEVICE_POWER in device:
             conf = device[CONF_DEVICE_POWER]
             sens = await switch.new_switch(conf)
