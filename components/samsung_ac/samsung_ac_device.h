@@ -83,9 +83,7 @@ namespace esphome
 
       std::string address;
       sensor::Sensor *room_temperature{nullptr};
-      sensor::Sensor *water_temperature{nullptr};
       sensor::Sensor *outdoor_temperature{nullptr};
-      sensor::Sensor *room_humidity{nullptr};
       Samsung_AC_Number *target_temperature{nullptr};
       Samsung_AC_Switch *power{nullptr};
       Samsung_AC_Mode_Select *mode{nullptr};
@@ -102,15 +100,6 @@ namespace esphome
         outdoor_temperature = sensor;
       }
 
-      void set_water_temperature_sensor(sensor::Sensor *sensor)
-      {
-        water_temperature = sensor;
-      }
-
-      void set_room_humidity_sensor(sensor::Sensor *sensor)
-      {
-        room_humidity = sensor;
-      }
 
       void add_custom_sensor(int message_number, sensor::Sensor *sensor)
       {
@@ -165,12 +154,6 @@ namespace esphome
       {
         climate = value;
         climate->device = this;
-      }
-
-      void update_outdoor_temperature(float value)
-      {
-        if (outdoor_temperature != nullptr)
-          outdoor_temperature->publish_state(value);
       }
 
       void update_target_temperature(float value)
@@ -274,16 +257,10 @@ namespace esphome
         }
       }
 
-      void update_water_temperature(float value)
+      void update_outdoor_temperature(float value)
       {
-        if (water_temperature != nullptr)
-          water_temperature->publish_state(value);
-      }
-
-      void update_room_humidity(float value)
-      {
-        if (room_humidity != nullptr)
-          room_humidity->publish_state(value);
+        if (outdoor_temperature != nullptr)
+          outdoor_temperature->publish_state(value);
       }
 
       void update_custom_sensor(uint16_t message_number, float value)

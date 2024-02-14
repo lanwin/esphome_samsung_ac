@@ -566,7 +566,6 @@ namespace esphome
             {
                 // XML Enum no value but in Code it adds unit
                 ESP_LOGW(TAG, "s:%s d:%s ENUM_in_state_humidity_percent %li", source.c_str(), dest.c_str(), message.value);
-                target->set_room_humidity(source, message.value);
                 return;
             }
             case MessageNumber::ENUM_in_operation_power:
@@ -623,14 +622,12 @@ namespace esphome
             }
             case MessageNumber::VAR_in_temp_water_tank_f:
             {
-                double temp = (double)message.value / (double)10;
-                ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_water_tank_f %f", source.c_str(), dest.c_str(), temp);
-                target->set_water_temperature(source, temp);
+                ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_water_tank_f %f", source.c_str(), dest.c_str(), message.value);
                 return;
             }
             case MessageNumber::VAR_out_sensor_airout:
             {
-                double temp = (double)message.value / (double)10;
+                double temp = (double) ((int16_t)message.value) / (double)10;
                 ESP_LOGW(TAG, "s:%s d:%s VAR_out_sensor_airout %li", source.c_str(), dest.c_str(), message.value);
                 target->set_outdoor_temperature(source, temp);
                 return;
