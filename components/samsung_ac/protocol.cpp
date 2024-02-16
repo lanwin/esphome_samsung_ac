@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "esphome/core/log.h"
 #include "protocol.h"
 #include "util.h"
@@ -8,62 +9,42 @@ namespace esphome
 {
     namespace samsung_ac
     {
-        bool debug_log_packets = false;
-        bool debug_log_raw_bytes = false;
+        uint16_t skip_data(std::vector<uint8_t> &data, int from)
+        {
+            // Skip over filler data or broken packets
+            // Example:
+            // 320037d8fedbff81cb7ffbfd808d00803f008243000082350000805e008031008248ffff801a0082d400000b6a34 f9f6f1f9f9 32000e200002
+            // Note that first part is a mangled packet, then regular filler data, then start of a new packet
+            // and that one new proper packet will continue with the next data read
+
+            // find next value of 0x32, and retry with that one
+            return std::find(data.begin() + from, data.end(), 0x32) - data.begin();
+        }
 
         // This functions is designed to run after a new value was added
         // to the data vector. One by one.
-        DataResult process_data(std::vector<uint8_t> &data, MessageTarget *target)
+        DecodeResult process_data(std::vector<uint8_t> &data, MessageTarget *target)
         {
-            if (data.size() > 1500)
+            if (*data.begin() != 0x32)
+                return { DecodeResultType::Discard, skip_data(data, 0) };
+
+            auto result = try_decode_non_nasa_packet(data);
+            if (result.type == DecodeResultType::Processed)
             {
-                ESP_LOGV(TAG, "current packat exceeds the size limits: %s", bytes_to_hex(data).c_str());
-                return DataResult::Clear;
+                process_non_nasa_packet(target);
+                return result;
             }
 
-            // Check if its a decodeable NonNASA packat
-            if (data.size() == 7 /* duplicate addr package */ || data.size() == 14 /* generic package */)
+            result = try_decode_nasa_packet(data);
+            if (result.type == DecodeResultType::Processed)
             {
-                const auto result = try_decode_non_nasa_packet(data);
-                if (result == DecodeResult::Ok)
-                {
-                    if (debug_log_raw_bytes)
-                    {
-                        ESP_LOGW(TAG, "RAW: %s", bytes_to_hex(data).c_str());
-                    }
-
-                    process_non_nasa_packet(target);
-                    return DataResult::Clear;
-                }
+                process_nasa_packet(target);
             }
-
-            const auto result = try_decode_nasa_packet(data);
-            if (result == DecodeResult::SizeDidNotMatch || result == DecodeResult::UnexpectedSize)
-                return DataResult::Fill;
-
-            if (debug_log_raw_bytes)
+            else if(result.type == DecodeResultType::Discard)
             {
-                ESP_LOGV(TAG, "RAW: %s", bytes_to_hex(data).c_str());
+                return { DecodeResultType::Discard, skip_data(data, 1) };
             }
-
-            if (result == DecodeResult::InvalidStartByte)
-            {
-                ESP_LOGV(TAG, "invalid start byte: %s", bytes_to_hex(data).c_str());
-                return DataResult::Clear;
-            }
-            else if (result == DecodeResult::InvalidEndByte)
-            {
-                ESP_LOGV(TAG, "invalid end byte: %s", bytes_to_hex(data).c_str());
-                return DataResult::Clear;
-            }
-            else if (result == DecodeResult::CrcError)
-            {
-                // is logge dwithin decoder
-                return DataResult::Clear;
-            }
-
-            process_nasa_packet(target);
-            return DataResult::Clear;
+            return result;
         }
 
         bool is_nasa_address(const std::string &address)

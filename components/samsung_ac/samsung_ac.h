@@ -8,6 +8,7 @@
 #include "esphome/components/uart/uart.h"
 #include "samsung_ac_device.h"
 #include "protocol.h"
+#include "log.h"
 
 namespace esphome
 {
@@ -15,6 +16,27 @@ namespace esphome
   {
     class NasaProtocol;
     class Samsung_AC_Device;
+
+    // time to wait since last wire activity before sending
+    const uint16_t silenceInterval = 100;
+
+    // minimum time before a retry attempt
+    const uint16_t retryInterval = 500;
+
+    // minimum number of retries, even beyond timeout
+    const uint8_t minRetries = 1;
+
+    // maximum time to wait before discarding command
+    const uint16_t sendTimeout = 4000;
+
+    struct OutgoingData
+    {
+      uint8_t id;
+      std::vector<uint8_t> data;
+      uint32_t nextRetry;
+      uint32_t timeout;
+      uint8_t retries;
+    };
 
     class Samsung_AC : public PollingComponent,
                        public uart::UARTDevice,
@@ -59,7 +81,9 @@ namespace esphome
         return millis();
       }
 
-      void /*MessageTarget::*/ publish_data(std::vector<uint8_t> &data);
+      void /*MessageTarget::*/ publish_data(uint8_t id, std::vector<uint8_t> &&data);
+
+      void /*MessageTarget::*/ ack_data(uint8_t id);
 
       void /*MessageTarget::*/ set_room_temperature(const std::string address, float value) override
       {
@@ -153,8 +177,12 @@ namespace esphome
       std::map<std::string, Samsung_AC_Device *> devices_;
       std::set<std::string> addresses_;
 
-      std::queue<std::vector<uint8_t>> send_queue_;
+      std::deque<OutgoingData> send_queue_;
       std::vector<uint8_t> data_;
+
+      bool read_data();
+      void write_data();
+
       uint32_t last_transmission_{0};
 
       bool data_processing_init = true;
