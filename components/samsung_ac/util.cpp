@@ -18,8 +18,13 @@ namespace esphome
 
         std::string bytes_to_hex(const std::vector<uint8_t> &data)
         {
+            return bytes_to_hex(data, 0, data.size());
+        }
+
+        std::string bytes_to_hex(const std::vector<uint8_t> &data, uint16_t start, uint16_t end)
+        {
             std::string str;
-            for (int i = 0; i < data.size(); i++)
+            for (int i = start; i < end; i++)
             {
                 str += long_to_hex(data[i]);
             }

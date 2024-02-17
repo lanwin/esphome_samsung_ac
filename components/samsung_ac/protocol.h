@@ -8,17 +8,17 @@ namespace esphome
 {
     namespace samsung_ac
     {
-        extern bool debug_log_packets;
-        extern bool debug_log_raw_bytes;
-
-        enum class DecodeResult
+        enum class DecodeResultType
         {
-            Ok = 0,
-            InvalidStartByte = 1,
-            InvalidEndByte = 2,
-            SizeDidNotMatch = 3,
-            UnexpectedSize = 4,
-            CrcError = 5
+            Fill = 1,
+            Discard = 2,
+            Processed = 3
+        };
+
+        struct DecodeResult
+        {
+            DecodeResultType type;
+            uint16_t bytes; // when Processed
         };
 
         enum class Mode
@@ -42,15 +42,13 @@ namespace esphome
             Off = 5
         };
 
-        enum class AltMode
+        typedef std::string AltModeName;
+        typedef uint8_t AltMode;
+
+        struct AltModeDesc
         {
-            Unknown = -1,
-            None = 0,
-            Sleep = 1,
-            Quiet = 2,
-            Fast = 3,
-            LongReach = 4,
-            Windfree = 5
+            AltModeName name;
+            AltMode value;
         };
 
         enum class SwingMode : uint8_t
@@ -65,7 +63,8 @@ namespace esphome
         {
         public:
             virtual uint32_t get_miliseconds() = 0;
-            virtual void publish_data(std::vector<uint8_t> &data) = 0;
+            virtual void publish_data(uint8_t id, std::vector<uint8_t> &&data) = 0;
+            virtual void ack_data(uint8_t id) = 0;
             virtual void register_address(const std::string address) = 0;
             virtual void set_power(const std::string address, bool value) = 0;
             virtual void set_room_temperature(const std::string address, float value) = 0;
@@ -73,7 +72,7 @@ namespace esphome
             virtual void set_outdoor_temperature(const std::string address, float value) = 0;
             virtual void set_mode(const std::string address, Mode mode) = 0;
             virtual void set_fanmode(const std::string address, FanMode fanmode) = 0;
-            virtual void set_altmode(const std::string address, AltMode fanmode) = 0;
+            virtual void set_altmode(const std::string address, AltMode altmode) = 0;
             virtual void set_swing_vertical(const std::string address, bool vertical) = 0;
             virtual void set_swing_horizontal(const std::string address, bool horizontal) = 0;
             virtual optional<std::set<uint16_t>> get_custom_sensors(const std::string address) = 0;
@@ -97,13 +96,7 @@ namespace esphome
             virtual void publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request) = 0;
         };
 
-        enum class DataResult
-        {
-            Fill = 0,
-            Clear = 1
-        };
-
-        DataResult process_data(std::vector<uint8_t> &data, MessageTarget *target);
+        DecodeResult process_data(std::vector<uint8_t> &data, MessageTarget *target);
 
         Protocol *get_protocol(const std::string &address);
 

@@ -188,7 +188,7 @@ namespace esphome
             static NonNasaRequest create(std::string dst_address);
         };
 
-        DecodeResult try_decode_non_nasa_packet(std::vector<uint8_t> data);
+        DecodeResult try_decode_non_nasa_packet(std::vector<uint8_t> &data);
         void process_non_nasa_packet(MessageTarget *target);
 
         class NonNasaProtocol : public Protocol

@@ -4,6 +4,7 @@
 #include "conversions.h"
 #include <vector>
 #include <set>
+#include <algorithm>
 
 namespace esphome
 {
@@ -49,24 +50,33 @@ namespace esphome
       customFan.insert("Turbo");
       traits.set_supported_custom_fan_modes(customFan);
 
-      std::set<climate::ClimatePreset> preset;
-      preset.insert(climate::ClimatePreset::CLIMATE_PRESET_NONE);
-      preset.insert(climate::ClimatePreset::CLIMATE_PRESET_SLEEP);
-      traits.set_supported_presets(preset);
+      auto supported = device->get_supported_alt_modes();
+      if (supported != nullptr && !supported->empty())
+      {
+        std::set<climate::ClimatePreset> presets;
+        std::set<std::string> custom_presets;
+        for (const AltModeDesc& mode: *supported) {
+          auto preset = altmodename_to_preset(mode.name);
+          if (preset)
+            presets.insert(preset.value());
+          else
+            custom_presets.insert(mode.name);
+        };
+        traits.set_supported_presets(presets);
+        traits.set_supported_custom_presets(custom_presets);
+      }
 
-      std::set<std::string> customPreset;
-      customPreset.insert("Quiet");
-      customPreset.insert("Fast");
-      customPreset.insert("Long Reach");
-      customPreset.insert("WindFree");
-      traits.set_supported_custom_presets(customPreset);
-
-      std::set<climate::ClimateSwingMode> swingMode;
-      swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_OFF);
-      swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_HORIZONTAL);
-      swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_VERTICAL);
-      swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_BOTH);
-      traits.set_supported_swing_modes(swingMode);
+      bool h = device->supports_horizontal_swing();
+      bool v = device->supports_vertical_swing();
+      if (h || v)
+      {
+        std::set<climate::ClimateSwingMode> swingMode;
+        swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_OFF);
+        if (h) swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_HORIZONTAL);
+        if (v) swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_VERTICAL);
+        if (h && v) swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_BOTH);
+        traits.set_supported_swing_modes(swingMode);
+      }
 
       return traits;
     }
@@ -109,13 +119,13 @@ namespace esphome
       auto presetOpt = call.get_preset();
       if (presetOpt.has_value())
       {
-        request.alt_mode = preset_to_altmode(presetOpt.value());
+        set_alt_mode_by_name(request, preset_to_altmodename(presetOpt.value()));
       }
 
       auto customPresetOpt = call.get_custom_preset();
       if (customPresetOpt.has_value())
       {
-        request.alt_mode = custompreset_to_altmode(customPresetOpt.value());
+        set_alt_mode_by_name(request, customPresetOpt.value());
       }
 
       auto swingModeOpt = call.get_swing_mode();
@@ -125,6 +135,18 @@ namespace esphome
       }
 
       device->publish_request(request);
+    }
+
+    void Samsung_AC_Climate::set_alt_mode_by_name(ProtocolRequest &request, const AltModeName &name)
+    {
+      auto supported = device->get_supported_alt_modes();
+      auto mode = std::find_if(supported->begin(),  supported->end(), [&name](const AltModeDesc &x) { return x.name == name;});
+      if (mode == supported->end())
+      {
+        ESP_LOGW(TAG, "Unsupported alt_mode %s", name);
+        return;
+      }
+      request.alt_mode = mode->value;
     }
   } // namespace samsung_ac
 } // namespace esphome

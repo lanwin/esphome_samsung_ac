@@ -19,10 +19,8 @@ namespace esphome
     FanMode climatefanmode_to_fanmode(climate::ClimateFanMode fanmode);
     FanMode customfanmode_to_fanmode(const std::string &value);
 
-    optional<climate::ClimatePreset> altmode_to_preset(AltMode mode);
-    std::string altmode_to_custompreset(AltMode mode);
-    AltMode preset_to_altmode(climate::ClimatePreset preset);
-    AltMode custompreset_to_altmode(const std::string &value);
+    AltModeName preset_to_altmodename(climate::ClimatePreset preset);
+    optional<climate::ClimatePreset> altmodename_to_preset(const AltModeName& name);
 
     climate::ClimateSwingMode swingmode_to_climateswingmode(SwingMode swingMode);
     SwingMode climateswingmode_to_swingmode(climate::ClimateSwingMode swingMode);

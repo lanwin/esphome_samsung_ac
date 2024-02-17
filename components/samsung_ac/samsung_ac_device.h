@@ -2,6 +2,8 @@
 
 #include <set>
 #include <optional>
+#include <algorithm>
+#include "esphome/core/helpers.h"
 #include "esphome/components/switch/switch.h"
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/select/select.h"
@@ -24,6 +26,9 @@ namespace esphome
       climate::ClimateTraits traits();
       void control(const climate::ClimateCall &call);
       Samsung_AC_Device *device;
+
+    protected:
+      void set_alt_mode_by_name(ProtocolRequest &request, const AltModeName &name);
     };
 
     class Samsung_AC_Number : public number::Number
@@ -213,16 +218,24 @@ namespace esphome
       {
         if (climate != nullptr)
         {
-          auto preset = altmode_to_preset(value);
-          if (preset.has_value())
+          auto supported = get_supported_alt_modes();
+          auto mode = std::find_if(supported->begin(),  supported->end(), [&value](const AltModeDesc& x) { return x.value == value; });
+          if (mode == supported->end())
           {
-            climate->preset = preset;
+            ESP_LOGW(TAG, "Unsupported alt_mode %d", value);
+            return;
+          }
+
+          auto preset = altmodename_to_preset(mode->name);
+          if (preset)
+          {
+            climate->preset = preset.value();
             climate->custom_preset.reset();
           }
           else
           {
             climate->preset.reset();
-            climate->custom_preset = altmode_to_custompreset(value);
+            climate->custom_preset = mode->name;
           }
           climate->publish_state();
         }
@@ -275,7 +288,46 @@ namespace esphome
         protocol->publish_request(target, address, request);
       }
 
+      bool supports_horizontal_swing()
+      {
+        return supports_horizontal_swing_;
+      }
+
+      bool supports_vertical_swing()
+      {
+        return supports_vertical_swing_;
+      }
+
+      void set_supports_horizontal_swing(bool value)
+      {
+        supports_horizontal_swing_ = value;
+      }
+      
+      void set_supports_vertical_swing(bool value)
+      {
+        supports_vertical_swing_ = value;
+      }
+
+      void add_alt_mode(const AltModeName &name, AltMode value)
+      {
+        AltModeDesc desc;
+        desc.name = name;
+        desc.value = value;
+        alt_modes.push_back(std::move(desc));
+      }
+
+      const std::vector<AltModeDesc> *get_supported_alt_modes()
+      {
+        if (!alt_modes.empty())
+          return &alt_modes;
+        return nullptr;
+      }
+
     protected:
+      bool supports_horizontal_swing_{true};
+      bool supports_vertical_swing_{true};
+      std::vector<AltModeDesc> alt_modes;
+
       Protocol *protocol{nullptr};
       MessageTarget *target{nullptr};
 
