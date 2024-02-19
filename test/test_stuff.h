@@ -3,7 +3,7 @@
 #include <bitset>
 #include <cassert>
 #include <optional>
-#include <experimental/optional>
+#include "esphome/core/optional.h"
 
 #include "../components/samsung_ac/util.h"
 #include "../components/samsung_ac/protocol.h"
@@ -105,16 +105,31 @@ public:
         last_set_fanmode_mode = fanmode;
     }
 
-    void set_altmode(const std::string address, AltMode fanmode)
+    void set_altmode(const std::string address, AltMode altmode)
     {
+        cout << "> " << address << " set_altmode=" << to_string((int)altmode) << endl;
     }
 
     void set_swing_vertical(const std::string address, bool vertical)
     {
+        cout << "> " << address << " set_swing_vertical=" << to_string((int)vertical) << endl;
     }
 
     void set_swing_horizontal(const std::string address, bool horizontal)
     {
+        cout << "> " << address << " set_swing_horizontal=" << to_string((int)horizontal) << endl;
+    }
+
+    std::set<uint16_t> last_custom_sensors;
+
+    esphome::optional<std::set<uint16_t>> get_custom_sensors(const std::string address)
+    {
+        return last_custom_sensors;
+    }
+
+    void set_custom_sensor(const std::string address, uint16_t message_number, float value)
+    {
+        last_custom_sensors.insert(message_number);
     }
 
     void assert_only_address(const std::string address)

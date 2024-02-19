@@ -499,9 +499,9 @@ namespace esphome
                 }
             }
 
-            if (custom.has_value() && custom.value().find((uint16_t) message.messageNumber) != custom.value().end())
+            if (custom && custom.value().find((uint16_t)message.messageNumber) != custom.value().end())
             {
-                target->set_custom_sensor(source, (uint16_t) message.messageNumber, (float) message.value);
+                target->set_custom_sensor(source, (uint16_t)message.messageNumber, (float)message.value);
             }
 
             switch (message.messageNumber)
@@ -586,7 +586,7 @@ namespace esphome
             }
             case MessageNumber::VAR_out_sensor_airout:
             {
-                double temp = (double) ((int16_t)message.value) / (double)10;
+                double temp = (double)((int16_t)message.value) / (double)10;
                 ESP_LOGW(TAG, "s:%s d:%s VAR_out_sensor_airout %li", source.c_str(), dest.c_str(), message.value);
                 target->set_outdoor_temperature(source, temp);
                 return;
