@@ -51,11 +51,12 @@ namespace esphome
       traits.set_supported_custom_fan_modes(customFan);
 
       auto supported = device->get_supported_alt_modes();
-      if (supported != nullptr && !supported->empty())
+      if (!supported->empty())
       {
         std::set<climate::ClimatePreset> presets;
         std::set<std::string> custom_presets;
-        for (const AltModeDesc& mode: *supported) {
+        for (const AltModeDesc &mode : *supported)
+        {
           auto preset = altmodename_to_preset(mode.name);
           if (preset)
             presets.insert(preset.value());
@@ -72,9 +73,12 @@ namespace esphome
       {
         std::set<climate::ClimateSwingMode> swingMode;
         swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_OFF);
-        if (h) swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_HORIZONTAL);
-        if (v) swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_VERTICAL);
-        if (h && v) swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_BOTH);
+        if (h)
+          swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_HORIZONTAL);
+        if (v)
+          swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_VERTICAL);
+        if (h && v)
+          swingMode.insert(climate::ClimateSwingMode::CLIMATE_SWING_BOTH);
         traits.set_supported_swing_modes(swingMode);
       }
 
@@ -140,7 +144,8 @@ namespace esphome
     void Samsung_AC_Climate::set_alt_mode_by_name(ProtocolRequest &request, const AltModeName &name)
     {
       auto supported = device->get_supported_alt_modes();
-      auto mode = std::find_if(supported->begin(),  supported->end(), [&name](const AltModeDesc &x) { return x.name == name;});
+      auto mode = std::find_if(supported->begin(), supported->end(), [&name](const AltModeDesc &x)
+                               { return x.name == name; });
       if (mode == supported->end())
       {
         ESP_LOGW(TAG, "Unsupported alt_mode %s", name);
