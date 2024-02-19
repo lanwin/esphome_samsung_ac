@@ -94,6 +94,7 @@ namespace esphome
       Samsung_AC_Mode_Select *mode{nullptr};
       Samsung_AC_Climate *climate{nullptr};
       std::vector<Samsung_AC_Sensor> custom_sensors;
+      float room_temperature_offset{0};
 
       void set_room_temperature_sensor(sensor::Sensor *sensor)
       {
@@ -262,10 +263,10 @@ namespace esphome
       void update_room_temperature(float value)
       {
         if (room_temperature != nullptr)
-          room_temperature->publish_state(value);
+          room_temperature->publish_state(value + room_temperature_offset);
         if (climate != nullptr)
         {
-          climate->current_temperature = value;
+          climate->current_temperature = value + room_temperature_offset;
           climate->publish_state();
         }
       }
@@ -319,6 +320,11 @@ namespace esphome
       const std::vector<AltModeDesc> *get_supported_alt_modes()
       {
         return &alt_modes;
+      }
+
+      void set_room_temperature_offset(float value)
+      {
+        room_temperature_offset = value;
       }
 
     protected:

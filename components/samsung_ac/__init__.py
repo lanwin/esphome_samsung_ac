@@ -51,6 +51,7 @@ CLIMATE_SCHEMA = (
 CONF_DEVICE_ID = "samsung_ac_device_id"
 CONF_DEVICE_ADDRESS = "address"
 CONF_DEVICE_ROOM_TEMPERATURE = "room_temperature"
+CONF_DEVICE_ROOM_TEMPERATURE_OFFSET = "room_temperature_offset"
 CONF_DEVICE_TARGET_TEMPERATURE = "target_temperature"
 CONF_DEVICE_OUTDOOR_TEMPERATURE = "outdoor_temperature"
 CONF_DEVICE_POWER = "power"
@@ -168,13 +169,13 @@ DEVICE_SCHEMA = (
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
+            cv.Optional(CONF_DEVICE_ROOM_TEMPERATURE_OFFSET): cv.float_,
             cv.Optional(CONF_DEVICE_OUTDOOR_TEMPERATURE): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=1,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
-
             cv.Optional(CONF_DEVICE_TARGET_TEMPERATURE): NUMBER_SCHEMA,
             cv.Optional(CONF_DEVICE_POWER): switch.switch_schema(Samsung_AC_Switch),
             cv.Optional(CONF_DEVICE_MODE): SELECT_MODE_SCHEMA,
@@ -289,6 +290,10 @@ async def to_code(config):
             conf = device[CONF_DEVICE_ROOM_TEMPERATURE]
             sens = await sensor.new_sensor(conf)
             cg.add(var_dev.set_room_temperature_sensor(sens))
+
+        if CONF_DEVICE_ROOM_TEMPERATURE_OFFSET in device:
+            cg.add(var_dev.set_room_temperature_offset(
+                device[CONF_DEVICE_ROOM_TEMPERATURE_OFFSET]))
 
         if CONF_DEVICE_OUTDOOR_TEMPERATURE in device:
             conf = device[CONF_DEVICE_OUTDOOR_TEMPERATURE]
