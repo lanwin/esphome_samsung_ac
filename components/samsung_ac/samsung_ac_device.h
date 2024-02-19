@@ -105,11 +105,10 @@ namespace esphome
         outdoor_temperature = sensor;
       }
 
-
       void add_custom_sensor(int message_number, sensor::Sensor *sensor)
       {
         Samsung_AC_Sensor cust_sensor;
-        cust_sensor.message_number = (uint16_t) message_number;
+        cust_sensor.message_number = (uint16_t)message_number;
         cust_sensor.sensor = sensor;
         custom_sensors.push_back(std::move(cust_sensor));
       }
@@ -117,7 +116,7 @@ namespace esphome
       std::set<uint16_t> get_custom_sensors()
       {
         std::set<uint16_t> numbers;
-        for (auto &sensor: custom_sensors)
+        for (auto &sensor : custom_sensors)
           numbers.insert(sensor.message_number);
         return numbers;
       }
@@ -219,7 +218,8 @@ namespace esphome
         if (climate != nullptr)
         {
           auto supported = get_supported_alt_modes();
-          auto mode = std::find_if(supported->begin(),  supported->end(), [&value](const AltModeDesc& x) { return x.value == value; });
+          auto mode = std::find_if(supported->begin(), supported->end(), [&value](const AltModeDesc &x)
+                                   { return x.value == value; });
           if (mode == supported->end())
           {
             ESP_LOGW(TAG, "Unsupported alt_mode %d", value);
@@ -278,7 +278,7 @@ namespace esphome
 
       void update_custom_sensor(uint16_t message_number, float value)
       {
-        for (auto &sensor: custom_sensors)
+        for (auto &sensor : custom_sensors)
           if (sensor.message_number == message_number)
             sensor.sensor->publish_state(value);
       }
@@ -302,7 +302,7 @@ namespace esphome
       {
         supports_horizontal_swing_ = value;
       }
-      
+
       void set_supports_vertical_swing(bool value)
       {
         supports_vertical_swing_ = value;
@@ -318,9 +318,7 @@ namespace esphome
 
       const std::vector<AltModeDesc> *get_supported_alt_modes()
       {
-        if (!alt_modes.empty())
-          return &alt_modes;
-        return nullptr;
+        return &alt_modes;
       }
 
     protected:
