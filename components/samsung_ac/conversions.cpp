@@ -128,59 +128,49 @@ namespace esphome
       return FanMode::Auto;
     }
 
-    AltMode preset_to_altmode(climate::ClimatePreset preset)
+    AltModeName preset_to_altmodename(climate::ClimatePreset preset)
     {
       switch (preset)
       {
+      case climate::ClimatePreset::CLIMATE_PRESET_ECO:
+        return "Eco";
+      case climate::ClimatePreset::CLIMATE_PRESET_AWAY:
+        return "Away";
+      case climate::ClimatePreset::CLIMATE_PRESET_BOOST:
+        return "Boost";
+      case climate::ClimatePreset::CLIMATE_PRESET_COMFORT:
+        return "Comfort";
+      case climate::ClimatePreset::CLIMATE_PRESET_HOME:
+        return "Home";
       case climate::ClimatePreset::CLIMATE_PRESET_SLEEP:
-        return AltMode::Sleep;
+        return "Sleep";
+      case climate::ClimatePreset::CLIMATE_PRESET_ACTIVITY:
+        return "Activity";
       case climate::ClimatePreset::CLIMATE_PRESET_NONE:
       default:
-        return AltMode::None;
+        return "None";
       }
     }
 
-    AltMode custompreset_to_altmode(const std::string &value)
+    optional<climate::ClimatePreset> altmodename_to_preset(const AltModeName& name)
     {
-      if (value == "Quiet")
-        return AltMode::Quiet;
-      if (value == "Fast")
-        return AltMode::Fast;
-      if (value == "Long Reach")
-        return AltMode::LongReach;
-      if (value == "WindFree")
-        return AltMode::Windfree;
-      return AltMode::Unknown;
-    }
-
-    optional<climate::ClimatePreset> altmode_to_preset(AltMode mode)
-    {
-      switch (mode)
-      {
-      case AltMode::None:
-        return climate::ClimatePreset::CLIMATE_PRESET_NONE;
-      case AltMode::Sleep:
-        return climate::ClimatePreset::CLIMATE_PRESET_SLEEP;
-      default:
-        return nullopt;
-      };
-    }
-
-    std::string altmode_to_custompreset(AltMode mode)
-    {
-      switch (mode)
-      {
-      case AltMode::Quiet:
-        return "Quiet";
-      case AltMode::Fast:
-        return "Fast";
-      case AltMode::LongReach:
-        return "Long Reach";
-      case AltMode::Windfree:
-        return "WindFree";
-      default:
-        return "";
-      };
+      if (str_equals_case_insensitive(name, "ECO"))
+        return optional<climate::ClimatePreset>(climate::CLIMATE_PRESET_ECO);
+      if (str_equals_case_insensitive(name, "AWAY"))
+        return optional<climate::ClimatePreset>(climate::CLIMATE_PRESET_AWAY);
+      if (str_equals_case_insensitive(name, "BOOST"))
+        return optional<climate::ClimatePreset>(climate::CLIMATE_PRESET_BOOST);
+      if (str_equals_case_insensitive(name, "COMFORT"))
+        return optional<climate::ClimatePreset>(climate::CLIMATE_PRESET_COMFORT);
+      if (str_equals_case_insensitive(name, "HOME"))
+        return optional<climate::ClimatePreset>(climate::CLIMATE_PRESET_HOME);
+      if (str_equals_case_insensitive(name, "SLEEP"))
+        return optional<climate::ClimatePreset>(climate::CLIMATE_PRESET_SLEEP);
+      if (str_equals_case_insensitive(name, "ACTIVITY"))
+        return optional<climate::ClimatePreset>(climate::CLIMATE_PRESET_ACTIVITY);
+      if (str_equals_case_insensitive(name, "NONE"))
+        return optional<climate::ClimatePreset>(climate::CLIMATE_PRESET_NONE);
+      return nullopt;
     }
 
     climate::ClimateSwingMode swingmode_to_climateswingmode(SwingMode swingMode)
