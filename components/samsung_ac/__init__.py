@@ -13,7 +13,7 @@ from esphome.const import (
     UNIT_PERCENT,
 )
 from esphome.core import (
-    CORE, 
+    CORE,
     Lambda
 )
 
@@ -50,30 +50,32 @@ CLIMATE_SCHEMA = (
 
 CONF_DEVICE_ID = "samsung_ac_device_id"
 CONF_DEVICE_ADDRESS = "address"
-CONF_CAPABILITIES = "capabilities"
-CONF_HORIZONTAL_SWING = "horizontal_swing"
-CONF_VERTICAL_SWING = "vertical_swing"
-CONF_PRESETS = "presets"
-CONF_PRESET_NAME = "name"
-CONF_PRESET_ENABLED = "enabled"
-CONF_PRESET_VALUE = "value"
 CONF_DEVICE_ROOM_TEMPERATURE = "room_temperature"
 CONF_DEVICE_TARGET_TEMPERATURE = "target_temperature"
 CONF_DEVICE_OUTDOOR_TEMPERATURE = "outdoor_temperature"
 CONF_DEVICE_POWER = "power"
 CONF_DEVICE_MODE = "mode"
 CONF_DEVICE_CLIMATE = "climate"
-CONF_DEVICE_CUSTOM = "custom_sensor"
-CONF_RAW_FILTERS = "raw_filters"
-CONF_DEVICE_MESSAGE = "message"
-
 CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
 CONF_DEVICE_WATER_TEMPERATURE = "water_temperature"
+CONF_DEVICE_CUSTOM = "custom_sensor"
+CONF_DEVICE_CUSTOM_MESSAGE = "message"
+CONF_DEVICE_CUSTOM_RAW_FILTERS = "raw_filters"
+
+CONF_CAPABILITIES = "capabilities"
+CONF_CAPABILITIES_HORIZONTAL_SWING = "horizontal_swing"
+CONF_CAPABILITIES_VERTICAL_SWING = "vertical_swing"
+
+CONF_PRESETS = "presets"
+CONF_PRESET_NAME = "name"
+CONF_PRESET_ENABLED = "enabled"
+CONF_PRESET_VALUE = "value"
+
 
 def preset_entry(
-  name: str,
-  value: int,
-  displayName: str
+    name: str,
+    value: int,
+    displayName: str
 ): return (
     cv.Optional(name, default=False), cv.Any(cv.boolean, cv.All({
         cv.Optional(CONF_PRESET_ENABLED, default=False): cv.boolean,
@@ -81,6 +83,7 @@ def preset_entry(
         cv.Optional(CONF_PRESET_VALUE, default=value): cv.int_
     }))
 )
+
 
 PRESETS = {
     "sleep": {"value": 1, "displayName": "Sleep"},
@@ -92,17 +95,19 @@ PRESETS = {
 
 CAPABILITIES_SCHEMA = (
     cv.Schema({
-        cv.Optional(CONF_HORIZONTAL_SWING, default=False): cv.boolean,
-        cv.Optional(CONF_VERTICAL_SWING, default=False): cv.boolean,
+        cv.Optional(CONF_CAPABILITIES_HORIZONTAL_SWING, default=False): cv.boolean,
+        cv.Optional(CONF_CAPABILITIES_VERTICAL_SWING, default=False): cv.boolean,
         cv.Optional(CONF_PRESETS): cv.Schema(dict(
-            [preset_entry(name, PRESETS[name]["value"], PRESETS[name]["displayName"]) for name in PRESETS]
+            [preset_entry(name, PRESETS[name]["value"],
+                          PRESETS[name]["displayName"]) for name in PRESETS]
         ))
     })
 )
 
 CUSTOM_SENSOR_SCHEMA = sensor.sensor_schema().extend({
-    cv.Required(CONF_DEVICE_MESSAGE): cv.hex_int,
+    cv.Required(CONF_DEVICE_CUSTOM_MESSAGE): cv.hex_int,
 })
+
 
 def custom_sensor_schema(
     message: int,
@@ -112,7 +117,7 @@ def custom_sensor_schema(
     device_class: str = sensor._UNDEF,
     state_class: str = sensor._UNDEF,
     entity_category: str = sensor._UNDEF,
-    raw_filters = []
+    raw_filters=[]
 ):
     return sensor.sensor_schema(
         unit_of_measurement=unit_of_measurement,
@@ -122,9 +127,10 @@ def custom_sensor_schema(
         state_class=state_class,
         entity_category=entity_category,
     ).extend({
-        cv.Optional(CONF_DEVICE_MESSAGE, default=message): cv.hex_int,
-        cv.Optional(CONF_RAW_FILTERS, default=raw_filters): sensor.validate_filters
+        cv.Optional(CONF_DEVICE_CUSTOM_MESSAGE, default=message): cv.hex_int,
+        cv.Optional(CONF_DEVICE_CUSTOM_RAW_FILTERS, default=raw_filters): sensor.validate_filters
     })
+
 
 def temperature_sensor_schema(message: int):
     return custom_sensor_schema(
@@ -134,10 +140,11 @@ def temperature_sensor_schema(message: int):
         device_class=DEVICE_CLASS_TEMPERATURE,
         state_class=STATE_CLASS_MEASUREMENT,
         raw_filters=[
-            { "lambda": Lambda("return (int16_t)x;") },
-            { "multiply": 0.1 }
+            {"lambda": Lambda("return (int16_t)x;")},
+            {"multiply": 0.1}
         ],
     )
+
 
 def humidity_sensor_schema(message: int):
     return custom_sensor_schema(
@@ -147,6 +154,7 @@ def humidity_sensor_schema(message: int):
         device_class=DEVICE_CLASS_HUMIDITY,
         state_class=STATE_CLASS_MEASUREMENT,
     )
+
 
 DEVICE_SCHEMA = (
     cv.Schema(
@@ -226,28 +234,31 @@ async def to_code(config):
             device[CONF_DEVICE_ID], device[CONF_DEVICE_ADDRESS], var)
 
         # setup capabilities
-        if CONF_CAPABILITIES in device and CONF_VERTICAL_SWING in device[CONF_CAPABILITIES]:
-            cg.add(var_dev.set_supports_vertical_swing(device[CONF_CAPABILITIES][CONF_VERTICAL_SWING]))
-        elif CONF_CAPABILITIES in config and CONF_VERTICAL_SWING in config[CONF_CAPABILITIES]:
-            cg.add(var_dev.set_supports_vertical_swing(config[CONF_CAPABILITIES][CONF_VERTICAL_SWING]))
-        
-        if CONF_CAPABILITIES in device and CONF_HORIZONTAL_SWING in device[CONF_CAPABILITIES]:
-            cg.add(var_dev.set_supports_horizontal_swing(device[CONF_CAPABILITIES][CONF_HORIZONTAL_SWING]))
-        elif CONF_CAPABILITIES in config and CONF_HORIZONTAL_SWING in config[CONF_CAPABILITIES]:
-            cg.add(var_dev.set_supports_horizontal_swing(config[CONF_CAPABILITIES][CONF_HORIZONTAL_SWING]))
-        
+        if CONF_CAPABILITIES in device and CONF_CAPABILITIES_VERTICAL_SWING in device[CONF_CAPABILITIES]:
+            cg.add(var_dev.set_supports_vertical_swing(
+                device[CONF_CAPABILITIES][CONF_CAPABILITIES_VERTICAL_SWING]))
+        elif CONF_CAPABILITIES in config and CONF_CAPABILITIES_VERTICAL_SWING in config[CONF_CAPABILITIES]:
+            cg.add(var_dev.set_supports_vertical_swing(
+                config[CONF_CAPABILITIES][CONF_CAPABILITIES_VERTICAL_SWING]))
+
+        if CONF_CAPABILITIES in device and CONF_CAPABILITIES_HORIZONTAL_SWING in device[CONF_CAPABILITIES]:
+            cg.add(var_dev.set_supports_horizontal_swing(
+                device[CONF_CAPABILITIES][CONF_CAPABILITIES_HORIZONTAL_SWING]))
+        elif CONF_CAPABILITIES in config and CONF_CAPABILITIES_HORIZONTAL_SWING in config[CONF_CAPABILITIES]:
+            cg.add(var_dev.set_supports_horizontal_swing(
+                config[CONF_CAPABILITIES][CONF_CAPABILITIES_HORIZONTAL_SWING]))
 
         none_added = False
         for preset in PRESETS:
             device_preset_conf = device[CONF_CAPABILITIES][CONF_PRESETS][preset] if (
-                CONF_CAPABILITIES in device 
-                and CONF_PRESETS in device[CONF_CAPABILITIES] 
+                CONF_CAPABILITIES in device
+                and CONF_PRESETS in device[CONF_CAPABILITIES]
                 and preset in device[CONF_CAPABILITIES][CONF_PRESETS]) else None
             global_preset_conf = config[CONF_CAPABILITIES][CONF_PRESETS][preset] if (
-                CONF_CAPABILITIES in config 
-                and CONF_PRESETS in config[CONF_CAPABILITIES] 
+                CONF_CAPABILITIES in config
+                and CONF_PRESETS in config[CONF_CAPABILITIES]
                 and preset in config[CONF_CAPABILITIES][CONF_PRESETS]) else None
-            
+
             preset_conf = global_preset_conf if device_preset_conf is None else device_preset_conf
             preset_dict = isinstance(preset_conf, dict)
             if preset_conf == True or (preset_dict and preset_conf[CONF_PRESET_ENABLED] == True):
@@ -256,7 +267,7 @@ async def to_code(config):
                     cg.add(var_dev.add_alt_mode("None", 0))
 
                 cg.add(var_dev.add_alt_mode(
-                    preset_conf[CONF_PRESET_NAME] if preset_dict and CONF_PRESET_NAME in preset_conf else PRESETS[preset]["displayName"], 
+                    preset_conf[CONF_PRESET_NAME] if preset_dict and CONF_PRESET_NAME in preset_conf else PRESETS[preset]["displayName"],
                     preset_conf[CONF_PRESET_VALUE] if preset_dict and CONF_PRESET_VALUE in preset_conf else PRESETS[preset]["value"]
                 ))
 
@@ -268,7 +279,7 @@ async def to_code(config):
 #            cg.add(var_dev.add_alt_mode("None", 0))
 #            for alt in config[CONF_CAPABILITIES][CONF_ALT_MODES]:
 #                cg.add(var_dev.add_alt_mode(alt[CONF_ALT_MODE_NAME], alt[CONF_ALT_MODE_VALUE]))
-        
+
         if CONF_DEVICE_POWER in device:
             conf = device[CONF_DEVICE_POWER]
             sens = await switch.new_switch(conf)
@@ -305,20 +316,23 @@ async def to_code(config):
             var_cli = cg.new_Pvariable(conf[CONF_ID])
             await climate.register_climate(var_cli, conf)
             cg.add(var_dev.set_climate(var_cli))
-        
+
         if CONF_DEVICE_CUSTOM in device:
             for cust_sens in device[CONF_DEVICE_CUSTOM]:
                 sens = await sensor.new_sensor(cust_sens)
-                cg.add(var_dev.add_custom_sensor(cust_sens[CONF_DEVICE_MESSAGE], sens))
-        
+                cg.add(var_dev.add_custom_sensor(
+                    cust_sens[CONF_DEVICE_CUSTOM_MESSAGE], sens))
+
         for key in CUSTOM_SENSOR_KEYS:
             if key in device:
                 conf = device[key]
                 # combine raw filters with any user-defined filters
                 conf_copy = conf.copy()
-                conf_copy[CONF_FILTERS] = (conf[CONF_RAW_FILTERS] if CONF_RAW_FILTERS in conf else []) +  (conf[CONF_FILTERS] if CONF_FILTERS in conf else [])
+                conf_copy[CONF_FILTERS] = (conf[CONF_DEVICE_CUSTOM_RAW_FILTERS] if CONF_DEVICE_CUSTOM_RAW_FILTERS in conf else [
+                ]) + (conf[CONF_FILTERS] if CONF_FILTERS in conf else [])
                 sens = await sensor.new_sensor(conf_copy)
-                cg.add(var_dev.add_custom_sensor(conf[CONF_DEVICE_MESSAGE], sens))
+                cg.add(var_dev.add_custom_sensor(
+                    conf[CONF_DEVICE_CUSTOM_MESSAGE], sens))
 
         cg.add(var.register_device(var_dev))
 
