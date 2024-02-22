@@ -53,6 +53,11 @@ namespace esphome
             std::string to_string();
         };
 
+        struct NonNasaCommand21 // AC090HCADNH
+
+            std::string to_string();
+        };
+
         struct NonNasaCommandC0 // from outdoor unit
         {
             uint8_t outdoor_unit_operation_mode = 0;
@@ -135,6 +140,7 @@ namespace esphome
         enum class NonNasaCommand : uint8_t
         {
             Cmd20 = 0x20,
+            Cmd21 = 0x21,
             CmdC0 = 0xc0,
             CmdC1 = 0xc1,
             CmdC6 = 0xc6,
@@ -158,6 +164,7 @@ namespace esphome
             union
             {
                 NonNasaCommand20 command20;
+                NonNasaCommand21 command21; // Unknown structure
                 NonNasaCommandC0 commandC0;
                 NonNasaCommandC1 commandC1;
                 NonNasaCommandC6 commandC6;

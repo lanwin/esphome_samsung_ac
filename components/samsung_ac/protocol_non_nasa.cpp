@@ -521,6 +521,14 @@ namespace esphome
                     send_requests(target, 20);
                 }
             }
+            else if (nonpacket_.cmd == NonNasaCommand::Cmd21)
+            {
+                // on AC090HCADNH is a lage gap after cmd 21 (src:00 dst:c8)
+                if (nonpacket_.src == "00" && nonpacket_.dst == "c8")
+                {
+                    send_requests(target, 20);
+                }
+            }
         }
     } // namespace samsung_ac
 } // namespace esphome
