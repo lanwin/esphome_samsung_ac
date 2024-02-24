@@ -505,7 +505,7 @@ namespace esphome
             else if (nonpacket_.cmd == NonNasaCommand::CmdF8)
             {
                 // After cmd F8 (src:c8 dst:f0) is a lage gap in communication, time to send data. Some systems did not sent that.
-                if (nonpacket_.src == "c8" && nonpacket_.dst == "f0")
+                if (nonpacket_.src == "c8" && ( nonpacket_.dst == "f0" || nonpacket_.dst == "d0"))
                 {
                     // the communication needs a delay from cmdf8 to send the data.
                     // series of test-delay-times: 1ms: no reaction, 7ms reactions half the time, 10ms very often a reaction (95%) -> delay on 20ms should be safe
@@ -517,14 +517,6 @@ namespace esphome
             {
                 // Some systems send a control message. It seems its possible to request that (SNET does that).
                 if (nonpacket_.src == "c8" && nonpacket_.dst == "d0" && nonpacket_.commandC6.control_status == true)
-                {
-                    send_requests(target, 20);
-                }
-            }
-            else if (nonpacket_.cmd == NonNasaCommand::Cmd21)
-            {
-                // on AC090HCADNH is a lage gap after cmd 21 (src:00 dst:c8)
-                if (nonpacket_.src == "00" && nonpacket_.dst == "c8")
                 {
                     send_requests(target, 20);
                 }
