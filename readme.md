@@ -30,7 +30,7 @@ Its cheap, comes with a tiny case (witch can fit inside an indoor unit) and allo
 
 1. Purchase the following components and stack them:
    - **M5STACK ATOM Lite** - [Aliexpress](https://a.aliexpress.com/_mO88aeK), [M5STACK store](https://shop.m5stack.com/products/atom-lite-esp32-development-kit), [documentation](https://docs.m5stack.com/en/core/ATOM%20Lite)
-   - **M5STACK ATOM RS-485 Kit** - [Aliexpress](https://a.aliexpress.com/_mLhOZQA), [M5STACK store](https://shop.m5stack.com/products/atom-rs485-kit?variant=34787900194980), [documentation](https://docs.m5stack.com/en/atom/atomic485)
+   - **M5STACK ATOM RS-485 Base** - [Aliexpress](https://a.aliexpress.com/_mLhOZQA), [M5STACK store](https://shop.m5stack.com/products/atomic-rs485-base), [documentation](https://docs.m5stack.com/en/atom/atomic485)
 
 1. Connect the components as follows:
    - Connect F1 on the AC unit to A on the M5STACK controller.
