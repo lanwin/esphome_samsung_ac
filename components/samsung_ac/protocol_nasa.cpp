@@ -1,5 +1,6 @@
 #include <queue>
 #include <iostream>
+#include <set>
 #include "esphome/core/log.h"
 #include "esphome/core/util.h"
 #include "esphome/core/hal.h"
@@ -366,26 +367,6 @@ namespace esphome
             }
         }
 
-        int altmode_to_nasa_altmode(AltMode mode)
-        {
-            switch (mode)
-            {
-            case AltMode::Sleep:
-                return 1;
-            case AltMode::Quiet:
-                return 2;
-            case AltMode::Fast:
-                return 3;
-            case AltMode::LongReach:
-                return 6;
-            case AltMode::Windfree:
-                return 9;
-            case AltMode::None:
-            default:
-                return 0;
-            }
-        }
-
         void NasaProtocol::publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request)
         {
             Packet packet = Packet::createa_partial(Address::parse(address), DataType::Request);
@@ -423,7 +404,7 @@ namespace esphome
             if (request.alt_mode)
             {
                 MessageSet altmode(MessageNumber::ENUM_in_alt_mode);
-                altmode.value = altmode_to_nasa_altmode(request.alt_mode.value());
+                altmode.value = request.alt_mode.value();
                 packet.messages.push_back(altmode);
             }
 
@@ -500,28 +481,7 @@ namespace esphome
             }
         }
 
-        AltMode altmode_to_nasa_altmode(int value)
-        {
-            switch (value)
-            {
-            case 0:
-                return AltMode::None;
-            case 1:
-                return AltMode::Sleep;
-            case 2:
-                return AltMode::Quiet;
-            case 3:
-                return AltMode::Fast;
-            case 6:
-                return AltMode::LongReach;
-            case 9:
-                return AltMode::Windfree;
-            default:
-                return AltMode::Unknown;
-            }
-        }
-
-        void process_messageset(std::string source, std::string dest, MessageSet &message, MessageTarget *target)
+        void process_messageset(std::string source, std::string dest, MessageSet &message, optional<std::set<uint16_t>> &custom, MessageTarget *target)
         {
             if (debug_mqtt_connected())
             {
@@ -537,6 +497,11 @@ namespace esphome
                 {
                     debug_mqtt_publish("samsung_ac/nasa/var_long/" + long_to_hex((uint16_t)message.messageNumber), std::to_string(message.value));
                 }
+            }
+
+            if (custom && custom.value().find((uint16_t)message.messageNumber) != custom.value().end())
+            {
+                target->set_custom_sensor(source, (uint16_t)message.messageNumber, (float)message.value);
             }
 
             switch (message.messageNumber)
@@ -560,7 +525,6 @@ namespace esphome
             {
                 // XML Enum no value but in Code it adds unit
                 ESP_LOGW(TAG, "s:%s d:%s ENUM_in_state_humidity_percent %li", source.c_str(), dest.c_str(), message.value);
-                target->set_room_humidity(source, message.value);
                 return;
             }
             case MessageNumber::ENUM_in_operation_power:
@@ -600,7 +564,7 @@ namespace esphome
             case MessageNumber::ENUM_in_alt_mode:
             {
                 ESP_LOGW(TAG, "s:%s d:%s ENUM_in_alt_mode %li", source.c_str(), dest.c_str(), message.value);
-                target->set_altmode(source, altmode_to_nasa_altmode(message.value));
+                target->set_altmode(source, message.value);
                 return;
             }
             case MessageNumber::ENUM_in_louver_hl_swing:
@@ -615,18 +579,21 @@ namespace esphome
                 target->set_swing_horizontal(source, message.value == 1);
                 return;
             }
+            case MessageNumber::VAR_in_temp_water_tank_f:
+            {
+                ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_water_tank_f %f", source.c_str(), dest.c_str(), message.value);
+                return;
+            }
+            case MessageNumber::VAR_out_sensor_airout:
+            {
+                double temp = (double)((int16_t)message.value) / (double)10;
+                ESP_LOGW(TAG, "s:%s d:%s VAR_out_sensor_airout %li", source.c_str(), dest.c_str(), message.value);
+                target->set_outdoor_temperature(source, temp);
+                return;
+            }
+
             default:
             {
-                // Test stuff
-                if ((uint16_t)message.messageNumber == 0x4237)
-                {
-                    // VAR_IN_TEMP_WATER_TANK_F
-                    double temp = (double)message.value / (double)10;
-                    ESP_LOGW(TAG, "s:%s d:%s VAR_IN_TEMP_WATER_TANK_F %f", source.c_str(), dest.c_str(), temp);
-                    target->set_water_temperature(source, temp);
-
-                    return;
-                }
                 if ((uint16_t)message.messageNumber == 0x4065)
                 {
                     // ENUM_IN_WATER_HEATER_POWER
@@ -772,9 +739,10 @@ namespace esphome
             if (packet_.commad.dataType != DataType::Notification)
                 return;
 
+            optional<std::set<uint16_t>> custom = target->get_custom_sensors(source);
             for (auto &message : packet_.messages)
             {
-                process_messageset(source, dest, message, target);
+                process_messageset(source, dest, message, custom, target);
             }
         }
 

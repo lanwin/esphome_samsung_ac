@@ -2,6 +2,8 @@
 
 #include <set>
 #include <optional>
+#include <algorithm>
+#include "esphome/core/helpers.h"
 #include "esphome/components/switch/switch.h"
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/select/select.h"
@@ -24,6 +26,9 @@ namespace esphome
       climate::ClimateTraits traits();
       void control(const climate::ClimateCall &call);
       Samsung_AC_Device *device;
+
+    protected:
+      void set_alt_mode_by_name(ProtocolRequest &request, const AltModeName &name);
     };
 
     class Samsung_AC_Number : public number::Number
@@ -65,6 +70,12 @@ namespace esphome
       }
     };
 
+    struct Samsung_AC_Sensor
+    {
+      uint16_t message_number;
+      sensor::Sensor *sensor;
+    };
+
     class Samsung_AC_Device
     {
     public:
@@ -77,27 +88,39 @@ namespace esphome
 
       std::string address;
       sensor::Sensor *room_temperature{nullptr};
-      sensor::Sensor *water_temperature{nullptr};
-      sensor::Sensor *room_humidity{nullptr};
+      sensor::Sensor *outdoor_temperature{nullptr};
       Samsung_AC_Number *target_temperature{nullptr};
       Samsung_AC_Number *target_water_temperature{nullptr};
       Samsung_AC_Switch *power{nullptr};
       Samsung_AC_Mode_Select *mode{nullptr};
       Samsung_AC_Climate *climate{nullptr};
+      std::vector<Samsung_AC_Sensor> custom_sensors;
+      float room_temperature_offset{0};
 
       void set_room_temperature_sensor(sensor::Sensor *sensor)
       {
         room_temperature = sensor;
       }
 
-      void set_water_temperature_sensor(sensor::Sensor *sensor)
+      void set_outdoor_temperature_sensor(sensor::Sensor *sensor)
       {
-        water_temperature = sensor;
+        outdoor_temperature = sensor;
       }
 
-      void set_room_humidity_sensor(sensor::Sensor *sensor)
+      void add_custom_sensor(int message_number, sensor::Sensor *sensor)
       {
-        room_humidity = sensor;
+        Samsung_AC_Sensor cust_sensor;
+        cust_sensor.message_number = (uint16_t)message_number;
+        cust_sensor.sensor = sensor;
+        custom_sensors.push_back(std::move(cust_sensor));
+      }
+
+      std::set<uint16_t> get_custom_sensors()
+      {
+        std::set<uint16_t> numbers;
+        for (auto &sensor : custom_sensors)
+          numbers.insert(sensor.message_number);
+        return numbers;
       }
 
       void set_power_switch(Samsung_AC_Switch *switch_)
@@ -213,16 +236,25 @@ namespace esphome
       {
         if (climate != nullptr)
         {
-          auto preset = altmode_to_preset(value);
-          if (preset.has_value())
+          auto supported = get_supported_alt_modes();
+          auto mode = std::find_if(supported->begin(), supported->end(), [&value](const AltModeDesc &x)
+                                   { return x.value == value; });
+          if (mode == supported->end())
           {
-            climate->preset = preset;
+            ESP_LOGW(TAG, "Unsupported alt_mode %d", value);
+            return;
+          }
+
+          auto preset = altmodename_to_preset(mode->name);
+          if (preset)
+          {
+            climate->preset = preset.value();
             climate->custom_preset.reset();
           }
           else
           {
             climate->preset.reset();
-            climate->custom_preset = altmode_to_custompreset(value);
+            climate->custom_preset = mode->name;
           }
           climate->publish_state();
         }
@@ -249,24 +281,25 @@ namespace esphome
       void update_room_temperature(float value)
       {
         if (room_temperature != nullptr)
-          room_temperature->publish_state(value);
+          room_temperature->publish_state(value + room_temperature_offset);
         if (climate != nullptr)
         {
-          climate->current_temperature = value;
+          climate->current_temperature = value + room_temperature_offset;
           climate->publish_state();
         }
       }
 
-      void update_water_temperature(float value)
+      void update_outdoor_temperature(float value)
       {
-        if (water_temperature != nullptr)
-          water_temperature->publish_state(value);
+        if (outdoor_temperature != nullptr)
+          outdoor_temperature->publish_state(value);
       }
 
-      void update_room_humidity(float value)
+      void update_custom_sensor(uint16_t message_number, float value)
       {
-        if (room_humidity != nullptr)
-          room_humidity->publish_state(value);
+        for (auto &sensor : custom_sensors)
+          if (sensor.message_number == message_number)
+            sensor.sensor->publish_state(value);
       }
 
       void publish_request(ProtocolRequest &request)
@@ -274,7 +307,49 @@ namespace esphome
         protocol->publish_request(target, address, request);
       }
 
+      bool supports_horizontal_swing()
+      {
+        return supports_horizontal_swing_;
+      }
+
+      bool supports_vertical_swing()
+      {
+        return supports_vertical_swing_;
+      }
+
+      void set_supports_horizontal_swing(bool value)
+      {
+        supports_horizontal_swing_ = value;
+      }
+
+      void set_supports_vertical_swing(bool value)
+      {
+        supports_vertical_swing_ = value;
+      }
+
+      void add_alt_mode(const AltModeName &name, AltMode value)
+      {
+        AltModeDesc desc;
+        desc.name = name;
+        desc.value = value;
+        alt_modes.push_back(std::move(desc));
+      }
+
+      const std::vector<AltModeDesc> *get_supported_alt_modes()
+      {
+        return &alt_modes;
+      }
+
+      void set_room_temperature_offset(float value)
+      {
+        room_temperature_offset = value;
+      }
+
     protected:
+      bool supports_horizontal_swing_{true};
+      bool supports_vertical_swing_{true};
+      std::vector<AltModeDesc> alt_modes;
+
       Protocol *protocol{nullptr};
       MessageTarget *target{nullptr};
 

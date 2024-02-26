@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include "esphome/core/optional.h"
 #include "util.h"
 
@@ -41,15 +42,13 @@ namespace esphome
             Off = 5
         };
 
-        enum class AltMode
+        typedef std::string AltModeName;
+        typedef uint8_t AltMode;
+
+        struct AltModeDesc
         {
-            Unknown = -1,
-            None = 0,
-            Sleep = 1,
-            Quiet = 2,
-            Fast = 3,
-            LongReach = 4,
-            Windfree = 5
+            AltModeName name;
+            AltMode value;
         };
 
         enum class SwingMode : uint8_t
@@ -68,15 +67,16 @@ namespace esphome
             virtual void register_address(const std::string address) = 0;
             virtual void set_power(const std::string address, bool value) = 0;
             virtual void set_room_temperature(const std::string address, float value) = 0;
-            virtual void set_water_temperature(const std::string address, float value) = 0;
-            virtual void set_room_humidity(const std::string address, float value) = 0;
             virtual void set_target_temperature(const std::string address, float value) = 0;
             virtual void set_target_water_temperature(const std::string address, float value) = 0;
+            virtual void set_outdoor_temperature(const std::string address, float value) = 0;
             virtual void set_mode(const std::string address, Mode mode) = 0;
             virtual void set_fanmode(const std::string address, FanMode fanmode) = 0;
-            virtual void set_altmode(const std::string address, AltMode fanmode) = 0;
+            virtual void set_altmode(const std::string address, AltMode altmode) = 0;
             virtual void set_swing_vertical(const std::string address, bool vertical) = 0;
             virtual void set_swing_horizontal(const std::string address, bool horizontal) = 0;
+            virtual optional<std::set<uint16_t>> get_custom_sensors(const std::string address) = 0;
+            virtual void set_custom_sensor(const std::string address, uint16_t message_number, float value) = 0;
         };
 
         struct ProtocolRequest

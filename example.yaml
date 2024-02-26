@@ -46,11 +46,28 @@ uart:
 
 # Import custom component from GitHub
 external_components:
-  - source: github://lanwin/esphome_samsung_ac@main
+  - source: github://lanwin/esphome_samsung_ac@stable # use @main if you want the latest development (possibly unstable?)
     components: [samsung_ac]
 
 # Configuration of AC component
 samsung_ac:
+
+  # Capabilities configure the features alle devices of your AC system have (all parts of this section are optional). 
+  # All capabilities are off by default, you need to enable only those your devices have.
+  # You can override or configure them also on a per devices basis (look below for that).
+  capabilities: 
+    vertical_swing: true
+    horizontal_swing: true
+    # Presets define special AC modes like Windfree and so on. 
+    # The following modes are available: sleep, quiet, fast, longreach, windfree
+    presets: 
+      # short version
+      quiet: true
+      # long version - allows to locilize names
+      quiet:
+        name: "Makes no sound"
+        enabled: true
+
   devices:
     # Skip everything below on the first run! Wait a minute, watch your ESPHome logs until you see the "Discovered devices:" section and you see some addresses:
     # For NASA devices it looks like this (with 4 indoor devices): 
@@ -62,8 +79,13 @@ samsung_ac:
     # Repeat everything below for each indoor device address you see in your logs
     - address: "20.00.00" # Indoor device address 
       # Each property below is optional (climate, room_temperature etc.) - you can delete those which you dont need.
-      # For the names I suggest to choose a combination of room name and the thing it controls. 
-            
+      # For the names we suggest to choose a combination of room name and the thing it controls. 
+
+      # Configures/overrides the capabilites for this devices. 
+      # Look above for all options.
+      capabilities:
+        horizontal_swing: false # This device have no h swing. 
+
       # Creates climate control in Home Assistant. A climate control combines multiple of the controls below (like temperature, mode etc.)
       climate:
         name: "Kitchen climate"
@@ -78,7 +100,17 @@ samsung_ac:
       mode:
         name: "Kitchen mode"
 
+      # If your AC sits near or inside the ceiling, the reported room temperature is often a little bit heigher then whats 
+      # measured below. This property can be used to correct that value.
+      room_temperature_offset: -1.4
+
       # Only supported on NASA devices
       room_humidity:
         name: "Kitchen humidity"
+
+      # Only supported on NASA based heatpumps
+      water_temperature:
+        name: "Warm water"
+      outdoor_temperature: # Should be used with outdoor device address
+        name: "Outdoor temperature"
 

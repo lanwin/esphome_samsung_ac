@@ -68,18 +68,11 @@ namespace esphome
           dev->update_room_temperature(value);
       }
 
-      void /*MessageTarget::*/ set_water_temperature(const std::string address, float value) override
+      void /*MessageTarget::*/ set_outdoor_temperature(const std::string address, float value) override
       {
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
-          dev->update_water_temperature(value);
-      }
-
-      void /*MessageTarget::*/ set_room_humidity(const std::string address, float value) override
-      {
-        Samsung_AC_Device *dev = find_device(address);
-        if (dev != nullptr)
-          dev->update_room_humidity(value);
+          dev->update_outdoor_temperature(value);
       }
 
       void /*MessageTarget::*/ set_target_temperature(const std::string address, float value) override
@@ -136,6 +129,21 @@ namespace esphome
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
           dev->update_swing_horizontal(horizontal);
+      }
+
+      optional<std::set<uint16_t>> /*MessageTarget::*/ get_custom_sensors(const std::string address) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          return optional<std::set<uint16_t>>(dev->get_custom_sensors());
+        return optional<std::set<uint16_t>>();
+      }
+      
+      void /*MessageTarget::*/ set_custom_sensor(const std::string address, uint16_t message_number, float value) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->update_custom_sensor(message_number, value);
       }
 
     protected:
