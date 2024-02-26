@@ -26,7 +26,7 @@ The current implementation offers the following features:
 An ESPHome compatible device and an RS-485 to (TTL) serial adapter is required to run this project. While its possible to run it on an ESP8266 its better to chose an ESP32 since it handles the incoming message stream better (cause it has more CPU power and RAM).
 
 ### We recommand to use the M5STACK ATOM Lite + M5STACK RS-485 kit
-Its cheap, comes with a tiny case (witch can fit inside an indoor unit) and allow directly to use the 12V comming from the V1/V2 lines witch some AC units provide.
+Its cheap, comes with a tiny case (which can fit inside an indoor unit) and allow directly to use the 12V comming from the V1/V2 lines which some AC units provide.
 
 1. Purchase the following components and stack them:
    - **M5STACK ATOM Lite** - [Aliexpress](https://a.aliexpress.com/_mO88aeK), [M5STACK store](https://shop.m5stack.com/products/atom-lite-esp32-development-kit), [documentation](https://docs.m5stack.com/en/core/ATOM%20Lite)
@@ -45,7 +45,7 @@ Its cheap, comes with a tiny case (witch can fit inside an indoor unit) and allo
 Follow these steps to install and configure the software for your AC unit controller:
 
 1. **Create a New ESPHome Device:**
-   - Begin by creating a new ESPHome device in your Home Assistant instance or ESPHome comand line tool.
+   - Begin by creating a new ESPHome device in your Home Assistant instance or ESPHome command line tool.
    - Use the configuration from [example.yaml](https://github.com/lanwin/esphome_samsung_ac/blob/main/example.yaml) file as a template and copy over the `api` and `ota` sections from the newly created YAML. 
 
 1. **Deploy and Boot:**
@@ -76,7 +76,7 @@ Follow these steps to install and configure the software for your AC unit contro
 * Test if swapping F1/F2 helps
 * Change **baud_rate** from 9600 to 2400 (some older hardware uses a lower baud rate)
 * For some boards (like NodeMCU) you need to disable serial logging, since it blocks the pins required for the RS484 serial communication. Just add `baud_rate: 0` to the logger section.
-* Add the following to your yaml witch dumps all data witch is received via RS484 to logs. This helps to check if you get any data. This also helps when reporting problems.
+* Add the following to your yaml which dumps all data which is received via RS484 to logs. This helps to check if you get any data. This also helps when reporting problems.
 ```yaml
   debug:
     direction: BOTH
@@ -121,8 +121,8 @@ newer NASA protocol is more complex and allows more data to be transferred and m
 
 ### NASA
 
-The NASA protocol is pretty generic. Its basicaly desinged to transport variables witch are a key (number) and a value (with 
-an datatype like Enum,Int,Long,Bytes). All meaning is defined to the keys. If you want to know the room temperature you need 
+The NASA protocol is pretty generic. Its basicaly desinged to transport variables which are a key (number) and a value (with 
+a datatype like Enum, Int, Long, Bytes). All meaning is defined to the keys. If you want to know the room temperature you need 
 to know the number and wait for it.
 
 [Foxhill67](https://github.com/Foxhill67) started to document the NASA protocol [here](https://wiki.myehs.eu/wiki/NASA_Protocol).
