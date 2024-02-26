@@ -243,10 +243,10 @@ namespace esphome
             Packet packet;
             packet.sa = Address::get_my_address();
             packet.da = da;
-            packet.commad.packetInformation = true;
-            packet.commad.packetType = PacketType::Normal;
-            packet.commad.dataType = dataType;
-            packet.commad.packetNumber = _packetCounter++;
+            packet.command.packetInformation = true;
+            packet.command.packetType = PacketType::Normal;
+            packet.command.dataType = dataType;
+            packet.command.packetNumber = _packetCounter++;
             return packet;
         }
 
@@ -281,8 +281,8 @@ namespace esphome
             da.decode(data, cursor);
             cursor += da.size;
 
-            commad.decode(data, cursor);
-            cursor += commad.size;
+            command.decode(data, cursor);
+            cursor += command.size;
 
             int capacity = (int)data[cursor];
             cursor++;
@@ -307,7 +307,7 @@ namespace esphome
             data.push_back(0); // size
             sa.encode(data);
             da.encode(data);
-            commad.encode(data);
+            command.encode(data);
 
             data.push_back((uint8_t)messages.size());
             for (int i = 0; i < messages.size(); i++)
@@ -336,7 +336,7 @@ namespace esphome
         std::string Packet::to_string()
         {
             std::string str;
-            str += "#Packet Src:" + sa.to_string() + " Dst:" + da.to_string() + " " + commad.to_string() + "\n";
+            str += "#Packet Src:" + sa.to_string() + " Dst:" + da.to_string() + " " + command.to_string() + "\n";
 
             for (int i = 0; i < messages.size(); i++)
             {
@@ -687,13 +687,13 @@ namespace esphome
                 ESP_LOGW(TAG, "MSG: %s", packet_.to_string().c_str());
             }
 
-            if (packet_.commad.dataType == DataType::Ack)
+            if (packet_.command.dataType == DataType::Ack)
             {
                 for (int i = 0; i < out.size(); i++)
                 {
-                    if (out[i].commad.packetNumber == packet_.commad.packetNumber)
+                    if (out[i].command.packetNumber == packet_.command.packetNumber)
                     {
-                        ESP_LOGW(TAG, "found %d", out[i].commad.packetNumber);
+                        ESP_LOGW(TAG, "found %d", out[i].command.packetNumber);
                         out.erase(out.begin() + i);
                         break;
                     }
@@ -703,33 +703,33 @@ namespace esphome
                 return;
             }
 
-            if (packet_.commad.dataType == DataType::Request)
+            if (packet_.command.dataType == DataType::Request)
             {
                 ESP_LOGW(TAG, "Request %s", packet_.to_string().c_str());
                 return;
             }
-            if (packet_.commad.dataType == DataType::Response)
+            if (packet_.command.dataType == DataType::Response)
             {
                 ESP_LOGW(TAG, "Response %s", packet_.to_string().c_str());
                 return;
             }
-            if (packet_.commad.dataType == DataType::Write)
+            if (packet_.command.dataType == DataType::Write)
             {
                 ESP_LOGW(TAG, "Write %s", packet_.to_string().c_str());
                 return;
             }
-            if (packet_.commad.dataType == DataType::Nack)
+            if (packet_.command.dataType == DataType::Nack)
             {
                 ESP_LOGW(TAG, "Nack %s", packet_.to_string().c_str());
                 return;
             }
-            if (packet_.commad.dataType == DataType::Read)
+            if (packet_.command.dataType == DataType::Read)
             {
                 ESP_LOGW(TAG, "Read %s", packet_.to_string().c_str());
                 return;
             }
 
-            if (packet_.commad.dataType != DataType::Notification)
+            if (packet_.command.dataType != DataType::Notification)
                 return;
 
             optional<std::set<uint16_t>> custom = target->get_custom_sensors(source);

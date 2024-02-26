@@ -10,12 +10,12 @@ void test_nasa_1()
     Packet packet;
 
     packet = Packet::create(to, DataType::Request, MessageNumber::ENUM_in_operation_power, 1);
-    packet.commad.packetNumber = 1;
+    packet.command.packetNumber = 1;
     std::cout << packet.to_string() << std::endl;
     std::cout << bytes_to_hex(packet.encode()) << std::endl;
 
     packet = Packet::create(to, DataType::Request, MessageNumber::ENUM_in_operation_power, 1);
-    packet.commad.packetNumber = 1;
+    packet.command.packetNumber = 1;
     std::cout << packet.to_string() << std::endl;
     std::cout << bytes_to_hex(packet.encode()) << std::endl;
 
@@ -31,7 +31,7 @@ void test_nasa_2()
 
     Packet packet;
     packet = Packet::create(Address::parse("20.00.02"), DataType::Request, MessageNumber::VAR_in_temp_target_f, 28 * 10.0);
-    packet.commad.packetNumber = 242;
+    packet.command.packetNumber = 242;
     std::cout << packet.to_string() << std::endl;
     std::cout << bytes_to_hex(packet.encode()) << std::endl;
 
