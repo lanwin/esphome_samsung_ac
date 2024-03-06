@@ -150,7 +150,7 @@ namespace esphome
         {
             Address sa;
             Address da;
-            Command commad;
+            Command command;
             std::vector<MessageSet> messages;
 
             static Packet create(Address da, DataType dataType, MessageNumber messageNumber, int value);

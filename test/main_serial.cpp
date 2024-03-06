@@ -76,7 +76,7 @@ void process_data(std::vector<uint8_t> &data)
         packet.da.to_string() != "20.00.02")
         return;*/
 
-    // if (packet.commad.dataType == DataType::Notification)
+    // if (packet.command.dataType == DataType::Notification)
     //   return;
 
     cout << packet.to_string() << endl;
@@ -97,8 +97,8 @@ void dump_csv(std::vector<uint8_t> &data)
         cout << ticks << ";";
         cout << "\"" << packet.sa.to_string() << "\";";
         cout << "\"" << packet.da.to_string() << "\";";
-        cout << GetPacketType(packet.commad.packetType) << ";";
-        cout << GetDataType(packet.commad.dataType) << ";";
+        cout << GetPacketType(packet.command.packetType) << ";";
+        cout << GetDataType(packet.command.dataType) << ";";
 
         cout << GetMessageSetType(msg.type) << ";";
 
