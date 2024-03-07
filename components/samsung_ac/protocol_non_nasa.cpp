@@ -505,7 +505,7 @@ namespace esphome
             else if (nonpacket_.cmd == NonNasaCommand::CmdF8)
             {
                 // After cmd F8 (src:c8 dst:f0) is a lage gap in communication, time to send data. Some systems did not sent that.
-                if (nonpacket_.src == "c8" && nonpacket_.dst == "f0")
+                if (nonpacket_.src == "c8" && ( nonpacket_.dst == "f0" || nonpacket_.dst == "d0"))
                 {
                     // the communication needs a delay from cmdf8 to send the data.
                     // series of test-delay-times: 1ms: no reaction, 7ms reactions half the time, 10ms very often a reaction (95%) -> delay on 20ms should be safe
