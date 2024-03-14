@@ -34,6 +34,7 @@ Samsung_AC_Mode_Select = samsung_ac.class_(
     "Samsung_AC_Mode_Select", select.Select)
 Samsung_AC_Number = samsung_ac.class_("Samsung_AC_Number", number.Number)
 Samsung_AC_Climate = samsung_ac.class_("Samsung_AC_Climate", climate.Climate)
+Samsung_AC_CustClim = samsung_ac.class_("Samsung_AC_CustClim", climate.Climate)
 
 # not sure why select.select_schema did not work yet
 SELECT_MODE_SCHEMA = select.select_schema(Samsung_AC_Mode_Select)
@@ -62,6 +63,16 @@ CONF_DEVICE_WATER_TEMPERATURE = "water_temperature"
 CONF_DEVICE_CUSTOM = "custom_sensor"
 CONF_DEVICE_CUSTOM_MESSAGE = "message"
 CONF_DEVICE_CUSTOM_RAW_FILTERS = "raw_filters"
+CONF_DEVICE_CUSTOMCLIMATE = "custom_climate"
+CONF_DEVICE_CUSTOMCLIMATE_status_addr = "status_addr"
+CONF_DEVICE_CUSTOMCLIMATE_set_addr = "set_addr"
+CONF_DEVICE_CUSTOMCLIMATE_set_min = "set_min"
+CONF_DEVICE_CUSTOMCLIMATE_set_max = "set_max"
+CONF_DEVICE_CUSTOMCLIMATE_enable_addr = "enable_addr"
+CONF_DEVICE_CUSTOMCLIMATE_mode = "mode"
+CONF_DEVICE_CUSTOMCLIMATE_mode_addr2 = "addr"
+CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue = [f"ClimateMode{i}Value" for i in range(7)]
+
 
 CONF_CAPABILITIES = "capabilities"
 CONF_CAPABILITIES_HORIZONTAL_SWING = "horizontal_swing"
@@ -72,6 +83,20 @@ CONF_PRESET_NAME = "name"
 CONF_PRESET_ENABLED = "enabled"
 CONF_PRESET_VALUE = "value"
 
+
+CUSTOM_CLIMATE_SCHEMA = climate.CLIMATE_SCHEMA.extend({
+    cv.GenerateID(): cv.declare_id(Samsung_AC_CustClim),
+        cv.Required(CONF_DEVICE_CUSTOMCLIMATE_status_addr): cv.hex_int,
+        cv.Required(CONF_DEVICE_CUSTOMCLIMATE_set_addr): cv.hex_int,
+        cv.Required(CONF_DEVICE_CUSTOMCLIMATE_enable_addr): cv.hex_int,
+        cv.Optional(CONF_DEVICE_CUSTOMCLIMATE_set_min, default=25): cv.float_,
+        cv.Optional(CONF_DEVICE_CUSTOMCLIMATE_set_max, default=65): cv.float_,
+        cv.Optional(CONF_DEVICE_CUSTOMCLIMATE_mode): cv.Schema({
+            **{cv.Optional(CONF_DEVICE_CUSTOMCLIMATE_mode_addr2, default=0): cv.hex_int}, 
+            **{cv.Optional(i, default=-1 if j > 0 else 0): cv.int_ for i,j in zip(CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue, range(7))}
+        })
+
+    })
 
 def preset_entry(
     name: str,
@@ -185,6 +210,8 @@ DEVICE_SCHEMA = (
             # keep CUSTOM_SENSOR_KEYS in sync with these
             cv.Optional(CONF_DEVICE_WATER_TEMPERATURE): temperature_sensor_schema(0x4237),
             cv.Optional(CONF_DEVICE_ROOM_HUMIDITY): humidity_sensor_schema(0x4038),
+            
+            cv.Optional(CONF_DEVICE_CUSTOMCLIMATE, default=[]): cv.ensure_list(CUSTOM_CLIMATE_SCHEMA),
         }
     )
 )
@@ -338,6 +365,33 @@ async def to_code(config):
                 sens = await sensor.new_sensor(conf_copy)
                 cg.add(var_dev.add_custom_sensor(
                     conf[CONF_DEVICE_CUSTOM_MESSAGE], sens))
+                
+        if CONF_DEVICE_CUSTOMCLIMATE in device:
+            for cust_clim in device[CONF_DEVICE_CUSTOMCLIMATE]:
+                var_cli = cg.new_Pvariable(cust_clim[CONF_ID])
+                await climate.register_climate(var_cli, cust_clim)
+                cg.add(var_dev.add_custom_climate(var_cli, 
+                                                  cust_clim[CONF_DEVICE_CUSTOMCLIMATE_status_addr], 
+                                                  cust_clim[CONF_DEVICE_CUSTOMCLIMATE_set_addr],
+                                                  cust_clim[CONF_DEVICE_CUSTOMCLIMATE_enable_addr],
+                                                  cust_clim[CONF_DEVICE_CUSTOMCLIMATE_set_min],
+                                                  cust_clim[CONF_DEVICE_CUSTOMCLIMATE_set_max]
+                                                  ))
+                if CONF_DEVICE_CUSTOMCLIMATE_mode in cust_clim:
+                    modeConf = cust_clim[CONF_DEVICE_CUSTOMCLIMATE_mode]
+                    cg.add(var_dev.add_custom_climate_mode(var_cli, 
+                                                    modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_addr2], 
+                                                    modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[0]], 
+                                                    modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[1]], 
+                                                    modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[2]], 
+                                                    modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[3]], 
+                                                    modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[4]], 
+                                                    modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[5]], 
+                                                    modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[6]]
+                                                    ))
+
+                
+
 
         cg.add(var.register_device(var_dev))
 
