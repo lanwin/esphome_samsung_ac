@@ -70,7 +70,7 @@ namespace esphome
           ESP_LOGE(TAG, "Unable to find read mode %u, not mentioned in the yaml", lastReadMode);
         } else {
           mode = (esphome::climate::ClimateMode)ret;
-          ESP_LOGV("TAG", "CC changed mode, read %u>%u for addr 0x%x", lastReadMode, ret);
+          ESP_LOGV(TAG, "CC changed mode, read %u>%u for addr 0x%x", lastReadMode, ret);
           publish_state();
         }
       }

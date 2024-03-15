@@ -167,12 +167,12 @@ namespace esphome
           float tempe = (float)value / 10.0;
           cc->target_temperature = tempe;
           cc->publish_state();
-          ESP_LOGV("TAG", "CC changed setpoint, read %f for addr %x", tempe, address);
+          ESP_LOGV(TAG, "CC changed setpoint, read %f for addr %x", tempe, address);
         } else if (address == cc->status) {
           float tempe = (float)value / 10.0;
           cc->current_temperature = tempe;
           cc->publish_state();
-          ESP_LOGV("TAG", "CC changed status, read %f for addr %x", tempe, address);
+          ESP_LOGV(TAG, "CC changed status, read %f for addr %x", tempe, address);
         }
       }
     }

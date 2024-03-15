@@ -70,7 +70,7 @@ CONF_DEVICE_CUSTOMCLIMATE_set_min = "set_min"
 CONF_DEVICE_CUSTOMCLIMATE_set_max = "set_max"
 CONF_DEVICE_CUSTOMCLIMATE_enable_addr = "enable_addr"
 CONF_DEVICE_CUSTOMCLIMATE_mode = "mode"
-CONF_DEVICE_CUSTOMCLIMATE_mode_addr2 = "addr"
+CONF_DEVICE_CUSTOMCLIMATE_mode_addr = "addr"
 CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue = [f"ClimateMode{i}Value" for i in range(7)]
 
 
@@ -92,7 +92,7 @@ CUSTOM_CLIMATE_SCHEMA = climate.CLIMATE_SCHEMA.extend({
         cv.Optional(CONF_DEVICE_CUSTOMCLIMATE_set_min, default=25): cv.float_,
         cv.Optional(CONF_DEVICE_CUSTOMCLIMATE_set_max, default=65): cv.float_,
         cv.Optional(CONF_DEVICE_CUSTOMCLIMATE_mode): cv.Schema({
-            **{cv.Optional(CONF_DEVICE_CUSTOMCLIMATE_mode_addr2, default=0): cv.hex_int}, 
+            **{cv.Optional(CONF_DEVICE_CUSTOMCLIMATE_mode_addr, default=0): cv.hex_int}, 
             **{cv.Optional(i, default=-1 if j > 0 else 0): cv.int_ for i,j in zip(CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue, range(7))}
         })
 
@@ -380,7 +380,7 @@ async def to_code(config):
                 if CONF_DEVICE_CUSTOMCLIMATE_mode in cust_clim:
                     modeConf = cust_clim[CONF_DEVICE_CUSTOMCLIMATE_mode]
                     cg.add(var_dev.add_custom_climate_mode(var_cli, 
-                                                    modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_addr2], 
+                                                    modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_addr], 
                                                     modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[0]], 
                                                     modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[1]], 
                                                     modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[2]], 

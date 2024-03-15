@@ -391,7 +391,7 @@ namespace esphome
                 MessageSet power(addr);
                 power.value = request.power.value() ? 1 : 0;
                 packet.messages.push_back(power);
-                ESP_LOGI("TAG", "Pushing %u at 0x%X for %s", request.power.value() , addr, address.c_str());
+                ESP_LOGI(TAG, "Pushing %u at 0x%X for %s", request.power.value() , addr, address.c_str());
             }
 
             if (request.target_temp)
