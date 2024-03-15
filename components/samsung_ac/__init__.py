@@ -51,7 +51,10 @@ CONF_DEVICE_MODE = "mode"
 CONF_DEVICE_CLIMATE = "climate"
 CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
 CONF_DEVICE_WATER_TEMPERATURE = "water_temperature"
+CONF_DEVICE_INDOOR_CONSUMPTION = "indoor_power_consumption"
 CONF_DEVICE_CONSUMPTION = "power_consumption"
+CONF_DEVICE_ENERGY_CONSUMPTION = "energy_consumption"
+CONF_DEVICE_ENERGY_PRODUCED = "energy_produced"
 CONF_DEVICE_CUSTOM = "custom_sensor"
 CONF_DEVICE_CUSTOM_MESSAGE = "message"
 CONF_DEVICE_CUSTOM_RAW_FILTERS = "raw_filters"
@@ -185,6 +188,18 @@ def consumption_sensor_schema(message: int):
         ],
     )
 
+def energy_sensor_schema(message: int):
+    return custom_sensor_schema(
+        message=message,
+        unit_of_measurement=UNIT_KILOWATT_HOURS,
+        accuracy_decimals=3,
+        device_class=DEVICE_CLASS_ENERGY,
+        state_class=STATE_CLASS_MEASUREMENT,
+        raw_filters=[
+            {"multiply": 0.001}
+        ],
+    )
+
 DEVICE_SCHEMA = (
     cv.Schema(
         {
@@ -214,6 +229,11 @@ DEVICE_SCHEMA = (
             cv.Optional(CONF_DEVICE_WATER_TEMPERATURE): temperature_sensor_schema(0x4237),
             cv.Optional(CONF_DEVICE_ROOM_HUMIDITY): humidity_sensor_schema(0x4038),
             cv.Optional(CONF_DEVICE_CONSUMPTION): consumption_sensor_schema(0x8413),
+            cv.Optional(CONF_DEVICE_INDOOR_CONSUMPTION): consumption_sensor_schema(0x4284),
+            cv.Optional(CONF_DEVICE_ENERGY_CONSUMPTION): energy_sensor_schema(0x8414),
+            cv.Optional(CONF_DEVICE_ENERGY_PRODUCED): energy_sensor_schema(0x4427),
+            
+            
             
             
             cv.Optional(CONF_DEVICE_CUSTOMCLIMATE, default=[]): cv.ensure_list(CUSTOM_CLIMATE_SCHEMA),
@@ -225,6 +245,9 @@ CUSTOM_SENSOR_KEYS = [
     CONF_DEVICE_WATER_TEMPERATURE,
     CONF_DEVICE_ROOM_HUMIDITY,
     CONF_DEVICE_CONSUMPTION,
+    CONF_DEVICE_ENERGY_CONSUMPTION,
+    CONF_DEVICE_INDOOR_CONSUMPTION,
+    CONF_DEVICE_ENERGY_PRODUCED,
 ]
 
 CONF_DEVICES = "devices"

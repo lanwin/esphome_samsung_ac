@@ -115,8 +115,14 @@ samsung_ac:
         name: "Warm water"
       outdoor_temperature: # Should be used with outdoor device address
         name: "Outdoor temperature"
-      power_consumption:
+      power_consumption: # Should be used with outdoor device address
         name: "Power consumption"
+      energy_consumption: # Should be used with outdoor device address
+        name: "Energy consumption"
+      energy_produced: # Indoor
+        name: "Energy Produced"
+      indoor_power_consumption: # Never seen on my setup
+        name: "Indoor consumption"
 
       # custom climate allow to define custom addresses and behaviour for many climate components
       # Addresses are more or less described on the file xlxs (link)
