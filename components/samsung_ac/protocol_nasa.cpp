@@ -702,8 +702,8 @@ namespace esphome
                 for (int i = 0; i < packet_.messages.size(); i++){
                     MessageSet ms = packet_.messages[i];
                     auto addr = long_to_hex((uint16_t)ms.messageNumber);
-                    if (dn->targetValue == ms.value && ms.type != Structure) {
-                        if (dn->source == packet_.sa.to_string()){
+                    if (dn->targetValue == ms.value && ms.type != Structure && dn->targetValue != Samsung_AC_NumberDebug::UNUSED) {
+                        if (dn->source == packet_.sa.to_string() || dn->source == ""){
                             std::string str;
                             str += "#Packet Src:" + packet_.sa.to_string() + " Dst:" + packet_.da.to_string() + " " + packet_.command.to_string() + " value " + ms.to_string() ;
                             ESP_LOGW(TAG, "\033[1;36mDebugNumber : %s", str.c_str());

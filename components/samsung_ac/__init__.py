@@ -1,17 +1,7 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import uart, sensor, switch, select, number, climate
-from esphome.const import (
-    CONF_ID,
-    DEVICE_CLASS_TEMPERATURE,
-    STATE_CLASS_MEASUREMENT,
-    DEVICE_CLASS_HUMIDITY,
-    CONF_UNIT_OF_MEASUREMENT,
-    CONF_DEVICE_CLASS,
-    CONF_FILTERS,
-    UNIT_CELSIUS,
-    UNIT_PERCENT,
-)
+from esphome.const import *
 from esphome.core import (
     CORE,
     Lambda
@@ -61,6 +51,7 @@ CONF_DEVICE_MODE = "mode"
 CONF_DEVICE_CLIMATE = "climate"
 CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
 CONF_DEVICE_WATER_TEMPERATURE = "water_temperature"
+CONF_DEVICE_CONSUMPTION = "power_consumption"
 CONF_DEVICE_CUSTOM = "custom_sensor"
 CONF_DEVICE_CUSTOM_MESSAGE = "message"
 CONF_DEVICE_CUSTOM_RAW_FILTERS = "raw_filters"
@@ -182,6 +173,17 @@ def humidity_sensor_schema(message: int):
         state_class=STATE_CLASS_MEASUREMENT,
     )
 
+def consumption_sensor_schema(message: int):
+    return custom_sensor_schema(
+        message=message,
+        unit_of_measurement=UNIT_KILOWATT,
+        accuracy_decimals=3,
+        device_class=DEVICE_CLASS_POWER,
+        state_class=STATE_CLASS_MEASUREMENT,
+        raw_filters=[
+            {"multiply": 0.001}
+        ],
+    )
 
 DEVICE_SCHEMA = (
     cv.Schema(
@@ -211,6 +213,8 @@ DEVICE_SCHEMA = (
             # keep CUSTOM_SENSOR_KEYS in sync with these
             cv.Optional(CONF_DEVICE_WATER_TEMPERATURE): temperature_sensor_schema(0x4237),
             cv.Optional(CONF_DEVICE_ROOM_HUMIDITY): humidity_sensor_schema(0x4038),
+            cv.Optional(CONF_DEVICE_CONSUMPTION): consumption_sensor_schema(0x8413),
+            
             
             cv.Optional(CONF_DEVICE_CUSTOMCLIMATE, default=[]): cv.ensure_list(CUSTOM_CLIMATE_SCHEMA),
         }
@@ -220,6 +224,7 @@ DEVICE_SCHEMA = (
 CUSTOM_SENSOR_KEYS = [
     CONF_DEVICE_WATER_TEMPERATURE,
     CONF_DEVICE_ROOM_HUMIDITY,
+    CONF_DEVICE_CONSUMPTION,
 ]
 
 CONF_DEVICES = "devices"
