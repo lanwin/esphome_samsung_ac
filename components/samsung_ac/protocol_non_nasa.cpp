@@ -571,7 +571,6 @@ namespace esphome
 				// It's unknown why the first data byte must be odd.
 				if (non_nasa_keepalive)
 				{
-					ESP_LOGD(TAG, "KEEPALIVE KEEPALIVE KEEPALIVE");
 					delay(30);
 					send_register_controller(target);
 				}
