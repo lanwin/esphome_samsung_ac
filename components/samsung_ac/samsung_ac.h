@@ -46,6 +46,11 @@ namespace esphome
       {
         debug_log_raw_bytes = value;
       }
+		
+      void set_non_nasa_keepalive(bool value)
+      {
+        non_nasa_keepalive = value;
+      }
 
       void register_device(Samsung_AC_Device *device);
 

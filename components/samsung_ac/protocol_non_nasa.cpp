@@ -563,6 +563,19 @@ namespace esphome
 					}
                 }
             }
+			else if (nonpacket_.src == "c8" && nonpacket_.dst == "ad" && (nonpacket_.commandRaw.data[0] & 1) == 1)
+			{
+				// We have received a broadcast registration request. It isn't necessary to register
+				// more than once, however we can use this as a keepalive method. A 30ms delay is added
+				// to allow other controllers to register. This mimics SNET Pro behaviour.
+				// It's unknown why the first data byte must be odd.
+				if (non_nasa_keepalive)
+				{
+					ESP_LOGD(TAG, "KEEPALIVE KEEPALIVE KEEPALIVE");
+					delay(30);
+					send_register_controller(target);
+				}
+			}
         }
 	
         void NonNasaProtocol::protocol_update(MessageTarget *target)

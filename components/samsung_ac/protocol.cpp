@@ -10,6 +10,7 @@ namespace esphome
     {
         bool debug_log_packets = false;
         bool debug_log_raw_bytes = false;
+        bool non_nasa_keepalive = false;
 
         // This functions is designed to run after a new value was added
         // to the data vector. One by one.
