@@ -93,6 +93,7 @@ namespace esphome
         {
         public:
             virtual void publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request) = 0;
+			virtual void protocol_update(MessageTarget *target) = 0;
         };
 
         enum class DataResult

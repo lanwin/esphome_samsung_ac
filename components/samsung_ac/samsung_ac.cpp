@@ -101,27 +101,38 @@ namespace esphome
           publish_data(senddata);
           send_queue_.pop();
         }
-
-        return; // nothing in uart-input-buffer, end here
       }
-
-      last_transmission_ = now;
-      while (available())
-      {
-        uint8_t c;
-        if (!read_byte(&c))
-          continue;
-        if (data_.size() == 0 && c != 0x32)
-          continue; // skip until start-byte found
-
-        data_.push_back(c);
-
-        if (process_data(data_, this) == DataResult::Clear)
-        {
-          data_.clear();
-          break; // wait for next loop
-        }
-      }
+      else
+	  {
+		  last_transmission_ = now;
+		  while (available())
+		  {
+			  uint8_t c;
+			  if (!read_byte(&c))
+				  continue;
+			  if (data_.size() == 0 && c != 0x32)
+				  continue; // skip until start-byte found
+			  
+			  data_.push_back(c);
+			  
+			  if (process_data(data_, this) == DataResult::Clear)
+			  {
+				  data_.clear();
+				  break; // wait for next loop
+			  }
+		  }
+	  }
+		
+      // Allow device protocols to perform recurring tasks (at most every 200ms)
+      if (now - last_protocol_update_ >= 200)
+	  {
+		  last_protocol_update_ = now;
+		  for (const auto &pair : devices_)
+		  {
+			Samsung_AC_Device* device = pair.second;
+			device->protocol_update(this);
+		  }
+	  }
     }
 
     float Samsung_AC::get_setup_priority() const { return setup_priority::DATA; }
