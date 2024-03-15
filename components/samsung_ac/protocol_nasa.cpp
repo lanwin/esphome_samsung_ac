@@ -8,6 +8,7 @@
 #include "protocol_nasa.h"
 #include "debug_mqtt.h"
 #include "samsung_ac_device_custClim.h"
+#include "debug_number.h"
 
 esphome::samsung_ac::Packet packet_;
 
@@ -695,6 +696,20 @@ namespace esphome
             if (debug_log_packets)
             {
                 ESP_LOGW(TAG, "MSG: %s", packet_.to_string().c_str());
+            }
+
+            for (auto& dn : Samsung_AC_NumberDebug::elements) {
+                for (int i = 0; i < packet_.messages.size(); i++){
+                    MessageSet ms = packet_.messages[i];
+                    auto addr = long_to_hex((uint16_t)ms.messageNumber);
+                    if (dn->targetValue == ms.value && ms.type != Structure) {
+                        if (dn->source == packet_.sa.to_string()){
+                            std::string str;
+                            str += "#Packet Src:" + packet_.sa.to_string() + " Dst:" + packet_.da.to_string() + " " + packet_.command.to_string() + " value " + ms.to_string() ;
+                            ESP_LOGW(TAG, "\033[1;36mDebugNumber : %s", str.c_str());
+                        }
+                    }
+                }
             }
 
             if (packet_.command.dataType == DataType::Ack)

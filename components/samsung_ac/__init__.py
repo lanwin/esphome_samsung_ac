@@ -35,6 +35,7 @@ Samsung_AC_Mode_Select = samsung_ac.class_(
 Samsung_AC_Number = samsung_ac.class_("Samsung_AC_Number", number.Number)
 Samsung_AC_Climate = samsung_ac.class_("Samsung_AC_Climate", climate.Climate)
 Samsung_AC_CustClim = samsung_ac.class_("Samsung_AC_CustClim", climate.Climate)
+Samsung_AC_NumberDebug = samsung_ac.class_("Samsung_AC_NumberDebug", number.Number)
 
 # not sure why select.select_schema did not work yet
 SELECT_MODE_SCHEMA = select.select_schema(Samsung_AC_Mode_Select)
@@ -85,7 +86,7 @@ CONF_PRESET_VALUE = "value"
 
 
 CUSTOM_CLIMATE_SCHEMA = climate.CLIMATE_SCHEMA.extend({
-    cv.GenerateID(): cv.declare_id(Samsung_AC_CustClim),
+        cv.GenerateID(): cv.declare_id(Samsung_AC_CustClim),
         cv.Required(CONF_DEVICE_CUSTOMCLIMATE_status_addr): cv.hex_int,
         cv.Required(CONF_DEVICE_CUSTOMCLIMATE_set_addr): cv.hex_int,
         cv.Required(CONF_DEVICE_CUSTOMCLIMATE_enable_addr): cv.hex_int,
@@ -223,6 +224,7 @@ CUSTOM_SENSOR_KEYS = [
 
 CONF_DEVICES = "devices"
 
+
 CONF_DEBUG_MQTT_HOST = "debug_mqtt_host"
 CONF_DEBUG_MQTT_PORT = "debug_mqtt_port"
 CONF_DEBUG_MQTT_USERNAME = "debug_mqtt_username"
@@ -230,6 +232,11 @@ CONF_DEBUG_MQTT_PASSWORD = "debug_mqtt_password"
 
 CONF_DEBUG_LOG_MESSAGES = "debug_log_messages"
 CONF_DEBUG_LOG_MESSAGES_RAW = "debug_log_messages_raw"
+
+CONF_debug_number = "debug_number"
+CONF_debug_number_SOURCE = "source"
+CONF_debug_number_MIN = "min"
+CONF_debug_number_MAX = "max"
 
 CONFIG_SCHEMA = (
     cv.Schema(
@@ -244,6 +251,12 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_DEBUG_LOG_MESSAGES_RAW, default=False): cv.boolean,
             cv.Optional(CONF_CAPABILITIES): CAPABILITIES_SCHEMA,
             cv.Required(CONF_DEVICES): cv.ensure_list(DEVICE_SCHEMA),
+            cv.Optional(CONF_debug_number) : cv.ensure_list(number.NUMBER_SCHEMA.extend({
+                cv.GenerateID(): cv.declare_id(Samsung_AC_NumberDebug),
+                cv.Optional(CONF_debug_number_SOURCE, default=""): cv.string,
+                cv.Optional(CONF_debug_number_MIN, default=-1000): cv.float_,
+                cv.Optional(CONF_debug_number_MAX, default=1000): cv.float_,
+            })),
         }
     )
     .extend(uart.UART_DEVICE_SCHEMA)
@@ -404,6 +417,16 @@ async def to_code(config):
     if (CONF_DEBUG_LOG_MESSAGES_RAW in config):
         cg.add(var.set_debug_log_messages_raw(
             config[CONF_DEBUG_LOG_MESSAGES_RAW]))
+    
+    if CONF_debug_number in config:
+        for conf in config[CONF_debug_number]:
+            var_dn = cg.new_Pvariable(conf[CONF_ID])
+            await number.register_number(var_dn,
+                                         conf,
+                                         min_value=conf[CONF_debug_number_MIN], 
+                                         max_value=conf[CONF_debug_number_MAX], 
+                                         step=1)
+            cg.add(var_dn.setup(conf[CONF_debug_number_SOURCE]))
 
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
