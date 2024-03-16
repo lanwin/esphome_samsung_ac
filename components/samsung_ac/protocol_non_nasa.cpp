@@ -15,6 +15,10 @@ namespace esphome
 {
     namespace samsung_ac
     {
+		std::list<NonNasaRequestQueueItem> nonnasa_requests;
+		bool controller_registered = false;
+		bool indoor_unit_awake = true;
+	
         uint8_t build_checksum(std::vector<uint8_t> &data)
         {
             uint8_t sum = data[1];
@@ -158,11 +162,11 @@ namespace esphome
             if (data[0] != 0x32)
                 return DecodeResult::InvalidStartByte;
 
+			if (data.size() != 14)
+				return DecodeResult::UnexpectedSize;
+			
             if (data[data.size() - 1] != 0x34)
                 return DecodeResult::InvalidEndByte;
-
-            if (data.size() != 7 && data.size() != 14)
-                return DecodeResult::UnexpectedSize;
 
             auto crc_expected = build_checksum(data);
             auto crc_actual = data[data.size() - 2];
@@ -357,8 +361,6 @@ namespace esphome
             return request;
         }
 
-        std::queue<NonNasaRequest> nonnasa_requests;
-
         NonNasaMode mode_to_nonnasa_mode(Mode value)
         {
             switch (value)
@@ -423,7 +425,19 @@ namespace esphome
                 ESP_LOGW(TAG, "change swingmode is currently not implemented");
             }
 
-            nonnasa_requests.push(req);
+			// Add to the queue with the current time
+			NonNasaRequestQueueItem reqItem = NonNasaRequestQueueItem();
+			reqItem.request = req;
+			reqItem.time = millis();
+			reqItem.time_sent = 0;
+			reqItem.retry_count = 0;
+			reqItem.resend_count = 0;
+			
+			// Safety check the length of the queue (in case something is spamming control
+			// requests we don't want the queue to get too large).
+			if (nonnasa_requests.size() < 10) {
+				nonnasa_requests.push_back(reqItem);
+			}
         }
 
         Mode nonnasa_mode_to_mode(NonNasaMode value)
@@ -467,17 +481,49 @@ namespace esphome
         {
             return nonpacket_.decode(data);
         }
-
-        void send_requests(MessageTarget *target, uint8_t delay_ms)
+	
+        void send_requests(MessageTarget *target)
         {
-            while (nonnasa_requests.size() > 0)
-            {
-                delay(delay_ms);
-                auto data = nonnasa_requests.front().encode();
-                target->publish_data(data);
-                nonnasa_requests.pop();
-            }
+			const uint32_t now = millis();
+			for (auto& item : nonnasa_requests)
+			{
+				if (item.time_sent == 0)
+				{
+					item.time_sent = now;
+					auto data = item.request.encode();
+					target->publish_data(data);
+				}
+			}
         }
+	
+		void send_register_controller(MessageTarget *target)
+		{
+			ESP_LOGD(TAG, "Sending controller registration request...");
+			
+			// Registers our device as a "controller" with the outdoor unit. This will cause the
+			// outdoor unit to poll us with a request_control message approximately every second,
+			// which we can reply to with a control message if required.
+			std::vector<uint8_t> data{
+				0x32,                     // 00 start
+				0xD0,                     // 01 src
+				0xc8,                     // 02 dst
+				0xD1,                     // 03 cmd (register_device)
+				0xD2,                     // 04 device_type (controller)
+				0,                        // 05
+				0,                        // 06
+				0,                        // 07
+				0,                        // 08
+				0,                        // 09
+				0,                        // 10
+				0,                        // 11
+				0,                        // 12 crc
+				0x34                      // 13 end
+			};
+			data[12] = build_checksum(data);
+			
+			// Send now
+			target->publish_data(data);
+		}
 
         void process_non_nasa_packet(MessageTarget *target)
         {
@@ -488,6 +534,12 @@ namespace esphome
 
             target->register_address(nonpacket_.src);
 
+			// Check if we have a message from the indoor unit. If so, we can assume it is awake.
+			if (!indoor_unit_awake && get_address_type(nonpacket_.src) == AddressType::Indoor)
+			{
+				indoor_unit_awake = true;
+			}
+			
             if (nonpacket_.cmd == NonNasaCommand::Cmd20)
             {
                 last_command20s_[nonpacket_.src] = nonpacket_.command20;
@@ -501,26 +553,108 @@ namespace esphome
                 // TODO
                 target->set_swing_horizontal(nonpacket_.src, false);
                 target->set_swing_vertical(nonpacket_.src, false);
-            }
-            else if (nonpacket_.cmd == NonNasaCommand::CmdF8)
-            {
-                // After cmd F8 (src:c8 dst:f0) is a lage gap in communication, time to send data. Some systems did not sent that.
-                if (nonpacket_.src == "c8" && nonpacket_.dst == "f0")
-                {
-                    // the communication needs a delay from cmdf8 to send the data.
-                    // series of test-delay-times: 1ms: no reaction, 7ms reactions half the time, 10ms very often a reaction (95%) -> delay on 20ms should be safe
-                    // the gap is around ~300ms
-                    send_requests(target, 20);
-                }
+				
+				// We may occasionally not receive a control_acknowledgement message when sending a control
+				// packet, so as a backup approach check if the state of the device matches that of the
+				// sent control packet. This also serves as a backup approach if for some reason a device
+				// doesn't send control_acknowledgement messages at all.
+				nonnasa_requests.remove_if([&](const NonNasaRequestQueueItem& item) {
+					return item.time_sent > 0 &&
+						nonpacket_.src == item.request.dst &&
+						item.request.target_temp == nonpacket_.command20.target_temp &&
+						item.request.fanspeed == nonpacket_.command20.fanspeed &&
+						item.request.mode == nonpacket_.command20.mode &&
+						item.request.power == nonpacket_.command20.power;
+				});
             }
             else if (nonpacket_.cmd == NonNasaCommand::CmdC6)
             {
-                // Some systems send a control message. It seems its possible to request that (SNET does that).
+				// We have received a request_control message. This is a message outdoor units will
+				// send to a registered controller, allowing us to reply with any control commands.
+				// Control commands should be sent immediately (per SNET Pro behaviour).
                 if (nonpacket_.src == "c8" && nonpacket_.dst == "d0" && nonpacket_.commandC6.control_status == true)
                 {
-                    send_requests(target, 20);
+					if (controller_registered == false)
+					{
+						ESP_LOGD(TAG, "Controller registered");
+						controller_registered = true;
+					}
+					if (indoor_unit_awake) {
+						// We know the outdoor unit is awake due to this request_control message, so we only
+						// need to check that the indoor unit is awake.
+						send_requests(target);
+					}
                 }
             }
+			else if (nonpacket_.cmd == NonNasaCommand::Cmd54 && nonpacket_.dst == "d0")
+			{
+				// We have received a control_acknowledgement message. This message will come from an
+				// indoor unit in reply to a control message from us, allowing us to confirm the control
+				// message was successfully sent. The data portion contains the same data we sent (however
+				// we can just assume it's for any sent packet, rather than comparing).
+				nonnasa_requests.remove_if([&](const NonNasaRequestQueueItem& item) {
+					return item.time_sent > 0 && nonpacket_.src == item.request.dst;
+				});
+			}
+			else if (nonpacket_.src == "c8" && nonpacket_.dst == "ad" && (nonpacket_.commandRaw.data[0] & 1) == 1)
+			{
+				// We have received a broadcast registration request. It isn't necessary to register
+				// more than once, however we can use this as a keepalive method. A 30ms delay is added
+				// to allow other controllers to register. This mimics SNET Pro behaviour.
+				// It's unknown why the first data byte must be odd.
+				if (non_nasa_keepalive)
+				{
+					delay(30);
+					send_register_controller(target);
+				}
+			}
+        }
+	
+        void NonNasaProtocol::protocol_update(MessageTarget *target)
+        {
+			// If we're not currently registered, keep sending a registration request until it has
+			// been confirmed by the outdoor unit.
+			if (!controller_registered)
+			{
+				send_register_controller(target);
+			}
+			
+			// If we have *any* messages in the queue for longer than 15s, assume failure and
+			// remove from queue (the AC or UART connection is likely offline).
+			const uint32_t now = millis();
+			nonnasa_requests.remove_if([&](const NonNasaRequestQueueItem& item) {
+				if (now - item.time > 15000) {
+				}
+				return now - item.time > 15000;
+			});
+			
+			// If we have any *sent* messages in the queue that haven't received an ack in under 5s,
+			// assume they failed and queue for resend on the next request_control message. Retry at
+			// most 3 times.
+			for (auto& item : nonnasa_requests)
+			{
+				if (item.time_sent > 0 && item.resend_count < 3 && now - item.time_sent > 4500)
+				{
+					item.time_sent = 0; // Resend
+					item.resend_count++;
+				}
+			}
+			
+			// If we have any *unsent* messages in the queue for over 1000ms, it likely means the indoor
+			// and/or outdoor unit has gone to sleep due to inactivity. Send a registration request to
+			// wake the unit up.
+			for (auto& item : nonnasa_requests)
+			{
+				if (item.time_sent == 0 && now - item.time > 1000 && item.resend_count == 0 && item.retry_count == 0)
+				{
+					// Both the outdoor and the indoor unit must be awake before we can send a command
+					indoor_unit_awake = false;
+					item.retry_count++;
+					ESP_LOGD(TAG, "Device is likely sleeping, waking...");
+					send_register_controller(target);
+					break;
+				}
+			}
         }
     } // namespace samsung_ac
 } // namespace esphome
