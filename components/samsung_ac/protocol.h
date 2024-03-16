@@ -97,6 +97,15 @@ namespace esphome
 			virtual void protocol_update(MessageTarget *target) = 0;
         };
 
+		enum class ProtocolProcessing
+		{
+			Auto = 0,
+			NASA = 1,
+			NonNASA = 2
+		};
+	
+		extern ProtocolProcessing protocol_processing;
+	
         enum class DataResult
         {
             Fill = 0,

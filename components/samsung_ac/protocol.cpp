@@ -11,7 +11,8 @@ namespace esphome
         bool debug_log_packets = false;
         bool debug_log_raw_bytes = false;
         bool non_nasa_keepalive = false;
-
+		ProtocolProcessing protocol_processing = ProtocolProcessing::Auto;
+		
         // This functions is designed to run after a new value was added
         // to the data vector. One by one.
         DataResult process_data(std::vector<uint8_t> &data, MessageTarget *target)
@@ -23,47 +24,71 @@ namespace esphome
             }
 
             // Check if its a decodeable NonNASA packat
-            if (data.size() == 7 /* duplicate addr package */ || data.size() == 14 /* generic package */)
-            {
-                const auto result = try_decode_non_nasa_packet(data);
-                if (result == DecodeResult::Ok)
-                {
-                    if (debug_log_raw_bytes)
-                    {
-                        ESP_LOGW(TAG, "RAW: %s", bytes_to_hex(data).c_str());
-                    }
+			DecodeResult result;
+			if (protocol_processing == ProtocolProcessing::Auto || protocol_processing == ProtocolProcessing::NonNASA)
+			{
+				result = try_decode_non_nasa_packet(data);
+				if (result == DecodeResult::Ok)
+				{
+					if (debug_log_raw_bytes)
+					{
+						ESP_LOGW(TAG, "RAW: %s", bytes_to_hex(data).c_str());
+					}
+					
+					// Non-NASA protocol confirmed, use for future packets
+					if (protocol_processing == ProtocolProcessing::Auto)
+					{
+						protocol_processing = ProtocolProcessing::NonNASA;
+					}
+					
+					process_non_nasa_packet(target);
+					return DataResult::Clear;
+				}
+			}
 
-                    process_non_nasa_packet(target);
-                    return DataResult::Clear;
-                }
-            }
+			if (protocol_processing == ProtocolProcessing::Auto || protocol_processing == ProtocolProcessing::NASA)
+			{
+				result = try_decode_nasa_packet(data);
+				if (result == DecodeResult::Ok)
+				{
+					if (debug_log_raw_bytes)
+					{
+						ESP_LOGW(TAG, "RAW: %s", bytes_to_hex(data).c_str());
+					}
+					
+					// NASA protocol confirmed, use for future packets
+					if (protocol_processing == ProtocolProcessing::Auto)
+					{
+						protocol_processing = ProtocolProcessing::NASA;
+					}
+					
+					process_nasa_packet(target);
+					return DataResult::Clear;
+				}
+			}
+			
+			if (result == DecodeResult::SizeDidNotMatch || result == DecodeResult::UnexpectedSize)
+			{
+				return DataResult::Fill;
+			}
 
-            const auto result = try_decode_nasa_packet(data);
-            if (result == DecodeResult::SizeDidNotMatch || result == DecodeResult::UnexpectedSize)
-                return DataResult::Fill;
-
-            if (debug_log_raw_bytes)
-            {
-                ESP_LOGV(TAG, "RAW: %s", bytes_to_hex(data).c_str());
-            }
+			if (debug_log_raw_bytes)
+			{
+				ESP_LOGV(TAG, "RAW: %s", bytes_to_hex(data).c_str());
+			}
 
             if (result == DecodeResult::InvalidStartByte)
             {
                 ESP_LOGV(TAG, "invalid start byte: %s", bytes_to_hex(data).c_str());
-                return DataResult::Clear;
             }
             else if (result == DecodeResult::InvalidEndByte)
             {
                 ESP_LOGV(TAG, "invalid end byte: %s", bytes_to_hex(data).c_str());
-                return DataResult::Clear;
             }
             else if (result == DecodeResult::CrcError)
             {
-                // is logge dwithin decoder
-                return DataResult::Clear;
+                // is logged within decoder
             }
-
-            process_nasa_packet(target);
             return DataResult::Clear;
         }
 
