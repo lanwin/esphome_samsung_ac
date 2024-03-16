@@ -15,7 +15,7 @@ namespace esphome
 {
     namespace samsung_ac
     {
-		std::queue<NonNasaRequestQueueItem> nonnasa_requests;
+		std::list<NonNasaRequestQueueItem> nonnasa_requests;
 		bool controller_registered = false;
 		bool indoor_unit_awake = true;
 	
@@ -429,8 +429,15 @@ namespace esphome
 			NonNasaRequestQueueItem reqItem = NonNasaRequestQueueItem();
 			reqItem.request = req;
 			reqItem.time = millis();
+			reqItem.time_sent = 0;
 			reqItem.retry_count = 0;
-            nonnasa_requests.push(reqItem);
+			reqItem.resend_count = 0;
+			
+			// Safety check the length of the queue (in case something is spamming control
+			// requests we don't want the queue to get too large).
+			if (nonnasa_requests.size() < 10) {
+				nonnasa_requests.push_back(reqItem);
+			}
         }
 
         Mode nonnasa_mode_to_mode(NonNasaMode value)
@@ -477,13 +484,16 @@ namespace esphome
 	
         void send_requests(MessageTarget *target)
         {
-            while (nonnasa_requests.size() > 0)
-            {
-				auto reqItem = nonnasa_requests.front();
-				auto data = reqItem.request.encode();
-				target->publish_data(data);
-				nonnasa_requests.pop();
-            }
+			const uint32_t now = millis();
+			for (auto& item : nonnasa_requests)
+			{
+				if (item.time_sent == 0)
+				{
+					item.time_sent = now;
+					auto data = item.request.encode();
+					target->publish_data(data);
+				}
+			}
         }
 	
 		void send_register_controller(MessageTarget *target)
@@ -525,7 +535,7 @@ namespace esphome
             target->register_address(nonpacket_.src);
 
 			// Check if we have a message from the indoor unit. If so, we can assume it is awake.
-			if (!indoor_unit_awake && nonpacket_.src == "00")
+			if (!indoor_unit_awake && get_address_type(nonpacket_.src) == AddressType::Indoor)
 			{
 				indoor_unit_awake = true;
 			}
@@ -543,6 +553,19 @@ namespace esphome
                 // TODO
                 target->set_swing_horizontal(nonpacket_.src, false);
                 target->set_swing_vertical(nonpacket_.src, false);
+				
+				// We may occasionally not receive a control_acknowledgement message when sending a control
+				// packet, so as a backup approach check if the state of the device matches that of the
+				// sent control packet. This also serves as a backup approach if for some reason a device
+				// doesn't send control_acknowledgement messages at all.
+				nonnasa_requests.remove_if([&](const NonNasaRequestQueueItem& item) {
+					return item.time_sent > 0 &&
+						nonpacket_.src == item.request.dst &&
+						item.request.target_temp == nonpacket_.command20.target_temp &&
+						item.request.fanspeed == nonpacket_.command20.fanspeed &&
+						item.request.mode == nonpacket_.command20.mode &&
+						item.request.power == nonpacket_.command20.power;
+				});
             }
             else if (nonpacket_.cmd == NonNasaCommand::CmdC6)
             {
@@ -563,6 +586,16 @@ namespace esphome
 					}
                 }
             }
+			else if (nonpacket_.cmd == NonNasaCommand::Cmd54 && nonpacket_.dst == "d0")
+			{
+				// We have received a control_acknowledgement message. This message will come from an
+				// indoor unit in reply to a control message from us, allowing us to confirm the control
+				// message was successfully sent. The data portion contains the same data we sent (however
+				// we can just assume it's for any sent packet, rather than comparing).
+				nonnasa_requests.remove_if([&](const NonNasaRequestQueueItem& item) {
+					return item.time_sent > 0 && nonpacket_.src == item.request.dst;
+				});
+			}
 			else if (nonpacket_.src == "c8" && nonpacket_.dst == "ad" && (nonpacket_.commandRaw.data[0] & 1) == 1)
 			{
 				// We have received a broadcast registration request. It isn't necessary to register
@@ -586,20 +619,40 @@ namespace esphome
 				send_register_controller(target);
 			}
 			
-			// If we have any messages in the queue for over 1000ms, it likely means the outdoor
-			// unit has gone to sleep due to inactivity. Send a registration request to wake the
-			// unit up.
-			if (nonnasa_requests.size() > 0)
+			// If we have *any* messages in the queue for longer than 15s, assume failure and
+			// remove from queue (the AC or UART connection is likely offline).
+			const uint32_t now = millis();
+			nonnasa_requests.remove_if([&](const NonNasaRequestQueueItem& item) {
+				if (now - item.time > 15000) {
+				}
+				return now - item.time > 15000;
+			});
+			
+			// If we have any *sent* messages in the queue that haven't received an ack in under 5s,
+			// assume they failed and queue for resend on the next request_control message. Retry at
+			// most 3 times.
+			for (auto& item : nonnasa_requests)
 			{
-				auto& reqItem = nonnasa_requests.front();
-				const uint32_t now = millis();
-				if (now - reqItem.time > 1000 && reqItem.retry_count == 0)
+				if (item.time_sent > 0 && item.resend_count < 3 && now - item.time_sent > 4500)
+				{
+					item.time_sent = 0; // Resend
+					item.resend_count++;
+				}
+			}
+			
+			// If we have any *unsent* messages in the queue for over 1000ms, it likely means the indoor
+			// and/or outdoor unit has gone to sleep due to inactivity. Send a registration request to
+			// wake the unit up.
+			for (auto& item : nonnasa_requests)
+			{
+				if (item.time_sent == 0 && now - item.time > 1000 && item.resend_count == 0 && item.retry_count == 0)
 				{
 					// Both the outdoor and the indoor unit must be awake before we can send a command
 					indoor_unit_awake = false;
-					reqItem.retry_count++;
-					ESP_LOGD(TAG, "Outdoor unit is likely sleeping, waking...");
+					item.retry_count++;
+					ESP_LOGD(TAG, "Device is likely sleeping, waking...");
 					send_register_controller(target);
+					break;
 				}
 			}
         }
