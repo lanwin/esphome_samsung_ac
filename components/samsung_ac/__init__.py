@@ -194,7 +194,7 @@ def energy_sensor_schema(message: int):
         unit_of_measurement=UNIT_KILOWATT_HOURS,
         accuracy_decimals=3,
         device_class=DEVICE_CLASS_ENERGY,
-        state_class=STATE_CLASS_MEASUREMENT,
+        state_class=STATE_CLASS_TOTAL_INCREASING,
         raw_filters=[
             {"multiply": 0.001}
         ],
