@@ -17,7 +17,7 @@ namespace esphome
       float setMax, setMin;
 
       uint16_t modeAddr = 0;
-      int m[7] = {-1, -1, -1, 1, -1, -1, -1};
+      int m[7] = {0, -1, -1, 1, -1, -1, -1}; // default = only enable activated on 4 = heat
 
       int lastReadMode = -1, lastEnabled = 1;
       void publishMode();
