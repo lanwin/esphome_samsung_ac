@@ -135,6 +135,9 @@ The Non NASA protocol is specifically desined to transport AC data.
 
 ## Credits
 
+NASA Protocol description
+https://wiki.myehs.eu/wiki/NASA_Protocol 
+
 Thanks goes to DannyDeGaspari https://github.com/DannyDeGaspari/Samsung-HVAC-buscontrol. He made the initial attempt to describe the
 older Non NASA protocol.
 
