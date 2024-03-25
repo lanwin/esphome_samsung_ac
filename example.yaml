@@ -1,15 +1,39 @@
-# This example provides a basic configuration and description based on the M5STACK components
-# For further configuration you should visit the ESPHome docs https://esphome.io
-# Every line starting with a # can be removed.
+substitutions:
+  name: esp-samsung-ac
+  friendly_name: ESP Samsung AC controller
 
-## BASIC CONFIGURATION
 esphome:
-  name: samsung_ac
-  friendly_name: Climate
+  name: ${name}
+  friendly_name: ${friendly_name}
+  name_add_mac_suffix: false
+  project:
+    name: esphome.web
+    version: '1.0'
 
-# Select chipset and board configuration - in this case M5STACK
 esp32:
-  board: m5stack-atom
+  board: esp32dev
+  framework:
+    type: arduino
+
+
+mqtt:
+  broker: 192.168.0.118
+  topic_prefix: /home/${name}
+
+ota:
+  password: "e30795a297e9bda52dce47947363f8a4"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esp-Samsung-AC"
+    password: "heslo"
+
+captive_portal:
+    
 
 # [Optional] - Create web interface where you can control the AC from your web browser (without Home Assistant)
 web_server:
@@ -21,23 +45,11 @@ logger:
   logs:
     component: ERROR # Remove the "Your component takes to long to respond warning"
 
-# Enable native API for communication with Home Assistant, this can be removed if you do not plan to use it with Home Assistant
-api:
 
-# Enable OTA firmware update, you will be able to upload the firmware over WiFi without connecting the device by cables
-ota:
-
-# Setup your WiFi password
-wifi:
-  ssid: "My WiFi Name" # !!!CHANGE ME!!!
-  password: "My WiFi Password" # !!!CHANGE ME!!!
-
-captive_portal:
-
-# Specify pins used by the board to comunicate with RS485 board - in this case M5STACK
+# Specify pins used by the board to comunicate with RS485 board
 uart:
-  tx_pin: GPIO19
-  rx_pin: GPIO22
+  tx_pin: GPIO12
+  rx_pin: GPIO14
   # For older devices it could also be 2400. But you should start with 9600.
   baud_rate: 9600
   parity: EVEN
@@ -46,11 +58,22 @@ uart:
 
 # Import custom component from GitHub
 external_components:
-  - source: github://lanwin/esphome_samsung_ac@stable # use @main if you want the latest development (possibly unstable?)
+  - source: github://lanwin/esphome_samsung_ac@main # use @main if you want the latest development (possibly unstable?)
     components: [samsung_ac]
 
 # Configuration of AC component
 samsung_ac:
+
+  # Sends all NASA package values to MQTT so the can be analysed or monitored.
+  #debug_mqtt_host: 192.168.0.118
+  #debug_mqtt_port: 1883
+  #debug_mqtt_username: user
+  #debug_mqtt_password: password
+
+  # Prints the parsed message data to the log
+  #debug_log_messages: true
+  # Prints the binary message data (HEX encoded) to the log
+  #debug_log_messages_raw: true
 
   # Capabilities configure the features alle devices of your AC system have (all parts of this section are optional). 
   # All capabilities are off by default, you need to enable only those your devices have.
@@ -61,11 +84,15 @@ samsung_ac:
     # Presets define special AC modes like Windfree and so on. 
     # The following modes are available: sleep, quiet, fast, longreach, windfree
     presets: 
-      # short version
-      quiet: true
       # long version - allows to locilize names
       quiet:
-        name: "Makes no sound"
+        name: "Quiet"
+        enabled: true
+      windfree:
+        name: "Windfree"
+        enabled: true
+      fast:
+        name: "Turbo"
         enabled: true
 
   devices:
@@ -83,22 +110,20 @@ samsung_ac:
 
       # Configures/overrides the capabilites for this devices. 
       # Look above for all options.
-      capabilities:
-        horizontal_swing: false # This device have no h swing. 
 
       # Creates climate control in Home Assistant. A climate control combines multiple of the controls below (like temperature, mode etc.)
       climate:
-        name: "Kitchen climate"
+        name: "Klima 1 - holky pokoj"
 
       # The controls directly below are all included in the climate control. Its adviced to only add the climate control and skip the extra controls.
       room_temperature:
-        name: "Kitchen temperature"
+        name: "Klima 1 temperature"
       target_temperature:
-        name: "Kitchen target temperature"
+        name: "Klima 1 target temperature"
       power:
-        name: "Kitchen power"
+        name: "Klima 1 power"
       mode:
-        name: "Kitchen mode"
+        name: "Klima 1 mode"
 
       # If your AC sits near or inside the ceiling, the reported room temperature is often a little bit heigher then whats 
       # measured below. This property can be used to correct that value.
@@ -106,11 +131,237 @@ samsung_ac:
 
       # Only supported on NASA devices
       room_humidity:
-        name: "Kitchen humidity"
+        name: "Klima 1 humidity"
 
-      # Only supported on NASA based heatpumps
-      water_temperature:
-        name: "Warm water"
-      outdoor_temperature: # Should be used with outdoor device address
-        name: "Outdoor temperature"
+    - address: "20.00.01" # Indoor device address 
+      # Each property below is optional (climate, room_temperature etc.) - you can delete those which you dont need.
+      # For the names we suggest to choose a combination of room name and the thing it controls. 
+
+      # Configures/overrides the capabilites for this devices. 
+      # Look above for all options.
+
+      # Creates climate control in Home Assistant. A climate control combines multiple of the controls below (like temperature, mode etc.)
+      climate:
+        name: "Klima 2 - loznice dole"
+
+      # The controls directly below are all included in the climate control. Its adviced to only add the climate control and skip the extra controls.
+      room_temperature:
+        name: "Klima 2 temperature"
+      target_temperature:
+        name: "Klima 2 target temperature"
+      power:
+        name: "Klima 2 power"
+      mode:
+        name: "Klima 2 mode"
+
+      # If your AC sits near or inside the ceiling, the reported room temperature is often a little bit heigher then whats 
+      # measured below. This property can be used to correct that value.
+      room_temperature_offset: -1.4
+
+      # Only supported on NASA devices
+      room_humidity:
+        name: "Klima 2 humidity"
+
+
+    - address: "20.00.02" # Indoor device address 
+      # Each property below is optional (climate, room_temperature etc.) - you can delete those which you dont need.
+      # For the names we suggest to choose a combination of room name and the thing it controls. 
+
+      # Configures/overrides the capabilites for this devices. 
+      # Look above for all options.
+
+      # Creates climate control in Home Assistant. A climate control combines multiple of the controls below (like temperature, mode etc.)
+      climate:
+        name: "Klima 3 - obyvak"
+
+      # The controls directly below are all included in the climate control. Its adviced to only add the climate control and skip the extra controls.
+      room_temperature:
+        name: "Klima 3 temperature"
+      target_temperature:
+        name: "Klima 3 target temperature"
+      power:
+        name: "Klima 3 power"
+      mode:
+        name: "Klima 3 mode"
+
+      # If your AC sits near or inside the ceiling, the reported room temperature is often a little bit heigher then whats 
+      # measured below. This property can be used to correct that value.
+      room_temperature_offset: -1.4
+
+      # Only supported on NASA devices
+      room_humidity:
+        name: "Klima 3 humidity"
+
+    - address: "20.00.03" # Indoor device address 
+      # Each property below is optional (climate, room_temperature etc.) - you can delete those which you dont need.
+      # For the names we suggest to choose a combination of room name and the thing it controls. 
+
+      # Configures/overrides the capabilites for this devices. 
+      # Look above for all options.
+
+      # Creates climate control in Home Assistant. A climate control combines multiple of the controls below (like temperature, mode etc.)
+      climate:
+        name: "Klima 4 - Miska pokoj"
+
+      # The controls directly below are all included in the climate control. Its adviced to only add the climate control and skip the extra controls.
+      room_temperature:
+        name: "Klima 4 temperature"
+      target_temperature:
+        name: "Klima 4 target temperature"
+      power:
+        name: "Klima 4 power"
+      mode:
+        name: "Klima 4 mode"
+
+      # If your AC sits near or inside the ceiling, the reported room temperature is often a little bit heigher then whats 
+      # measured below. This property can be used to correct that value.
+      room_temperature_offset: -1.4
+
+      # Only supported on NASA devices
+      room_humidity:
+        name: "Klima 4 humidity"
+
+
+    - address: "10.00.00"
+      outdoor_temperature:
+        name: Outdoor temperature
+      custom_sensor:
+        - name: AC Voltage
+          message: 0x24fc
+          device_class: voltage
+          state_class: measurement
+          unit_of_measurement: V
+
+        - name: AC Current
+          message: 0x8217
+          device_class: current
+          state_class: measurement
+          unit_of_measurement: A
+          accuracy_decimals: 1
+          filters:
+            - multiply: 0.1
+
+        - name: AC Power
+          message: 0x8413
+          device_class: energy
+          state_class: measurement
+          unit_of_measurement: W
+
+        - name: AC Energy cumulative
+          message: 0x8414
+          device_class: energy
+          state_class: total_increasing
+          unit_of_measurement: KWh
+          accuracy_decimals: 1
+          filters:
+            - multiply: 0.001
+
+        - name: Discharge temperature
+          message: 0x820A
+          device_class: temperature
+          state_class: measurement
+          unit_of_measurement: °C
+          accuracy_decimals: 1
+          filters:
+            - multiply: 0.1
+            
+        - name: Compressor frequency
+          message: 0x8238
+          state_class: measurement
+          accuracy_decimals: 0
+          filters:
+            - multiply: 1
+
+        - name: Pipe In 1
+          message: 0x825F
+          device_class: temperature
+          state_class: measurement
+          unit_of_measurement: °C
+          accuracy_decimals: 1
+          filters:
+            - multiply: 0.1
+            
+        - name: Pipe In 2
+          message: 0x8260
+          device_class: temperature
+          state_class: measurement
+          unit_of_measurement: °C
+          accuracy_decimals: 1
+          filters:
+            - multiply: 0.1
+            
+        - name: Pipe In 3
+          message: 0x8261
+          device_class: temperature
+          state_class: measurement
+          unit_of_measurement: °C
+          accuracy_decimals: 1
+          filters:
+            - multiply: 0.1
+
+        - name: Pipe In 4
+          message: 0x8262
+          device_class: temperature
+          state_class: measurement
+          unit_of_measurement: °C
+          accuracy_decimals: 1
+          filters:
+            - multiply: 0.1
+
+        - name: Pipe Out 1
+          message: 0x8264
+          device_class: temperature
+          state_class: measurement
+          unit_of_measurement: °C
+          accuracy_decimals: 1
+          filters:
+            - multiply: 0.1
+
+        - name: Pipe Out 2
+          message: 0x8265
+          device_class: temperature
+          state_class: measurement
+          unit_of_measurement: °C
+          accuracy_decimals: 1
+          filters:
+            - multiply: 0.1
+
+        - name: Pipe Out 3
+          message: 0x8266
+          device_class: temperature
+          state_class: measurement
+          unit_of_measurement: °C
+          accuracy_decimals: 1
+          filters:
+            - multiply: 0.1
+
+        - name: Pipe Out 4
+          message: 0x8267
+          device_class: temperature
+          state_class: measurement
+          unit_of_measurement: °C
+          accuracy_decimals: 1
+          filters:
+            - multiply: 0.1
+
+
+        - name: IPM1 temp
+          message: 0x8254
+          device_class: temperature
+          state_class: measurement
+          unit_of_measurement: °C
+          accuracy_decimals: 1
+          filters:
+            - multiply: 0.1
+
+        - name: Condenser temp
+          message: 0x8218
+          device_class: temperature
+          state_class: measurement
+          unit_of_measurement: °C
+          accuracy_decimals: 1
+          filters:
+            - multiply: 0.1
+
+
 
