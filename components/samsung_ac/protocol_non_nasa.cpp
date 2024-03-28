@@ -397,6 +397,10 @@ namespace esphome
         void NonNasaProtocol::publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request)
         {
             auto req = NonNasaRequest::create(address);
+            if (request.caller.has_value()) {
+                ESP_LOGE(TAG, "Custom Climate not supported by non nasa devices");
+                return;
+            }
 
             if (request.mode)
             {

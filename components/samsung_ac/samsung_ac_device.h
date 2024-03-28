@@ -12,6 +12,7 @@
 #include "protocol.h"
 #include "samsung_ac.h"
 #include "conversions.h"
+#include "samsung_ac_device_custClim.h"
 
 namespace esphome
 {
@@ -94,7 +95,10 @@ namespace esphome
       Samsung_AC_Mode_Select *mode{nullptr};
       Samsung_AC_Climate *climate{nullptr};
       std::vector<Samsung_AC_Sensor> custom_sensors;
+      std::vector<Samsung_AC_CustClim*> custom_climates;
       float room_temperature_offset{0};
+
+      void getValueForCustomClimate(uint16_t address, long value);
 
       void set_room_temperature_sensor(sensor::Sensor *sensor)
       {
@@ -154,6 +158,29 @@ namespace esphome
           publish_request(request);
         };
       };
+
+      void add_custom_climate(Samsung_AC_CustClim * clim, uint16_t status, uint16_t set, uint16_t enable, float setMin, float setMax) {
+          clim->status = status;
+          clim->set = set;
+          clim->enable = enable;
+          clim->setMin = setMin;
+          clim->setMax = setMax;
+          clim->device = this;
+          
+          custom_climates.push_back(clim);
+
+      }
+
+      void add_custom_climate_mode(Samsung_AC_CustClim * clim, uint16_t modeAddr, int m0, int m1, int m2, int m3, int m4, int m5, int m6){
+        clim->modeAddr = modeAddr;
+        clim->m[0] = m0;
+        clim->m[1] = m1;
+        clim->m[2] = m2;
+        clim->m[3] = m3;
+        clim->m[4] = m4;
+        clim->m[5] = m5;
+        clim->m[6] = m6;
+      }
 
       void set_climate(Samsung_AC_Climate *value)
       {

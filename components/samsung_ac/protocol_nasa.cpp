@@ -7,6 +7,8 @@
 #include "util.h"
 #include "protocol_nasa.h"
 #include "debug_mqtt.h"
+#include "samsung_ac_device_custClim.h"
+#include "debug_number.h"
 
 esphome::samsung_ac::Packet packet_;
 
@@ -373,23 +375,30 @@ namespace esphome
 
             if (request.mode)
             {
-                request.power = true; // ensure system turns on when mode is set
-
-                MessageSet mode(MessageNumber::ENUM_in_operation_mode);
+                MessageNumber addr = MessageNumber::ENUM_in_operation_mode;
+                if (request.caller.has_value()) {
+                    addr = (MessageNumber)request.caller.value()->modeAddr;
+                } else {
+                    request.power = true; // ensure system turns on when mode is set
+                }
+                MessageSet mode(addr);
                 mode.value = (int)request.mode.value();
                 packet.messages.push_back(mode);
             }
 
             if (request.power)
             {
-                MessageSet power(MessageNumber::ENUM_in_operation_power);
+                MessageNumber addr = request.caller.has_value() ? (MessageNumber)request.caller.value()->enable: MessageNumber::ENUM_in_operation_power;
+                MessageSet power(addr);
                 power.value = request.power.value() ? 1 : 0;
                 packet.messages.push_back(power);
+                ESP_LOGI(TAG, "Pushing %u at 0x%X for %s", request.power.value() , addr, address.c_str());
             }
 
             if (request.target_temp)
             {
-                MessageSet targettemp(MessageNumber::VAR_in_temp_target_f);
+                MessageNumber addr = request.caller.has_value() ? (MessageNumber)request.caller.value()->set: MessageNumber::VAR_in_temp_target_f;
+                MessageSet targettemp(addr);
                 targettemp.value = request.target_temp.value() * 10.0;
                 packet.messages.push_back(targettemp);
             }
@@ -480,7 +489,7 @@ namespace esphome
                 return FanMode::Unknown;
             }
         }
-
+        
         void process_messageset(std::string source, std::string dest, MessageSet &message, optional<std::set<uint16_t>> &custom, MessageTarget *target)
         {
             if (debug_mqtt_connected())
@@ -498,11 +507,13 @@ namespace esphome
                     debug_mqtt_publish("samsung_ac/nasa/var_long/" + long_to_hex((uint16_t)message.messageNumber), std::to_string(message.value));
                 }
             }
-
+            
             if (custom && custom.value().find((uint16_t)message.messageNumber) != custom.value().end())
             {
                 target->set_custom_sensor(source, (uint16_t)message.messageNumber, (float)message.value);
             }
+            
+            target->getValueForCustomClimate(source, (int16_t) message.messageNumber, message.value);
 
             switch (message.messageNumber)
             {
@@ -685,6 +696,20 @@ namespace esphome
             if (debug_log_packets)
             {
                 ESP_LOGW(TAG, "MSG: %s", packet_.to_string().c_str());
+            }
+
+            for (auto& dn : Samsung_AC_NumberDebug::elements) {
+                for (int i = 0; i < packet_.messages.size(); i++){
+                    MessageSet ms = packet_.messages[i];
+                    auto addr = long_to_hex((uint16_t)ms.messageNumber);
+                    if (dn->targetValue == ms.value && ms.type != Structure && dn->targetValue != Samsung_AC_NumberDebug::UNUSED) {
+                        if (dn->source == packet_.sa.to_string() || dn->source == ""){
+                            std::string str;
+                            str += "#Packet Src:" + packet_.sa.to_string() + " Dst:" + packet_.da.to_string() + " " + packet_.command.to_string() + " value " + ms.to_string() ;
+                            ESP_LOGW(TAG, "\033[1;36mDebugNumber : %s", str.c_str());
+                        }
+                    }
+                }
             }
 
             if (packet_.command.dataType == DataType::Ack)

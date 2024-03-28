@@ -8,6 +8,7 @@ namespace esphome
 {
     namespace samsung_ac
     {
+        class Samsung_AC_CustClim;
         extern bool debug_log_packets;
         extern bool debug_log_raw_bytes;
 
@@ -76,6 +77,7 @@ namespace esphome
             virtual void set_swing_horizontal(const std::string address, bool horizontal) = 0;
             virtual optional<std::set<uint16_t>> get_custom_sensors(const std::string address) = 0;
             virtual void set_custom_sensor(const std::string address, uint16_t message_number, float value) = 0;
+            virtual void getValueForCustomClimate(const std::string source, uint16_t messageNumber, long value) = 0;
         };
 
         struct ProtocolRequest
@@ -87,6 +89,7 @@ namespace esphome
             optional<FanMode> fan_mode;
             optional<SwingMode> swing_mode;
             optional<AltMode> alt_mode;
+            optional<Samsung_AC_CustClim *> caller; // used to analyze custom addresses
         };
 
         class Protocol

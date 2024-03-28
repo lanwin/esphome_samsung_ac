@@ -111,6 +111,14 @@ samsung_ac:
   debug_log_messages: true
   # Prints the binary message data (HEX encoded) to the log
   debug_log_messages_raw: true
+  
+  # Prints parsed read value only if it match the source address (optional) AND if it's exactly the number set on HA user interface
+  debug_number:
+    - name: "debugFrom10"
+      source: "10.00.00"
+    - name: "debugFrom20"
+      source: "20.00.00"
+
 ```
 
 ## NASA vs Non NASA
