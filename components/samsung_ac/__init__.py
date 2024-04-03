@@ -1,17 +1,7 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import uart, sensor, switch, select, number, climate
-from esphome.const import (
-    CONF_ID,
-    DEVICE_CLASS_TEMPERATURE,
-    STATE_CLASS_MEASUREMENT,
-    DEVICE_CLASS_HUMIDITY,
-    CONF_UNIT_OF_MEASUREMENT,
-    CONF_DEVICE_CLASS,
-    CONF_FILTERS,
-    UNIT_CELSIUS,
-    UNIT_PERCENT,
-)
+from esphome.const import *
 from esphome.core import (
     CORE,
     Lambda
@@ -34,6 +24,8 @@ Samsung_AC_Mode_Select = samsung_ac.class_(
     "Samsung_AC_Mode_Select", select.Select)
 Samsung_AC_Number = samsung_ac.class_("Samsung_AC_Number", number.Number)
 Samsung_AC_Climate = samsung_ac.class_("Samsung_AC_Climate", climate.Climate)
+Samsung_AC_CustClim = samsung_ac.class_("Samsung_AC_CustClim", climate.Climate)
+Samsung_AC_NumberDebug = samsung_ac.class_("Samsung_AC_NumberDebug", number.Number)
 
 # not sure why select.select_schema did not work yet
 SELECT_MODE_SCHEMA = select.select_schema(Samsung_AC_Mode_Select)
@@ -59,9 +51,26 @@ CONF_DEVICE_MODE = "mode"
 CONF_DEVICE_CLIMATE = "climate"
 CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
 CONF_DEVICE_WATER_TEMPERATURE = "water_temperature"
+CONF_DEVICE_INDOOR_CONSUMPTION = "indoor_power_consumption"
+CONF_DEVICE_CONSUMPTION = "power_consumption"
+CONF_DEVICE_ENERGY_CONSUMPTION = "energy_consumption"
+CONF_DEVICE_ENERGY_PRODUCED = "energy_produced"
 CONF_DEVICE_CUSTOM = "custom_sensor"
 CONF_DEVICE_CUSTOM_MESSAGE = "message"
 CONF_DEVICE_CUSTOM_RAW_FILTERS = "raw_filters"
+CONF_DEVICE_CUSTOMCLIMATE = "custom_climate"
+CONF_DEVICE_CUSTOMCLIMATE_status_addr = "status_addr"
+CONF_DEVICE_CUSTOMCLIMATE_set_addr = "set_addr"
+CONF_DEVICE_CUSTOMCLIMATE_set_min = "set_min"
+CONF_DEVICE_CUSTOMCLIMATE_set_max = "set_max"
+CONF_DEVICE_CUSTOMCLIMATE_enable_addr = "enable_addr"
+CONF_DEVICE_CUSTOMCLIMATE_mode = "mode"
+CONF_DEVICE_CUSTOMCLIMATE_mode_addr = "addr"
+CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue = [f"ClimateMode{i}Value" for i in range(7)]
+CONF_DEVICE_CUSTOMCLIMATE_preset = "preset"
+CONF_DEVICE_CUSTOMCLIMATE_preset_addr = "addr"
+CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue  = [f"ClimatePreset{i}Value" for i in range(8)]
+
 
 CONF_CAPABILITIES = "capabilities"
 CONF_CAPABILITIES_HORIZONTAL_SWING = "horizontal_swing"
@@ -72,6 +81,24 @@ CONF_PRESET_NAME = "name"
 CONF_PRESET_ENABLED = "enabled"
 CONF_PRESET_VALUE = "value"
 
+
+CUSTOM_CLIMATE_SCHEMA = climate.CLIMATE_SCHEMA.extend({
+        cv.GenerateID(): cv.declare_id(Samsung_AC_CustClim),
+        cv.Required(CONF_DEVICE_CUSTOMCLIMATE_status_addr): cv.hex_int,
+        cv.Required(CONF_DEVICE_CUSTOMCLIMATE_set_addr): cv.hex_int,
+        cv.Required(CONF_DEVICE_CUSTOMCLIMATE_enable_addr): cv.hex_int,
+        cv.Optional(CONF_DEVICE_CUSTOMCLIMATE_set_min, default=25): cv.float_,
+        cv.Optional(CONF_DEVICE_CUSTOMCLIMATE_set_max, default=65): cv.float_,
+        cv.Optional(CONF_DEVICE_CUSTOMCLIMATE_mode): cv.Schema({
+            **{cv.Optional(CONF_DEVICE_CUSTOMCLIMATE_mode_addr, default=0): cv.hex_int}, 
+            **{cv.Optional(i, default=-1 if j > 0 else 0): cv.int_ for i,j in zip(CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue, range(7))}
+        }),
+        cv.Optional(CONF_DEVICE_CUSTOMCLIMATE_preset): cv.Schema({
+            **{cv.Required(CONF_DEVICE_CUSTOMCLIMATE_preset_addr): cv.hex_int},
+            **{cv.Optional(i, default=-1): cv.int_ for i in CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue}, 
+        }),
+
+    })
 
 def preset_entry(
     name: str,
@@ -156,6 +183,29 @@ def humidity_sensor_schema(message: int):
         state_class=STATE_CLASS_MEASUREMENT,
     )
 
+def consumption_sensor_schema(message: int):
+    return custom_sensor_schema(
+        message=message,
+        unit_of_measurement=UNIT_KILOWATT,
+        accuracy_decimals=3,
+        device_class=DEVICE_CLASS_POWER,
+        state_class=STATE_CLASS_MEASUREMENT,
+        raw_filters=[
+            {"multiply": 0.001}
+        ],
+    )
+
+def energy_sensor_schema(message: int):
+    return custom_sensor_schema(
+        message=message,
+        unit_of_measurement=UNIT_KILOWATT_HOURS,
+        accuracy_decimals=3,
+        device_class=DEVICE_CLASS_ENERGY,
+        state_class=STATE_CLASS_TOTAL_INCREASING,
+        raw_filters=[
+            {"multiply": 0.001}
+        ],
+    )
 
 DEVICE_SCHEMA = (
     cv.Schema(
@@ -185,6 +235,15 @@ DEVICE_SCHEMA = (
             # keep CUSTOM_SENSOR_KEYS in sync with these
             cv.Optional(CONF_DEVICE_WATER_TEMPERATURE): temperature_sensor_schema(0x4237),
             cv.Optional(CONF_DEVICE_ROOM_HUMIDITY): humidity_sensor_schema(0x4038),
+            cv.Optional(CONF_DEVICE_CONSUMPTION): consumption_sensor_schema(0x8413),
+            cv.Optional(CONF_DEVICE_INDOOR_CONSUMPTION): consumption_sensor_schema(0x4284),
+            cv.Optional(CONF_DEVICE_ENERGY_CONSUMPTION): energy_sensor_schema(0x8414),
+            cv.Optional(CONF_DEVICE_ENERGY_PRODUCED): energy_sensor_schema(0x4427),
+            
+            
+            
+            
+            cv.Optional(CONF_DEVICE_CUSTOMCLIMATE, default=[]): cv.ensure_list(CUSTOM_CLIMATE_SCHEMA),
         }
     )
 )
@@ -192,9 +251,14 @@ DEVICE_SCHEMA = (
 CUSTOM_SENSOR_KEYS = [
     CONF_DEVICE_WATER_TEMPERATURE,
     CONF_DEVICE_ROOM_HUMIDITY,
+    CONF_DEVICE_CONSUMPTION,
+    CONF_DEVICE_ENERGY_CONSUMPTION,
+    CONF_DEVICE_INDOOR_CONSUMPTION,
+    CONF_DEVICE_ENERGY_PRODUCED,
 ]
 
 CONF_DEVICES = "devices"
+
 
 CONF_DEBUG_MQTT_HOST = "debug_mqtt_host"
 CONF_DEBUG_MQTT_PORT = "debug_mqtt_port"
@@ -203,6 +267,11 @@ CONF_DEBUG_MQTT_PASSWORD = "debug_mqtt_password"
 
 CONF_DEBUG_LOG_MESSAGES = "debug_log_messages"
 CONF_DEBUG_LOG_MESSAGES_RAW = "debug_log_messages_raw"
+
+CONF_debug_number = "debug_number"
+CONF_debug_number_SOURCE = "source"
+CONF_debug_number_MIN = "min"
+CONF_debug_number_MAX = "max"
 
 CONFIG_SCHEMA = (
     cv.Schema(
@@ -217,6 +286,12 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_DEBUG_LOG_MESSAGES_RAW, default=False): cv.boolean,
             cv.Optional(CONF_CAPABILITIES): CAPABILITIES_SCHEMA,
             cv.Required(CONF_DEVICES): cv.ensure_list(DEVICE_SCHEMA),
+            cv.Optional(CONF_debug_number) : cv.ensure_list(number.NUMBER_SCHEMA.extend({
+                cv.GenerateID(): cv.declare_id(Samsung_AC_NumberDebug),
+                cv.Optional(CONF_debug_number_SOURCE, default=""): cv.string,
+                cv.Optional(CONF_debug_number_MIN, default=-1000): cv.float_,
+                cv.Optional(CONF_debug_number_MAX, default=1000): cv.float_,
+            })),
         }
     )
     .extend(uart.UART_DEVICE_SCHEMA)
@@ -338,6 +413,47 @@ async def to_code(config):
                 sens = await sensor.new_sensor(conf_copy)
                 cg.add(var_dev.add_custom_sensor(
                     conf[CONF_DEVICE_CUSTOM_MESSAGE], sens))
+                
+        if CONF_DEVICE_CUSTOMCLIMATE in device:
+            for cust_clim in device[CONF_DEVICE_CUSTOMCLIMATE]:
+                var_cli = cg.new_Pvariable(cust_clim[CONF_ID])
+                await climate.register_climate(var_cli, cust_clim)
+                cg.add(var_dev.add_custom_climate(var_cli, 
+                                                  cust_clim[CONF_DEVICE_CUSTOMCLIMATE_status_addr], 
+                                                  cust_clim[CONF_DEVICE_CUSTOMCLIMATE_set_addr],
+                                                  cust_clim[CONF_DEVICE_CUSTOMCLIMATE_enable_addr],
+                                                  cust_clim[CONF_DEVICE_CUSTOMCLIMATE_set_min],
+                                                  cust_clim[CONF_DEVICE_CUSTOMCLIMATE_set_max]
+                                                  ))
+                if CONF_DEVICE_CUSTOMCLIMATE_mode in cust_clim:
+                    modeConf = cust_clim[CONF_DEVICE_CUSTOMCLIMATE_mode]
+                    cg.add(var_dev.add_custom_climate_mode(var_cli, 
+                                                    modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_addr], 
+                                                    modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[0]], 
+                                                    modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[1]], 
+                                                    modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[2]], 
+                                                    modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[3]], 
+                                                    modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[4]], 
+                                                    modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[5]], 
+                                                    modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[6]]
+                                                    ))
+                if CONF_DEVICE_CUSTOMCLIMATE_preset in cust_clim:
+                    presConf = cust_clim[CONF_DEVICE_CUSTOMCLIMATE_preset]
+                    cg.add(var_dev.add_custom_climate_preset(var_cli, 
+                                                    presConf[CONF_DEVICE_CUSTOMCLIMATE_preset_addr], 
+                                                    presConf[CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue[0]], 
+                                                    presConf[CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue[1]], 
+                                                    presConf[CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue[2]], 
+                                                    presConf[CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue[3]], 
+                                                    presConf[CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue[4]], 
+                                                    presConf[CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue[5]], 
+                                                    presConf[CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue[6]],
+                                                    presConf[CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue[7]]
+                                                    ))
+                    
+
+                
+
 
         cg.add(var.register_device(var_dev))
 
@@ -350,6 +466,16 @@ async def to_code(config):
     if (CONF_DEBUG_LOG_MESSAGES_RAW in config):
         cg.add(var.set_debug_log_messages_raw(
             config[CONF_DEBUG_LOG_MESSAGES_RAW]))
+    
+    if CONF_debug_number in config:
+        for conf in config[CONF_debug_number]:
+            var_dn = cg.new_Pvariable(conf[CONF_ID])
+            await number.register_number(var_dn,
+                                         conf,
+                                         min_value=conf[CONF_debug_number_MIN], 
+                                         max_value=conf[CONF_debug_number_MAX], 
+                                         step=1)
+            cg.add(var_dn.setup(conf[CONF_debug_number_SOURCE]))
 
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)

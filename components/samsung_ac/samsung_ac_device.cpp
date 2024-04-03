@@ -5,6 +5,7 @@
 #include <vector>
 #include <set>
 #include <algorithm>
+#include "samsung_ac_device_custClim.h"
 
 namespace esphome
 {
@@ -153,5 +154,31 @@ namespace esphome
       }
       request.alt_mode = mode->value;
     }
+
+    void Samsung_AC_Device::getValueForCustomClimate(uint16_t address, long value) {
+      for (auto& cc: custom_climates) {
+        if (address == cc->modeAddr && cc->modeAddr) {
+          cc->lastReadMode = value;
+          cc->publishMode();
+        } else if (address == cc->enable) {
+          cc->lastEnabled = value;
+          cc->publishMode();
+        } else if (address == cc->presAddr &&  cc->presAddr) {
+          cc->lastReadPres = value;
+          cc->publishMode();
+        } else if (address == cc->set) {
+          float tempe = (float)value / 10.0;
+          cc->target_temperature = tempe;
+          cc->publish_state();
+          ESP_LOGV(TAG, "CC changed setpoint, read %f for addr %x", tempe, address);
+        } else if (address == cc->status) {
+          float tempe = (float)value / 10.0;
+          cc->current_temperature = tempe;
+          cc->publish_state();
+          ESP_LOGV(TAG, "CC changed status, read %f for addr %x", tempe, address);
+        }
+      }
+    }
+
   } // namespace samsung_ac
 } // namespace esphome

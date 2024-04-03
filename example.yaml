@@ -52,6 +52,8 @@ external_components:
 # Configuration of AC component
 samsung_ac:
 
+  #debug_log_messages: true < With this row, all read data from the bus is printed on the terminal
+   
   # Capabilities configure the features alle devices of your AC system have (all parts of this section are optional). 
   # All capabilities are off by default, you need to enable only those your devices have.
   # You can override or configure them also on a per devices basis (look below for that).
@@ -113,4 +115,52 @@ samsung_ac:
         name: "Warm water"
       outdoor_temperature: # Should be used with outdoor device address
         name: "Outdoor temperature"
+      power_consumption: # Should be used with outdoor device address
+        name: "Power consumption"
+      energy_consumption: # Should be used with outdoor device address
+        name: "Energy consumption"
+      energy_produced: # Indoor
+        name: "Energy Produced"
+      indoor_power_consumption: # Never seen on my setup
+        name: "Indoor consumption"
 
+      # custom climate allow to define custom addresses and behaviour for many climate components
+      # Addresses are more or less described on the file xlxs (link)
+      # enabling debug_log_messages: true under the samsung_ac section, you can look at sent data directly from ESP web loger. 
+      # Most of temperatura are in celsius with a /10 formula.
+      custom_climate:
+        - name: "Water heater"
+          status_addr: 0x4237 # mandatory address regarding status temperature
+          set_addr: 0x4235    # mandatory address regarding setpoint temperature
+          set_min: 40         # optional, default = 25°C
+          set_max: 55         # optional, default = 65°C
+          enable_addr: 0x4065 # mandatory enabling address, only 1/0 should be written there. Look at mode sub section
+                              # By default the value is set = 1 when HA send a value > 0.
+          preset:         
+            addr: 0x4066      # Address for presets
+            ClimatePreset0Value: 1 # CLIMATE_PRESET_NONE => 1 Standard
+            ClimatePreset1Value: -1 # CLIMATE_PRESET_HOME 
+            ClimatePreset2Value: -1 # CLIMATE_PRESET_AWAY 
+            ClimatePreset3Value: 2 # CLIMATE_PRESET_BOOST => 2 Power
+            ClimatePreset4Value: -1 # CLIMATE_PRESET_COMFORT 
+            ClimatePreset5Value: 0 # CLIMATE_PRESET_ECO => 0 Eco
+            ClimatePreset6Value: -1 # CLIMATE_PRESET_SLEEP 
+            ClimatePreset7Value: 3 # CLIMATE_PRESET_ACTIVITY  => 3 Force
+        - name: "Heating"
+          status_addr: 0x4238
+          set_addr: 0x4247
+          set_min: 8          # large enough to let both ranges for heating (25-65)°C and cooling (8-25)°C
+          set_max: 65
+          enable_addr: 0x4000
+          mode:
+            addr: 0x4001      # In this case the single ClimateMode is splitted between the enable_addr and the mode->addr
+                              # https://esphome.io/api/namespaceesphome_1_1climate#a8716cd7ed01ceb7ccedfa2f7b47a39d2
+                              # As before, the enable_addr is set = 1 for each mode > 0. If a value of enable is read = 0 from nasa,
+                              # a value of CLIMATE_MODE_OFF is sent to HA regardless of the value of the register mode->addr
+            #ClimateMode0Value:  # Default -1 = CLIMATE_MODE_OFF is not translated into mode->addr
+            #ClimateMode1Value:  # Default -1 = CLIMATE_MODE_HEAT_COOL is not translated into mode->addr     
+            ClimateMode2Value: 1 # Default -1. Setting =1 the value CLIMATE_MODE_COOL==2 is translated as 1 into mode->addr
+            ClimateMode3Value: 4 # Default -1. Setting = 4 the value CLIMATE_MODE_HEAT==3 is translated as 4 into mode->addr
+            #ClimateMode4Value: -1
+            #ClimateMode5Value: -1
+            ClimateMode6Value: 0 # Default -1. Setting = 4 the value CLIMATE_MODE_AUTO==6 is translated as 0 into mode->addr
