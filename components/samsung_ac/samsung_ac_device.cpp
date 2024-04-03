@@ -163,6 +163,9 @@ namespace esphome
         } else if (address == cc->enable) {
           cc->lastEnabled = value;
           cc->publishMode();
+        } else if (address == cc->presAddr &&  cc->presAddr) {
+          cc->lastReadPres = value;
+          cc->publishMode();
         } else if (address == cc->set) {
           float tempe = (float)value / 10.0;
           cc->target_temperature = tempe;

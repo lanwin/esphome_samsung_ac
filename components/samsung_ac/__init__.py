@@ -67,6 +67,9 @@ CONF_DEVICE_CUSTOMCLIMATE_enable_addr = "enable_addr"
 CONF_DEVICE_CUSTOMCLIMATE_mode = "mode"
 CONF_DEVICE_CUSTOMCLIMATE_mode_addr = "addr"
 CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue = [f"ClimateMode{i}Value" for i in range(7)]
+CONF_DEVICE_CUSTOMCLIMATE_preset = "preset"
+CONF_DEVICE_CUSTOMCLIMATE_preset_addr = "addr"
+CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue  = [f"ClimatePreset{i}Value" for i in range(8)]
 
 
 CONF_CAPABILITIES = "capabilities"
@@ -89,7 +92,11 @@ CUSTOM_CLIMATE_SCHEMA = climate.CLIMATE_SCHEMA.extend({
         cv.Optional(CONF_DEVICE_CUSTOMCLIMATE_mode): cv.Schema({
             **{cv.Optional(CONF_DEVICE_CUSTOMCLIMATE_mode_addr, default=0): cv.hex_int}, 
             **{cv.Optional(i, default=-1 if j > 0 else 0): cv.int_ for i,j in zip(CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue, range(7))}
-        })
+        }),
+        cv.Optional(CONF_DEVICE_CUSTOMCLIMATE_preset): cv.Schema({
+            **{cv.Required(CONF_DEVICE_CUSTOMCLIMATE_preset_addr): cv.hex_int},
+            **{cv.Optional(i, default=-1): cv.int_ for i in CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue}, 
+        }),
 
     })
 
@@ -430,6 +437,20 @@ async def to_code(config):
                                                     modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[5]], 
                                                     modeConf[CONF_DEVICE_CUSTOMCLIMATE_mode_ClimateModeXValue[6]]
                                                     ))
+                if CONF_DEVICE_CUSTOMCLIMATE_preset in cust_clim:
+                    presConf = cust_clim[CONF_DEVICE_CUSTOMCLIMATE_preset]
+                    cg.add(var_dev.add_custom_climate_preset(var_cli, 
+                                                    presConf[CONF_DEVICE_CUSTOMCLIMATE_preset_addr], 
+                                                    presConf[CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue[0]], 
+                                                    presConf[CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue[1]], 
+                                                    presConf[CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue[2]], 
+                                                    presConf[CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue[3]], 
+                                                    presConf[CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue[4]], 
+                                                    presConf[CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue[5]], 
+                                                    presConf[CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue[6]],
+                                                    presConf[CONF_DEVICE_CUSTOMCLIMATE_preset_ClimatePresetXValue[7]]
+                                                    ))
+                    
 
                 
 

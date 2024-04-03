@@ -136,6 +136,16 @@ samsung_ac:
           set_max: 55         # optional, default = 65°C
           enable_addr: 0x4065 # mandatory enabling address, only 1/0 should be written there. Look at mode sub section
                               # By default the value is set = 1 when HA send a value > 0.
+          preset:         
+            addr: 0x4066      # Address for presets
+            ClimatePreset0Value: 1 # CLIMATE_PRESET_NONE => 1 Standard
+            ClimatePreset1Value: -1 # CLIMATE_PRESET_HOME 
+            ClimatePreset2Value: -1 # CLIMATE_PRESET_AWAY 
+            ClimatePreset3Value: 2 # CLIMATE_PRESET_BOOST => 2 Power
+            ClimatePreset4Value: -1 # CLIMATE_PRESET_COMFORT 
+            ClimatePreset5Value: 0 # CLIMATE_PRESET_ECO => 0 Eco
+            ClimatePreset6Value: -1 # CLIMATE_PRESET_SLEEP 
+            ClimatePreset7Value: 3 # CLIMATE_PRESET_ACTIVITY  => 3 Force
         - name: "Heating"
           status_addr: 0x4238
           set_addr: 0x4247

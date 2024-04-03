@@ -182,6 +182,18 @@ namespace esphome
         clim->m[6] = m6;
       }
 
+      void add_custom_climate_preset(Samsung_AC_CustClim * clim, uint16_t presAddr, int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7){
+        clim->presAddr = presAddr;
+        clim->p[0] = p0;
+        clim->p[1] = p1;
+        clim->p[2] = p2;
+        clim->p[3] = p3;
+        clim->p[4] = p4;
+        clim->p[5] = p5;
+        clim->p[6] = p6;
+        clim->p[7] = p7;
+      }
+
       void set_climate(Samsung_AC_Climate *value)
       {
         climate = value;

@@ -373,6 +373,17 @@ namespace esphome
         {
             Packet packet = Packet::createa_partial(Address::parse(address), DataType::Request);
 
+            if (request.caller.has_value()) { // customClimate
+                Samsung_AC_CustClim *caller = request.caller.value();
+                if (caller->presToSend >= 0) {
+                    MessageSet pres((MessageNumber)caller->presAddr);
+                    pres.value = caller->presToSend;
+                    packet.messages.push_back(pres);
+                    ESP_LOGI(TAG, "Pushing pres %i at 0x%X for %s", pres.value, (MessageNumber)caller->presAddr, address.c_str());
+                    caller->presToSend = -1;
+                }
+            }
+
             if (request.mode)
             {
                 MessageNumber addr = MessageNumber::ENUM_in_operation_mode;
@@ -384,6 +395,7 @@ namespace esphome
                 MessageSet mode(addr);
                 mode.value = (int)request.mode.value();
                 packet.messages.push_back(mode);
+                ESP_LOGI(TAG, "Pushing mode %i at 0x%X for %s", mode.value , addr, address.c_str());
             }
 
             if (request.power)
@@ -392,7 +404,7 @@ namespace esphome
                 MessageSet power(addr);
                 power.value = request.power.value() ? 1 : 0;
                 packet.messages.push_back(power);
-                ESP_LOGI(TAG, "Pushing %u at 0x%X for %s", request.power.value() , addr, address.c_str());
+                ESP_LOGI(TAG, "Pushing power %u at 0x%X for %s", power.value  , addr, address.c_str());
             }
 
             if (request.target_temp)

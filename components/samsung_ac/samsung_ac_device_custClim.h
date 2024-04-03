@@ -19,6 +19,11 @@ namespace esphome
       uint16_t modeAddr = 0;
       int m[7] = {0, -1, -1, 1, -1, -1, -1}; // default = only enable activated on 4 = heat
 
+      uint16_t presAddr = 0;
+      int p[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
+      int presToSend = -1; // set when must be sent, resetted once the value has been enqueued
+      int lastReadPres = -1;
+
       int lastReadMode = -1, lastEnabled = 1;
       void publishMode();
     };
