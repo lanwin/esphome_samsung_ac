@@ -55,7 +55,9 @@ namespace esphome
       ESP_LOGCONFIG(TAG, "  Outdoor: %s", (knownOutdoor.length() == 0 ? "-" : knownOutdoor.c_str()));
       ESP_LOGCONFIG(TAG, "  Indoor:  %s", (knownIndoor.length() == 0 ? "-" : knownIndoor.c_str()));
       if (knownOther.length() > 0)
+      {
         ESP_LOGCONFIG(TAG, "  Other:   %s", knownOther.c_str());
+      }
     }
 
     void Samsung_AC::register_device(Samsung_AC_Device *device)

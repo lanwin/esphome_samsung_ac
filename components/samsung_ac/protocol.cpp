@@ -24,7 +24,8 @@ namespace esphome
             }
 
             // Check if its a decodeable NonNASA packat
-            DecodeResult result;
+            DecodeResult result = DecodeResult::Ok;
+
             if (protocol_processing == ProtocolProcessing::Auto || protocol_processing == ProtocolProcessing::NonNASA)
             {
                 result = try_decode_non_nasa_packet(data);
