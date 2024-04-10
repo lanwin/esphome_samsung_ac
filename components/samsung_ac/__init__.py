@@ -204,6 +204,8 @@ CONF_DEBUG_MQTT_PASSWORD = "debug_mqtt_password"
 CONF_DEBUG_LOG_MESSAGES = "debug_log_messages"
 CONF_DEBUG_LOG_MESSAGES_RAW = "debug_log_messages_raw"
 
+CONF_NON_NASA_KEEPALIVE = "non_nasa_keepalive"
+
 CONFIG_SCHEMA = (
     cv.Schema(
         {
@@ -215,6 +217,7 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_DEBUG_MQTT_PASSWORD, default=""): cv.string,
             cv.Optional(CONF_DEBUG_LOG_MESSAGES, default=False): cv.boolean,
             cv.Optional(CONF_DEBUG_LOG_MESSAGES_RAW, default=False): cv.boolean,
+            cv.Optional(CONF_NON_NASA_KEEPALIVE, default=False): cv.boolean,
             cv.Optional(CONF_CAPABILITIES): CAPABILITIES_SCHEMA,
             cv.Required(CONF_DEVICES): cv.ensure_list(DEVICE_SCHEMA),
         }
@@ -350,6 +353,9 @@ async def to_code(config):
     if (CONF_DEBUG_LOG_MESSAGES_RAW in config):
         cg.add(var.set_debug_log_messages_raw(
             config[CONF_DEBUG_LOG_MESSAGES_RAW]))
+            
+    if (CONF_NON_NASA_KEEPALIVE in config):
+        cg.add(var.set_non_nasa_keepalive(config[CONF_NON_NASA_KEEPALIVE]))
 
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
