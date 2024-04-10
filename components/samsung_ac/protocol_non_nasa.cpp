@@ -623,10 +623,7 @@ namespace esphome
             // remove from queue (the AC or UART connection is likely offline).
             const uint32_t now = millis();
             nonnasa_requests.remove_if([&](const NonNasaRequestQueueItem &item)
-                                       {
-				if (now - item.time > 15000) {
-				}
-				return now - item.time > 15000; });
+                                       { return now - item.time > 15000; });
 
             // If we have any *sent* messages in the queue that haven't received an ack in under 5s,
             // assume they failed and queue for resend on the next request_control message. Retry at
