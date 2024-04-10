@@ -1176,11 +1176,11 @@ namespace esphome
             }
             return;
         }
-	
-	void NasaProtocol::protocol_update(MessageTarget *target)
-	{
-		// Unused for NASA protocol
-	}
+
+        void NasaProtocol::protocol_update(MessageTarget *target)
+        {
+            // Unused for NASA protocol
+        }
 
     } // namespace samsung_ac
 } // namespace esphome
