@@ -1,5 +1,6 @@
 #pragma once
 
+#include <list>
 #include <vector>
 #include <iostream>
 #include <optional>
@@ -135,6 +136,7 @@ namespace esphome
         enum class NonNasaCommand : uint8_t
         {
             Cmd20 = 0x20,
+            Cmd54 = 0x54,
             CmdC0 = 0xc0,
             CmdC1 = 0xc1,
             CmdC6 = 0xc6,
@@ -158,6 +160,7 @@ namespace esphome
             union
             {
                 NonNasaCommand20 command20;
+                NonNasaCommandRaw command54; // Control message ack
                 NonNasaCommandC0 commandC0;
                 NonNasaCommandC1 commandC1;
                 NonNasaCommandC6 commandC6;
@@ -188,6 +191,19 @@ namespace esphome
             static NonNasaRequest create(std::string dst_address);
         };
 
+        struct NonNasaRequestQueueItem
+        {
+            NonNasaRequest request;
+            uint32_t time;
+            uint32_t time_sent;
+            uint8_t retry_count;
+            uint8_t resend_count;
+        };
+
+        extern std::list<NonNasaRequestQueueItem> nonnasa_requests;
+        extern bool controller_registered;
+        extern bool indoor_unit_awake;
+
         DecodeResult try_decode_non_nasa_packet(std::vector<uint8_t> data);
         void process_non_nasa_packet(MessageTarget *target);
 
@@ -197,6 +213,7 @@ namespace esphome
             NonNasaProtocol() = default;
 
             void publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request) override;
+            void protocol_update(MessageTarget *target) override;
         };
     } // namespace samsung_ac
 } // namespace esphome

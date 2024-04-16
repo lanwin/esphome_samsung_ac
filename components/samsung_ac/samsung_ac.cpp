@@ -55,7 +55,9 @@ namespace esphome
       ESP_LOGCONFIG(TAG, "  Outdoor: %s", (knownOutdoor.length() == 0 ? "-" : knownOutdoor.c_str()));
       ESP_LOGCONFIG(TAG, "  Indoor:  %s", (knownIndoor.length() == 0 ? "-" : knownIndoor.c_str()));
       if (knownOther.length() > 0)
+      {
         ESP_LOGCONFIG(TAG, "  Other:   %s", knownOther.c_str());
+      }
     }
 
     void Samsung_AC::register_device(Samsung_AC_Device *device)
@@ -101,25 +103,36 @@ namespace esphome
           publish_data(senddata);
           send_queue_.pop();
         }
+      }
+      else
+      {
+        last_transmission_ = now;
+        while (available())
+        {
+          uint8_t c;
+          if (!read_byte(&c))
+            continue;
+          if (data_.size() == 0 && c != 0x32)
+            continue; // skip until start-byte found
 
-        return; // nothing in uart-input-buffer, end here
+          data_.push_back(c);
+
+          if (process_data(data_, this) == DataResult::Clear)
+          {
+            data_.clear();
+            break; // wait for next loop
+          }
+        }
       }
 
-      last_transmission_ = now;
-      while (available())
+      // Allow device protocols to perform recurring tasks (at most every 200ms)
+      if (now - last_protocol_update_ >= 200)
       {
-        uint8_t c;
-        if (!read_byte(&c))
-          continue;
-        if (data_.size() == 0 && c != 0x32)
-          continue; // skip until start-byte found
-
-        data_.push_back(c);
-
-        if (process_data(data_, this) == DataResult::Clear)
+        last_protocol_update_ = now;
+        for (const auto &pair : devices_)
         {
-          data_.clear();
-          break; // wait for next loop
+          Samsung_AC_Device *device = pair.second;
+          device->protocol_update(this);
         }
       }
     }

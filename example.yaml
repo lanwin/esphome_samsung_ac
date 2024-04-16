@@ -365,3 +365,6 @@ samsung_ac:
 
 
 
+  # For NonNASA devices the following option can be enabled to prevent the device from sleeping when idle. This allows
+  # values like internal and external temperature to continue to be tracked when the device isn't in use.
+  #non_nasa_keepalive: true

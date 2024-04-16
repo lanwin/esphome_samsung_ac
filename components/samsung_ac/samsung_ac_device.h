@@ -327,6 +327,14 @@ namespace esphome
         room_temperature_offset = value;
       }
 
+      void protocol_update(MessageTarget *target)
+      {
+        if (protocol != nullptr)
+        {
+          protocol->protocol_update(target);
+        }
+      }
+
     protected:
       bool supports_horizontal_swing_{true};
       bool supports_vertical_swing_{true};

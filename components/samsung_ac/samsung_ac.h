@@ -47,6 +47,11 @@ namespace esphome
         debug_log_raw_bytes = value;
       }
 
+      void set_non_nasa_keepalive(bool value)
+      {
+        non_nasa_keepalive = value;
+      }
+
       void register_device(Samsung_AC_Device *device);
 
       void /*MessageTarget::*/ register_address(const std::string address) override
@@ -131,7 +136,7 @@ namespace esphome
           return optional<std::set<uint16_t>>(dev->get_custom_sensors());
         return optional<std::set<uint16_t>>();
       }
-      
+
       void /*MessageTarget::*/ set_custom_sensor(const std::string address, uint16_t message_number, float value) override
       {
         Samsung_AC_Device *dev = find_device(address);
@@ -156,6 +161,7 @@ namespace esphome
       std::queue<std::vector<uint8_t>> send_queue_;
       std::vector<uint8_t> data_;
       uint32_t last_transmission_{0};
+      uint32_t last_protocol_update_{0};
 
       bool data_processing_init = true;
 
