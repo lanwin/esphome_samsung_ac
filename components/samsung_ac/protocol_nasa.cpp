@@ -581,7 +581,7 @@ namespace esphome
             }
             case MessageNumber::VAR_in_temp_water_tank_f:
             {
-                ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_water_tank_f %f", source.c_str(), dest.c_str(), message.value);
+                ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_water_tank_f %li", source.c_str(), dest.c_str(), message.value);
                 return;
             }
             case MessageNumber::VAR_out_sensor_airout:
