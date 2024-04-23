@@ -148,7 +148,7 @@ namespace esphome
                                { return x.name == name; });
       if (mode == supported->end())
       {
-        ESP_LOGW(TAG, "Unsupported alt_mode %s", name);
+        ESP_LOGW(TAG, "Unsupported alt_mode %s", name.c_str());
         return;
       }
       request.alt_mode = mode->value;
