@@ -36,8 +36,8 @@ captive_portal:
 
 # Specify pins used by the board to comunicate with RS485 board - in this case M5STACK
 uart:
-  tx_pin: GPIO19
-  rx_pin: GPIO22
+  tx_pin: GPIO19   # Use GPIO26 for ATOM Tail485 
+  rx_pin: GPIO22   # Use GPIO32 for ATOM Tail485
   # For older devices it could also be 2400. But you should start with 9600.
   baud_rate: 9600
   parity: EVEN
