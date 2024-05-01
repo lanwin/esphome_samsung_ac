@@ -82,6 +82,8 @@ namespace esphome
             VAR_in_temp_target_f = 0x4201,
             VAR_in_temp_water_tank_f = 0x4237,
             VAR_out_sensor_airout = 0x8204,
+            ENUM_in_water_heater_mode = 0x4066,
+            ENUM_out_operation_odu_mode = 0x8001,
         };
 
         struct Address
