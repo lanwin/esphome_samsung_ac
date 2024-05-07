@@ -22,7 +22,9 @@ The current implementation offers the following features:
 
 ## Compatibility
 
-In generel all devices witch have dedicated communication wires (not only power) should work. If you want to be safe when buying a new AC, then just as for NASA support.
+In generel all devices with dedicated communication wires (not only power) should work. If you want to be safe when buying a new AC, then just ask for NASA support.
+
+@hnykda found way to decode Samsungs product numbers. Just Google for "FJM Technical Data Book".
 
 ### Know to work
 
