@@ -1,6 +1,6 @@
 # ESPHome Samsung AC
 
-This project offers a [ESPHome](https://esphome.io/index.html) component for integrating Samsung air conditioners into your home automation system. It provides the ability to monitor and control your AC units effortlessly. 
+This project offers a [ESPHome](https://esphome.io/index.html) component for integrating Samsung air conditioners into your home automation system. It provides the ability to monitor and control your AC units effortlessly.
 
 This component is designed to connect to the F1 and F2 communication bus between the indoor and the outdoor devices.
 
@@ -20,15 +20,34 @@ The current implementation offers the following features:
 
 - **AC Mode Control:** The controller enables you to change the AC mode, giving you control over cooling, heating, or other operational modes.
 
+## Compatibility
+
+In generel all devices witch have dedicated communication wires (not only power) should work. If you want to be safe when buying a new AC, then just as for NASA support.
+
+### Know to work
+
+#### NASA
+
+- AJ080TXJ4KG, AJ026TN1DKG, AR24TXHZAWKNEU, AR09TXFCAWKNEU, AC030KNZDCH/AA (CNH30ZDK), AE090RNYDEG, AE090RXEDEG, AE160JXYDEH/EU
+
+#### NonNASA
+
+- RJ100F5HXBA,
+
+### Dont work
+
+- AR12BSEAMWKX (no communication wires)
 
 ## Hardware installation
 
 An ESPHome compatible device and an RS-485 to (TTL) serial adapter is required to run this project. While its possible to run it on an ESP8266 its better to chose an ESP32 since it handles the incoming message stream better (cause it has more CPU power and RAM).
 
 ### We recommand to use the M5STACK ATOM Lite + M5STACK RS-485 kit
+
 Its cheap, comes with a tiny case (which can fit inside an indoor unit) and allow directly to use the 12V comming from the V1/V2 lines which some AC units provide.
 
 1. Purchase the following components and stack them:
+
    - **M5STACK ATOM Lite** - [Aliexpress](https://a.aliexpress.com/_mO88aeK), [M5STACK store](https://shop.m5stack.com/products/atom-lite-esp32-development-kit), [documentation](https://docs.m5stack.com/en/core/ATOM%20Lite)
    - **M5STACK ATOM RS-485 Base** - [Aliexpress](https://a.aliexpress.com/_mLhOZQA), [M5STACK store](https://shop.m5stack.com/products/atomic-rs485-base), [documentation](https://docs.m5stack.com/en/atom/atomic485)
 
@@ -45,22 +64,27 @@ Its cheap, comes with a tiny case (which can fit inside an indoor unit) and allo
 Follow these steps to install and configure the software for your AC unit controller:
 
 1. **Create a New ESPHome Device:**
+
    - Begin by creating a new ESPHome device in your Home Assistant instance or ESPHome command line tool.
-   - Use the configuration from [example.yaml](https://github.com/lanwin/esphome_samsung_ac/blob/main/example.yaml) file as a template and copy over the `api` and `ota` sections from the newly created YAML. 
+   - Use the configuration from [example.yaml](https://github.com/lanwin/esphome_samsung_ac/blob/main/example.yaml) file as a template and copy over the `api` and `ota` sections from the newly created YAML.
 
 1. **Deploy and Boot:**
+
    - Deploy the configured firmware to your ESP device.
    - After deploying, power on the ESP.
 
 1. **Check the Log:**
+
    - Monitor the log output of your ESPHome device. You should see yellow log messages indicating the reception of data packets.
-  
+
 1. **Identify Indoor Device Addresses:**
-   - Wait for a minute and watch for purple log messages and the "Discovered devices" seciton in the format: "  indoor: 20.00.00, 20.00.01" or "  indoor: 00, 01".
+
+   - Wait for a minute and watch for purple log messages and the "Discovered devices" seciton in the format: " indoor: 20.00.00, 20.00.01" or " indoor: 00, 01".
    - These are the addresses of your indoor devices.
    - If you see only see - look into the Troubleshooting section below.
-  
+
 1. **Update Your YAML File:**
+
    - Copy the address block containing the indoor device addresses from the log.
    - In your ESPHome configuration YAML file, create a section for each indoor unit using the copied addresses.
    - Assign meaningful names to each unit based on the rooms they control.
@@ -71,12 +95,13 @@ Follow these steps to install and configure the software for your AC unit contro
 
 ## Troubleshooting
 
-* Check your wiring (I had a lot problems cause the wire connection was loose)
-* Check that you really connected to the same pins/cables as our outdoor device (usally F1/F2). Not to the pins/calbes of a remote control unit.
-* Test if swapping F1/F2 helps
-* Change **baud_rate** from 9600 to 2400 (some older hardware uses a lower baud rate)
-* For some boards (like NodeMCU) you need to disable serial logging, since it blocks the pins required for the RS484 serial communication. Just add `baud_rate: 0` to the logger section.
-* Add the following to your yaml which dumps all data which is received via RS484 to logs. This helps to check if you get any data. This also helps when reporting problems.
+- Check your wiring (I had a lot problems cause the wire connection was loose)
+- Check that you really connected to the same pins/cables as our outdoor device (usally F1/F2). Not to the pins/calbes of a remote control unit.
+- Test if swapping F1/F2 helps
+- Change **baud_rate** from 9600 to 2400 (some older hardware uses a lower baud rate)
+- For some boards (like NodeMCU) you need to disable serial logging, since it blocks the pins required for the RS484 serial communication. Just add `baud_rate: 0` to the logger section.
+- Add the following to your yaml which dumps all data which is received via RS484 to logs. This helps to check if you get any data. This also helps when reporting problems.
+
 ```yaml
   debug:
     direction: BOTH
@@ -89,14 +114,14 @@ Follow these steps to install and configure the software for your AC unit contro
 
 ## FAQ
 
-* **Do I need to power cycle my Samsung devices to make it work?** No, but they should be turned on.
-* **Does this works also with Samsung heat pumps?** Yes, while it was not desinged in the first place for them, we have reports that it also works.
-* **Do I need a ESP for each indoor device?** When all your indoor devices are connected to the same outdoor device, then you need just one. Otherwise you need one for each outdoor device.
-* **Do I need to turn off my climate devices when I connect the ESP?** No, but its adviced to do so, cause there is no garantee that it will not harm you Samsung hardware.
+- **Do I need to power cycle my Samsung devices to make it work?** No, but they should be turned on.
+- **Does this works also with Samsung heat pumps?** Yes, while it was not desinged in the first place for them, we have reports that it also works.
+- **Do I need a ESP for each indoor device?** When all your indoor devices are connected to the same outdoor device, then you need just one. Otherwise you need one for each outdoor device.
+- **Do I need to turn off my climate devices when I connect the ESP?** No, but its adviced to do so, cause there is no garantee that it will not harm you Samsung hardware.
 
 ## Development
 
-The following YAML configuration is not included in the example since they are for development purposes. 
+The following YAML configuration is not included in the example since they are for development purposes.
 
 ```yaml
 # All this values are optional. Only use the ones you need.
@@ -121,8 +146,8 @@ newer NASA protocol is more complex and allows more data to be transferred and m
 
 ### NASA
 
-The NASA protocol is pretty generic. Its basicaly desinged to transport variables which are a key (number) and a value (with 
-a datatype like Enum, Int, Long, Bytes). All meaning is defined to the keys. If you want to know the room temperature you need 
+The NASA protocol is pretty generic. Its basicaly desinged to transport variables which are a key (number) and a value (with
+a datatype like Enum, Int, Long, Bytes). All meaning is defined to the keys. If you want to know the room temperature you need
 to know the number and wait for it.
 
 [Foxhill67](https://github.com/Foxhill67) started to document the NASA protocol [here](https://wiki.myehs.eu/wiki/NASA_Protocol).
