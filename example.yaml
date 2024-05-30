@@ -52,6 +52,10 @@ external_components:
 # Configuration of AC component
 samsung_ac:
 
+  # For NonNASA devices the following option can be enabled to prevent the device from sleeping when idle. This allows
+  # values like internal and external temperature to continue to be tracked when the device isn't in use.
+  non_nasa_keepalive: true
+
   # Capabilities configure the features alle devices of your AC system have (all parts of this section are optional). 
   # All capabilities are off by default, you need to enable only those your devices have.
   # You can override or configure them also on a per devices basis (look below for that).
@@ -114,6 +118,3 @@ samsung_ac:
       outdoor_temperature: # Should be used with outdoor device address
         name: "Outdoor temperature"
 
-  # For NonNASA devices the following option can be enabled to prevent the device from sleeping when idle. This allows
-  # values like internal and external temperature to continue to be tracked when the device isn't in use.
-  #non_nasa_keepalive: true
