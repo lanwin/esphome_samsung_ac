@@ -48,6 +48,8 @@ An ESPHome compatible device and an RS-485 to (TTL) serial adapter is required t
 
 Its cheap, comes with a tiny case (which can fit inside an indoor unit) and allow directly to use the 12V comming from the V1/V2 lines which some AC units provide.
 
+> If your AC did not has V1/V2 please check out this [post](https://github.com/lanwin/esphome_samsung_ac/discussions/39#discussioncomment-8383733).
+
 1. Purchase the following components and stack them:
 
    - **M5STACK ATOM Lite** - [Aliexpress](https://a.aliexpress.com/_mO88aeK), [M5STACK store](https://shop.m5stack.com/products/atom-lite-esp32-development-kit), [documentation](https://docs.m5stack.com/en/core/ATOM%20Lite)
@@ -60,8 +62,6 @@ Its cheap, comes with a tiny case (which can fit inside an indoor unit) and allo
    - Connect V2 on the AC unit to G on the M5STACK controller.
 
 <img alt='M5STACK Wiring Diagram' src='https://github.com/lanwin/esphome_samsung_ac/assets/32042186/42a6757d-bfcf-4a29-be87-cf1b204e248a' width='400'>
-
-If your AC did not has V1/V2 please check out this [post](https://github.com/lanwin/esphome_samsung_ac/discussions/39#discussioncomment-8383733).
 
 ## Software Installation
 
