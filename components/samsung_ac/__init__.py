@@ -59,6 +59,7 @@ CONF_DEVICE_MODE = "mode"
 CONF_DEVICE_CLIMATE = "climate"
 CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
 CONF_DEVICE_WATER_TEMPERATURE = "water_temperature"
+CONF_DEVICE_WATER_TARGET_TEMPERATURE = "water_target_temperature"
 CONF_DEVICE_CUSTOM = "custom_sensor"
 CONF_DEVICE_CUSTOM_MESSAGE = "message"
 CONF_DEVICE_CUSTOM_RAW_FILTERS = "raw_filters"
@@ -177,6 +178,7 @@ DEVICE_SCHEMA = (
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
             cv.Optional(CONF_DEVICE_TARGET_TEMPERATURE): NUMBER_SCHEMA,
+            cv.Optional(CONF_DEVICE_WATER_TARGET_TEMPERATURE): NUMBER_SCHEMA,
             cv.Optional(CONF_DEVICE_POWER): switch.switch_schema(Samsung_AC_Switch),
             cv.Optional(CONF_DEVICE_MODE): SELECT_MODE_SCHEMA,
             cv.Optional(CONF_DEVICE_CLIMATE): CLIMATE_SCHEMA,
@@ -297,6 +299,16 @@ async def to_code(config):
         if CONF_DEVICE_ROOM_TEMPERATURE_OFFSET in device:
             cg.add(var_dev.set_room_temperature_offset(
                 device[CONF_DEVICE_ROOM_TEMPERATURE_OFFSET]))
+
+        if CONF_DEVICE_WATER_TARGET_TEMPERATURE in device:
+            conf = device[CONF_DEVICE_WATER_TARGET_TEMPERATURE]
+            conf[CONF_UNIT_OF_MEASUREMENT] = UNIT_CELSIUS
+            conf[CONF_DEVICE_CLASS] = DEVICE_CLASS_TEMPERATURE
+            num = await number.new_number(conf,
+                                          min_value=10.0,
+                                          max_value=60.0,
+                                          step=0.5)
+            cg.add(var_dev.set_target_water_temperature_number(num))
 
         if CONF_DEVICE_OUTDOOR_TEMPERATURE in device:
             conf = device[CONF_DEVICE_OUTDOOR_TEMPERATURE]
