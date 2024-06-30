@@ -34,7 +34,7 @@ In generel all devices with dedicated communication wires (not only power) shoul
 
 #### NonNASA
 
-- RJ100F5HXBA,
+- RJ100F5HXBA, AJ050NCJ2EG
 
 ### Dont work
 
