@@ -36,7 +36,7 @@ There are also two Discussion threads about confirmed [NASA]([url](https://githu
 
 #### NonNASA
 
-- RJ100F5HXBA,
+- RJ100F5HXBA, AJ050NCJ2EG
 
 ### Dont work
 
