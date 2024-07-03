@@ -22,19 +22,21 @@ The current implementation offers the following features:
 
 ## Compatibility
 
-In generel all devices with dedicated communication wires (not only power) should work. If you want to be safe when buying a new AC, then just ask for NASA support.
+In general, all devices with dedicated communication wires (not only power) should work. If you want to be safe when buying a new AC, then just ask for NASA support.
 
-@hnykda found way to decode Samsungs product numbers. Just Google for "FJM Technical Data Book".
+[@hnykda](https://github.com/hnykda) found a way to decode Samsung's product numbers. For more info, see [this issue](https://github.com/lanwin/esphome_samsung_ac/issues/101#issuecomment-2098206070).
 
-### Know to work
+There are also two Discussion threads about confirmed [NASA]([url](https://github.com/lanwin/esphome_samsung_ac/discussions/82)) and [NonNASA]([url](https://github.com/lanwin/esphome_samsung_ac/discussions/78)) uses. If you made this working on a model that has not been confirmed yet, please do so in there!
+
+### Known to work (not exhaustive)
 
 #### NASA
 
-- AJ080TXJ4KG, AJ026TN1DKG, AR24TXHZAWKNEU, AR09TXFCAWKNEU, AC030KNZDCH/AA (CNH30ZDK), AE090RNYDEG, AE090RXEDEG, AE160JXYDEH/EU
+- AJ080TXJ4KG, AJ026TN1DKG, AR24TXHZAWKNEU, AR09TXFCAWKNEU, AC030KNZDCH/AA (CNH30ZDK), AE090RNYDEG, AE090RXEDEG, AE160JXYDEH/EU, AR09TXFCAWKNEU
 
 #### NonNASA
 
-- RJ100F5HXBA,
+- RJ100F5HXBA, AJ050NCJ2EG
 
 ### Dont work
 
@@ -79,13 +81,13 @@ Follow these steps to install and configure the software for your AC unit contro
 
 1. **Check the Log:**
 
-   - Monitor the log output of your ESPHome device. You should see yellow log messages indicating the reception of data packets.
+   - Monitor the log output of your ESPHome device. You should see yellow log messages indicating the reception of data packets. If you only see something like `[samsung_ac] ... update` every 30 seconds or so, you are not receiving messages, and something is wrong.
 
 1. **Identify Indoor Device Addresses:**
 
-   - Wait for a minute and watch for purple log messages and the "Discovered devices" seciton in the format: " indoor: 20.00.00, 20.00.01" or " indoor: 00, 01".
+   - Wait for a minute and watch for purple log messages and the "Discovered devices" section in the format " indoor: 20.00.00, 20.00.01" or " indoor: 00, 01."
    - These are the addresses of your indoor devices.
-   - If you see only see - look into the Troubleshooting section below.
+   - If you don't see this - look into the Troubleshooting section below.
 
 1. **Update Your YAML File:**
 
@@ -99,11 +101,11 @@ Follow these steps to install and configure the software for your AC unit contro
 
 ## Troubleshooting
 
-- Check your wiring (I had a lot problems cause the wire connection was loose)
-- Check that you really connected to the same pins/cables as our outdoor device (usally F1/F2). Not to the pins/calbes of a remote control unit.
+- Check your wiring (I had a lot of problems cause the wire connection was loose)
+- Check that you really connected to the same pins/cables as our outdoor device (usually F1/F2), not to the pins/cables of a remote control unit.
 - Test if swapping F1/F2 helps
 - Change **baud_rate** from 9600 to 2400 (some older hardware uses a lower baud rate)
-- For some boards (like NodeMCU) you need to disable serial logging, since it blocks the pins required for the RS484 serial communication. Just add `baud_rate: 0` to the logger section.
+- For some boards (like NodeMCU) you need to disable serial logging, since it blocks the pins required for the RS485 serial communication. Just add `baud_rate: 0` to the logger section.
 - Add the following to your yaml which dumps all data which is received via RS484 to logs. This helps to check if you get any data. This also helps when reporting problems.
 
 ```yaml
@@ -121,7 +123,7 @@ Follow these steps to install and configure the software for your AC unit contro
 - **Do I need to power cycle my Samsung devices to make it work?** No, but they should be turned on.
 - **Does this works also with Samsung heat pumps?** Yes, while it was not desinged in the first place for them, we have reports that it also works.
 - **Do I need a ESP for each indoor device?** When all your indoor devices are connected to the same outdoor device, then you need just one. Otherwise you need one for each outdoor device.
-- **Do I need to turn off my climate devices when I connect the ESP?** No, but its adviced to do so, cause there is no garantee that it will not harm you Samsung hardware.
+- **Do I need to turn off my climate devices when I connect the ESP?** No, but it's advised to do so, cause there is no garantee that it will not harm you Samsung hardware. And as you might be messing around 240V to be able to hook to those F1/F2 cables, it's safer to disconnect the power when attaching the cables and then bring the power up again. 
 
 ## Development
 
@@ -150,7 +152,7 @@ newer NASA protocol is more complex and allows more data to be transferred and m
 
 ### NASA
 
-The NASA protocol is pretty generic. Its basicaly desinged to transport variables which are a key (number) and a value (with
+The NASA protocol is pretty generic. Its basically designed to transport variables which are a key (number) and a value (with
 a datatype like Enum, Int, Long, Bytes). All meaning is defined to the keys. If you want to know the room temperature you need
 to know the number and wait for it.
 
