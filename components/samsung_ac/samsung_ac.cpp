@@ -95,16 +95,7 @@ namespace esphome
       }
 
       // If there is no data we use the time to send
-      if (!available())
-      {
-        if (send_queue_.size() > 0)
-        {
-          auto senddata = send_queue_.front();
-          publish_data(senddata);
-          send_queue_.pop();
-        }
-      }
-      else
+      if (available())
       {
         last_transmission_ = now;
         while (available())

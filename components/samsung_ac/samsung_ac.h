@@ -158,7 +158,6 @@ namespace esphome
       std::map<std::string, Samsung_AC_Device *> devices_;
       std::set<std::string> addresses_;
 
-      std::queue<std::vector<uint8_t>> send_queue_;
       std::vector<uint8_t> data_;
       uint32_t last_transmission_{0};
       uint32_t last_protocol_update_{0};
