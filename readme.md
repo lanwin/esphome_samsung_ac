@@ -106,7 +106,7 @@ Follow these steps to install and configure the software for your AC unit contro
 - Test if swapping F1/F2 helps
 - Change **baud_rate** from 9600 to 2400 (some older hardware uses a lower baud rate)
 - For some boards (like NodeMCU) you need to disable serial logging, since it blocks the pins required for the RS485 serial communication. Just add `baud_rate: 0` to the logger section.
-- Add the following to your yaml which dumps all data which is received via RS484 to logs. This helps to check if you get any data. This also helps when reporting problems.
+- Add the following to your [YAML uart configuration section](https://esphome.io/components/uart.html#debugging) which dumps all data which is received via RS484 to logs. This helps to check if you get any data. This also helps when reporting problems.
 
 ```yaml
   debug:
