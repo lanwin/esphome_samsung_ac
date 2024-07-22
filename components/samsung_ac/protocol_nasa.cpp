@@ -396,7 +396,7 @@ namespace esphome
 			
 			if (request.target_water_temp)
             {
-                MessageSet targetwatertemp(MessageNumber::VAR_in_temp_target_f);
+                MessageSet targetwatertemp(MessageNumber::VAR_in_temp_water_heater_target_f);
                 targetwatertemp.value = request.target_water_temp.value() * 10.0;
                 packet.messages.push_back(targetwatertemp);
             }
