@@ -393,6 +393,13 @@ namespace esphome
                 targettemp.value = request.target_temp.value() * 10.0;
                 packet.messages.push_back(targettemp);
             }
+			
+			if (request.target_water_temp)
+            {
+                MessageSet targetwatertemp(MessageNumber::VAR_in_temp_target_f);
+                targetwatertemp.value = request.target_water_temp.value() * 10.0;
+                packet.messages.push_back(targetwatertemp);
+            }
 
             if (request.fan_mode)
             {
