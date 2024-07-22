@@ -311,8 +311,8 @@ async def to_code(config):
             conf[CONF_UNIT_OF_MEASUREMENT] = UNIT_CELSIUS
             conf[CONF_DEVICE_CLASS] = DEVICE_CLASS_TEMPERATURE
             num = await number.new_number(conf,
-                                          min_value=10.0,
-                                          max_value=60.0,
+                                          min_value=30.0,
+                                          max_value=70.0,
                                           step=0.5)
             cg.add(var_dev.set_target_water_temperature_number(num))
 
