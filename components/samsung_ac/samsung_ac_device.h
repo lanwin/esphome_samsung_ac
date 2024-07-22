@@ -92,6 +92,7 @@ namespace esphome
       Samsung_AC_Number *target_temperature{nullptr};
       Samsung_AC_Number *target_water_temperature{nullptr};
       Samsung_AC_Switch *power{nullptr};
+	  Samsung_AC_Switch *dhw_power{nullptr};
       Samsung_AC_Mode_Select *mode{nullptr};
       Samsung_AC_Climate *climate{nullptr};
       std::vector<Samsung_AC_Sensor> custom_sensors;
@@ -130,6 +131,17 @@ namespace esphome
         {
           ProtocolRequest request;
           request.power = value;
+          publish_request(request);
+        };
+      }
+	  
+	  void set_dhw_power_switch(Samsung_AC_Switch *switch_)
+      {
+        dhw_power = switch_;
+        dhw_power->write_state_ = [this](bool value)
+        {
+          ProtocolRequest request;
+          request.dhw_power = value;
           publish_request(request);
         };
       }
@@ -191,6 +203,7 @@ namespace esphome
       }
 
       optional<bool> _cur_power;
+	  optional<bool> _cur_dhw_power;
       optional<Mode> _cur_mode;
 
       void update_power(bool value)
@@ -200,6 +213,13 @@ namespace esphome
           power->publish_state(value);
         if (climate != nullptr)
           calc_and_publish_mode();
+      }
+	  
+	  void update_dhw_power(bool value)
+      {
+        _cur_dhw_power = value;
+        if (dhw_power != nullptr)
+          dhw_power->publish_state(value);
       }
 
       void update_mode(Mode value)

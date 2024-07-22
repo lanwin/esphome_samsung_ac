@@ -57,6 +57,7 @@ CONF_DEVICE_OUTDOOR_TEMPERATURE = "outdoor_temperature"
 CONF_DEVICE_WATER_TEMPERATURE = "water_temperature"
 CONF_DEVICE_WATER_TARGET_TEMPERATURE = "water_target_temperature"
 CONF_DEVICE_POWER = "power"
+CONF_DEVICE_DHW_POWER = "dhw_power"
 CONF_DEVICE_MODE = "mode"
 CONF_DEVICE_CLIMATE = "climate"
 CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
@@ -181,6 +182,7 @@ DEVICE_SCHEMA = (
             cv.Optional(CONF_DEVICE_TARGET_TEMPERATURE): NUMBER_SCHEMA,
             cv.Optional(CONF_DEVICE_WATER_TARGET_TEMPERATURE): NUMBER_SCHEMA,
             cv.Optional(CONF_DEVICE_POWER): switch.switch_schema(Samsung_AC_Switch),
+            cv.Optional(CONF_DEVICE_DHW_POWER): switch.switch_schema(Samsung_AC_Switch),
             cv.Optional(CONF_DEVICE_MODE): SELECT_MODE_SCHEMA,
             cv.Optional(CONF_DEVICE_CLIMATE): CLIMATE_SCHEMA,
             cv.Optional(CONF_DEVICE_CUSTOM, default=[]): cv.ensure_list(CUSTOM_SENSOR_SCHEMA),
@@ -291,6 +293,11 @@ async def to_code(config):
             conf = device[CONF_DEVICE_POWER]
             sens = await switch.new_switch(conf)
             cg.add(var_dev.set_power_switch(sens))
+        
+        if CONF_DEVICE_DHW_POWER in device:
+            conf = device[CONF_DEVICE_DHW_POWER]
+            sens = await switch.new_switch(conf)
+            cg.add(var_dev.set_dhw_power_switch(sens))
 
         if CONF_DEVICE_ROOM_TEMPERATURE in device:
             conf = device[CONF_DEVICE_ROOM_TEMPERATURE]

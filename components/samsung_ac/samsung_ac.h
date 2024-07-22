@@ -100,6 +100,13 @@ namespace esphome
         if (dev != nullptr)
           dev->update_power(value);
       }
+	  
+	  void /*MessageTarget::*/ set_dhw_power(const std::string address, bool value) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->update_dhw_power(value);
+      }
 
       void /*MessageTarget::*/ set_mode(const std::string address, Mode mode) override
       {

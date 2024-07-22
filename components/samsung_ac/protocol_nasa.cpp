@@ -386,6 +386,13 @@ namespace esphome
                 power.value = request.power.value() ? 1 : 0;
                 packet.messages.push_back(power);
             }
+			
+			if (request.dhw_power)
+            {
+                MessageSet dhwpower(MessageNumber::ENUM_in_water_heater_power);
+                dhwpower.value = request.dhw_power.value() ? 1 : 0;
+                packet.messages.push_back(dhwpower);
+            }
 
             if (request.target_temp)
             {
@@ -547,6 +554,12 @@ namespace esphome
                 target->set_power(source, message.value != 0);
                 return;
             }
+			case MessageNumber::ENUM_in_water_heater_power:
+            {
+                ESP_LOGW(TAG, "s:%s d:%s ENUM_in_water_heater_power %s", source.c_str(), dest.c_str(), message.value == 0 ? "off" : "on");
+                target->set_dhw_power(source, message.value != 0);
+                return;
+            }
             case MessageNumber::ENUM_in_operation_mode:
             {
                 ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_mode %li", source.c_str(), dest.c_str(), message.value);
@@ -608,12 +621,6 @@ namespace esphome
 
             default:
             {
-                if ((uint16_t)message.messageNumber == 0x4065)
-                {
-                    // ENUM_IN_WATER_HEATER_POWER
-                    ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_WATER_HEATER_POWER %s", source.c_str(), dest.c_str(), message.value == 0 ? "off" : "on");
-                    return;
-                }
                 if ((uint16_t)message.messageNumber == 0x4260)
                 {
                     // VAR_IN_FSV_3021
