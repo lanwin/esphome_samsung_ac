@@ -90,10 +90,10 @@ namespace esphome
       sensor::Sensor *room_temperature{nullptr};
       sensor::Sensor *outdoor_temperature{nullptr};
       Samsung_AC_Number *target_temperature{nullptr};
-	  Samsung_AC_Number *water_outlet_target{nullptr};
+      Samsung_AC_Number *water_outlet_target{nullptr};
       Samsung_AC_Number *target_water_temperature{nullptr};
       Samsung_AC_Switch *power{nullptr};
-	  Samsung_AC_Switch *dhw_power{nullptr};
+      Samsung_AC_Switch *dhw_power{nullptr};
       Samsung_AC_Mode_Select *mode{nullptr};
       Samsung_AC_Climate *climate{nullptr};
       std::vector<Samsung_AC_Sensor> custom_sensors;
@@ -135,8 +135,8 @@ namespace esphome
           publish_request(request);
         };
       }
-	  
-	  void set_dhw_power_switch(Samsung_AC_Switch *switch_)
+      
+      void set_dhw_power_switch(Samsung_AC_Switch *switch_)
       {
         dhw_power = switch_;
         dhw_power->write_state_ = [this](bool value)
@@ -168,8 +168,8 @@ namespace esphome
           publish_request(request);
         };
       };
-	  
-	  void set_water_outlet_target_number(Samsung_AC_Number *number)
+      
+      void set_water_outlet_target_number(Samsung_AC_Number *number)
       {
         water_outlet_target = number;
         water_outlet_target->write_state_ = [this](float value)
@@ -207,8 +207,8 @@ namespace esphome
           climate->publish_state();
         }
       }
-	  
-	  void update_water_outlet_target(float value)
+      
+      void update_water_outlet_target(float value)
       {
         if (water_outlet_target != nullptr)
           water_outlet_target->publish_state(value);
@@ -221,7 +221,7 @@ namespace esphome
       }
 
       optional<bool> _cur_power;
-	  optional<bool> _cur_dhw_power;
+      optional<bool> _cur_dhw_power;
       optional<Mode> _cur_mode;
 
       void update_power(bool value)
@@ -232,8 +232,8 @@ namespace esphome
         if (climate != nullptr)
           calc_and_publish_mode();
       }
-	  
-	  void update_dhw_power(bool value)
+      
+      void update_dhw_power(bool value)
       {
         _cur_dhw_power = value;
         if (dhw_power != nullptr)

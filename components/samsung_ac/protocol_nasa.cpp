@@ -386,8 +386,8 @@ namespace esphome
                 power.value = request.power.value() ? 1 : 0;
                 packet.messages.push_back(power);
             }
-			
-			if (request.dhw_power)
+            
+            if (request.dhw_power)
             {
                 MessageSet dhwpower(MessageNumber::ENUM_in_water_heater_power);
                 dhwpower.value = request.dhw_power.value() ? 1 : 0;
@@ -400,15 +400,15 @@ namespace esphome
                 targettemp.value = request.target_temp.value() * 10.0;
                 packet.messages.push_back(targettemp);
             }
-			
-			if (request.water_outlet_target)
+            
+            if (request.water_outlet_target)
             {
                 MessageSet wateroutlettarget(MessageNumber::VAR_in_temp_water_outlet_target_f);
                 wateroutlettarget.value = request.water_outlet_target.value() * 10.0;
                 packet.messages.push_back(wateroutlettarget);
             }
-			
-			if (request.target_water_temp)
+            
+            if (request.target_water_temp)
             {
                 MessageSet targetwatertemp(MessageNumber::VAR_in_temp_water_heater_target_f);
                 targetwatertemp.value = request.target_water_temp.value() * 10.0;
@@ -542,14 +542,14 @@ namespace esphome
                 target->set_target_temperature(source, temp);
                 return;
             }
-			case MessageNumber::VAR_in_temp_water_outlet_target_f: // unit = 'Celsius' from XML
+            case MessageNumber::VAR_in_temp_water_outlet_target_f: // unit = 'Celsius' from XML
             {
                 double temp = (double)message.value / (double)10;
                 ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_water_outlet_target_f %f", source.c_str(), dest.c_str(), temp);
                 target->set_water_outlet_target(source, temp);
                 return;
             }
-			case MessageNumber::VAR_in_temp_water_heater_target_f: // unit = 'Celsius' from XML
+            case MessageNumber::VAR_in_temp_water_heater_target_f: // unit = 'Celsius' from XML
             {
                 double temp = (double)message.value / (double)10;
                 ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_water_heater_target_f %f", source.c_str(), dest.c_str(), temp);
@@ -568,7 +568,7 @@ namespace esphome
                 target->set_power(source, message.value != 0);
                 return;
             }
-			case MessageNumber::ENUM_in_water_heater_power:
+            case MessageNumber::ENUM_in_water_heater_power:
             {
                 ESP_LOGW(TAG, "s:%s d:%s ENUM_in_water_heater_power %s", source.c_str(), dest.c_str(), message.value == 0 ? "off" : "on");
                 target->set_dhw_power(source, message.value != 0);
