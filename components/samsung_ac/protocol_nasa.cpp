@@ -535,6 +535,7 @@ namespace esphome
                 target->set_target_temperature(source, temp);
                 return;
             }
+
             case MessageNumber::VAR_in_temp_water_heater_target_f: // unit = 'Celsius' from XML
             {
                 double temp = (double)message.value / (double)10;
