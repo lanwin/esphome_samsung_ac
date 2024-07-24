@@ -76,6 +76,7 @@ public:
         cout << "> " << address << " set_outdoor_temperature=" << to_string(value) << endl;
         last_set_outdoor_temperature_address = address;
         last_set_outdoor_temperature_value = value;
+    
     std::string last_set_target_water_temperature_address;
     float last_set_target_water_temperature_value;
     void set_target_water_temperature(const std::string address, float value)
