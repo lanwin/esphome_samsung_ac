@@ -393,6 +393,13 @@ namespace esphome
                 targettemp.value = request.target_temp.value() * 10.0;
                 packet.messages.push_back(targettemp);
             }
+            
+        if (request.target_water_temp)
+            {
+                MessageSet targetwatertemp(MessageNumber::VAR_in_temp_water_heater_target_f);
+                targetwatertemp.value = request.target_water_temp.value() * 10.0;
+                packet.messages.push_back(targetwatertemp);
+            }
 
             if (request.fan_mode)
             {
@@ -519,6 +526,13 @@ namespace esphome
                 // if (value == 1) value = 'waterOutSetTemp'; //action in xml
                 ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_target_f %f", source.c_str(), dest.c_str(), temp);
                 target->set_target_temperature(source, temp);
+                return;
+            }
+        case MessageNumber::VAR_in_temp_water_heater_target_f: // unit = 'Celsius' from XML
+            {
+                double temp = (double)message.value / (double)10;
+                ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_water_heater_target_f %f", source.c_str(), dest.c_str(), temp);
+                target->set_target_water_temperature(source, temp);
                 return;
             }
             case MessageNumber::ENUM_in_state_humidity_percent:

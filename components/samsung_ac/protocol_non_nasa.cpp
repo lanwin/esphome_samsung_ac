@@ -572,6 +572,8 @@ namespace esphome
                 {
                    last_command20s_[nonpacket_.src] = nonpacket_.command20;
                    target->set_target_temperature(nonpacket_.src, nonpacket_.command20.target_temp);
+                   // TODO
+                   target->set_target_water_temperature(nonpacket_.src, false);
                    target->set_room_temperature(nonpacket_.src, nonpacket_.command20.room_temp);
                    target->set_power(nonpacket_.src, nonpacket_.command20.power);
                    target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(nonpacket_.command20.mode));
