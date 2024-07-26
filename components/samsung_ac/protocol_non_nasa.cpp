@@ -577,7 +577,7 @@ namespace esphome
                    target->set_room_temperature(nonpacket_.src, nonpacket_.command20.room_temp);
                    target->set_power(nonpacket_.src, nonpacket_.command20.power);
                    // TODO
-                   target->set_dhw_power(nonpacket_.src, false);
+                   target->set_water_heater_power(nonpacket_.src, false);
                    target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(nonpacket_.command20.mode));
                    target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(nonpacket_.command20.fanspeed));
                    // TODO
