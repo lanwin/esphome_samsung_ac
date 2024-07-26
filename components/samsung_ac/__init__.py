@@ -296,7 +296,7 @@ async def to_code(config):
             cg.add(var_dev.set_power_switch(sens))
         
         if CONF_DEVICE_WATER_HEATER_POWER in device:
-            conf = device[CONF_DEVICE_WATER_HEAT_POWER]
+            conf = device[CONF_DEVICE_WATER_HEATER_POWER]
             sens = await switch.new_switch(conf)
             cg.add(var_dev.set_water_heater_power_switch(sens))
 
