@@ -386,12 +386,12 @@ namespace esphome
                 power.value = request.power.value() ? 1 : 0;
                 packet.messages.push_back(power);
             }
-            
-            if (request.dhw_power)
+
+            if (request.water_heater_power)
             {
-                MessageSet dhwpower(MessageNumber::ENUM_in_water_heater_power);
-                dhwpower.value = request.dhw_power.value() ? 1 : 0;
-                packet.messages.push_back(dhwpower);
+                MessageSet waterheaterpower(MessageNumber::ENUM_in_water_heater_power);
+                dhwpower.value = request.water_heater_power.value() ? 1 : 0;
+                packet.messages.push_back(waterheaterpower);
             }
 
             if (request.target_temp)
@@ -571,7 +571,7 @@ namespace esphome
             case MessageNumber::ENUM_in_water_heater_power:
             {
                 ESP_LOGW(TAG, "s:%s d:%s ENUM_in_water_heater_power %s", source.c_str(), dest.c_str(), message.value == 0 ? "off" : "on");
-                target->set_dhw_power(source, message.value != 0);
+                target->set_water_heater_power(source, message.value != 0);
                 return;
             }
             case MessageNumber::ENUM_in_operation_mode:

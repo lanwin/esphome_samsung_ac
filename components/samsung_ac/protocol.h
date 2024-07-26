@@ -67,7 +67,7 @@ namespace esphome
             virtual void publish_data(std::vector<uint8_t> &data) = 0;
             virtual void register_address(const std::string address) = 0;
             virtual void set_power(const std::string address, bool value) = 0;
-            virtual void set_dhw_power(const std::string address, bool value) = 0;
+            virtual void set_water_heater_power(const std::string address, bool value) = 0;
             virtual void set_room_temperature(const std::string address, float value) = 0;
             virtual void set_target_temperature(const std::string address, float value) = 0;
             virtual void set_water_outlet_target(const std::string address, float value) = 0;
@@ -86,7 +86,7 @@ namespace esphome
         {
         public:
             optional<bool> power;
-            optional<bool> dhw_power;
+            optional<bool> water_heater_power;
             optional<Mode> mode;
             optional<float> target_temp;
             optional<float> water_outlet_target;
