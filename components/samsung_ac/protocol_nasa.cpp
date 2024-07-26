@@ -390,7 +390,7 @@ namespace esphome
             if (request.water_heater_power)
             {
                 MessageSet waterheaterpower(MessageNumber::ENUM_in_water_heater_power);
-                dhwpower.value = request.water_heater_power.value() ? 1 : 0;
+                waterheaterpower.value = request.water_heater_power.value() ? 1 : 0;
                 packet.messages.push_back(waterheaterpower);
             }
 
