@@ -387,6 +387,13 @@ namespace esphome
                 packet.messages.push_back(power);
             }
 
+            if (request.water_heater_power)
+            {
+                MessageSet waterheaterpower(MessageNumber::ENUM_in_water_heater_power);
+                waterheaterpower.value = request.water_heater_power.value() ? 1 : 0;
+                packet.messages.push_back(waterheaterpower);
+            }
+
             if (request.target_temp)
             {
                 MessageSet targettemp(MessageNumber::VAR_in_temp_target_f);
@@ -394,7 +401,7 @@ namespace esphome
                 packet.messages.push_back(targettemp);
             }
             
-        if (request.target_water_temp)
+            if (request.target_water_temp)
             {
                 MessageSet targetwatertemp(MessageNumber::VAR_in_temp_water_heater_target_f);
                 targetwatertemp.value = request.target_water_temp.value() * 10.0;
@@ -528,7 +535,8 @@ namespace esphome
                 target->set_target_temperature(source, temp);
                 return;
             }
-        case MessageNumber::VAR_in_temp_water_heater_target_f: // unit = 'Celsius' from XML
+
+            case MessageNumber::VAR_in_temp_water_heater_target_f: // unit = 'Celsius' from XML
             {
                 double temp = (double)message.value / (double)10;
                 ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_water_heater_target_f %f", source.c_str(), dest.c_str(), temp);
@@ -545,6 +553,12 @@ namespace esphome
             {
                 ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_power %s", source.c_str(), dest.c_str(), message.value == 0 ? "off" : "on");
                 target->set_power(source, message.value != 0);
+                return;
+            }
+            case MessageNumber::ENUM_in_water_heater_power:
+            {
+                ESP_LOGW(TAG, "s:%s d:%s ENUM_in_water_heater_power %s", source.c_str(), dest.c_str(), message.value == 0 ? "off" : "on");
+                target->set_water_heater_power(source, message.value != 0);
                 return;
             }
             case MessageNumber::ENUM_in_operation_mode:
@@ -608,12 +622,6 @@ namespace esphome
 
             default:
             {
-                if ((uint16_t)message.messageNumber == 0x4065)
-                {
-                    // ENUM_IN_WATER_HEATER_POWER
-                    ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_WATER_HEATER_POWER %s", source.c_str(), dest.c_str(), message.value == 0 ? "off" : "on");
-                    return;
-                }
                 if ((uint16_t)message.messageNumber == 0x4260)
                 {
                     // VAR_IN_FSV_3021
