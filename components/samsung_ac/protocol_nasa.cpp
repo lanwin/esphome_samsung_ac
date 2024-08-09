@@ -401,6 +401,13 @@ namespace esphome
                 packet.messages.push_back(targettemp);
             }
             
+            if (request.water_outlet_target)
+            {
+                MessageSet wateroutlettarget(MessageNumber::VAR_in_temp_water_outlet_target_f);
+                wateroutlettarget.value = request.water_outlet_target.value() * 10.0;
+                packet.messages.push_back(wateroutlettarget);
+            }
+            
             if (request.target_water_temp)
             {
                 MessageSet targetwatertemp(MessageNumber::VAR_in_temp_water_heater_target_f);
@@ -535,7 +542,13 @@ namespace esphome
                 target->set_target_temperature(source, temp);
                 return;
             }
-
+            case MessageNumber::VAR_in_temp_water_outlet_target_f: // unit = 'Celsius' from XML
+            {
+                double temp = (double)message.value / (double)10;
+                ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_water_outlet_target_f %f", source.c_str(), dest.c_str(), temp);
+                target->set_water_outlet_target(source, temp);
+                return;
+            }
             case MessageNumber::VAR_in_temp_water_heater_target_f: // unit = 'Celsius' from XML
             {
                 double temp = (double)message.value / (double)10;

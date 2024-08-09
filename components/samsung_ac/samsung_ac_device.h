@@ -90,6 +90,7 @@ namespace esphome
       sensor::Sensor *room_temperature{nullptr};
       sensor::Sensor *outdoor_temperature{nullptr};
       Samsung_AC_Number *target_temperature{nullptr};
+      Samsung_AC_Number *water_outlet_target{nullptr};
       Samsung_AC_Number *target_water_temperature{nullptr};
       Samsung_AC_Switch *power{nullptr};
       Samsung_AC_Switch *water_heater_power{nullptr};
@@ -167,6 +168,17 @@ namespace esphome
           publish_request(request);
         };
       };
+      
+      void set_water_outlet_target_number(Samsung_AC_Number *number)
+      {
+        water_outlet_target = number;
+        water_outlet_target->write_state_ = [this](float value)
+        {
+          ProtocolRequest request;
+          request.water_outlet_target = value;
+          publish_request(request);
+        };
+      };
 
       void set_target_water_temperature_number(Samsung_AC_Number *number)
       {
@@ -194,6 +206,12 @@ namespace esphome
           climate->target_temperature = value;
           climate->publish_state();
         }
+      }
+      
+      void update_water_outlet_target(float value)
+      {
+        if (water_outlet_target != nullptr)
+          water_outlet_target->publish_state(value);
       }
 
       void update_target_water_temperature(float value)

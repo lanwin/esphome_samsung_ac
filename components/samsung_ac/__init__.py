@@ -53,6 +53,7 @@ CONF_DEVICE_ADDRESS = "address"
 CONF_DEVICE_ROOM_TEMPERATURE = "room_temperature"
 CONF_DEVICE_ROOM_TEMPERATURE_OFFSET = "room_temperature_offset"
 CONF_DEVICE_TARGET_TEMPERATURE = "target_temperature"
+CONF_DEVICE_WATER_OUTLET_TARGET = "water_outlet_target"
 CONF_DEVICE_OUTDOOR_TEMPERATURE = "outdoor_temperature"
 CONF_DEVICE_WATER_TEMPERATURE = "water_temperature"
 CONF_DEVICE_WATER_TARGET_TEMPERATURE = "water_target_temperature"
@@ -61,7 +62,6 @@ CONF_DEVICE_WATER_HEATER_POWER = "water_heater_power"
 CONF_DEVICE_MODE = "mode"
 CONF_DEVICE_CLIMATE = "climate"
 CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
-CONF_DEVICE_WATER_TEMPERATURE = "water_temperature"
 CONF_DEVICE_CUSTOM = "custom_sensor"
 CONF_DEVICE_CUSTOM_MESSAGE = "message"
 CONF_DEVICE_CUSTOM_RAW_FILTERS = "raw_filters"
@@ -180,6 +180,7 @@ DEVICE_SCHEMA = (
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
             cv.Optional(CONF_DEVICE_TARGET_TEMPERATURE): NUMBER_SCHEMA,
+            cv.Optional(CONF_DEVICE_WATER_OUTLET_TARGET): NUMBER_SCHEMA,
             cv.Optional(CONF_DEVICE_WATER_TARGET_TEMPERATURE): NUMBER_SCHEMA,
             cv.Optional(CONF_DEVICE_POWER): switch.switch_schema(Samsung_AC_Switch),
             cv.Optional(CONF_DEVICE_WATER_HEATER_POWER): switch.switch_schema(Samsung_AC_Switch),
@@ -332,6 +333,16 @@ async def to_code(config):
                                           max_value=30.0,
                                           step=1.0)
             cg.add(var_dev.set_target_temperature_number(num))
+            
+        if CONF_DEVICE_WATER_OUTLET_TARGET in device:
+            conf = device[CONF_DEVICE_WATER_OUTLET_TARGET]
+            conf[CONF_UNIT_OF_MEASUREMENT] = UNIT_CELSIUS
+            conf[CONF_DEVICE_CLASS] = DEVICE_CLASS_TEMPERATURE
+            num = await number.new_number(conf,
+                                          min_value=15.0,
+                                          max_value=55.0,
+                                          step=0.1)
+            cg.add(var_dev.set_water_outlet_target_number(num))
 
         if CONF_DEVICE_MODE in device:
             conf = device[CONF_DEVICE_MODE]
