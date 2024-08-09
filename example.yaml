@@ -26,6 +26,7 @@ api:
 
 # Enable OTA firmware update, you will be able to upload the firmware over WiFi without connecting the device by cables
 ota:
+  platform: esphome
 
 # Setup your WiFi password
 wifi:
