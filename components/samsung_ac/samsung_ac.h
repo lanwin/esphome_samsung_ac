@@ -120,8 +120,8 @@ namespace esphome
         if (dev != nullptr)
           dev->update_mode(mode);
       }
-	  
-	  void /*MessageTarget::*/ set_water_heater_mode(const std::string address, WaterHeaterMode waterheatermode) override
+      
+      void /*MessageTarget::*/ set_water_heater_mode(const std::string address, WaterHeaterMode waterheatermode) override
       {
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)

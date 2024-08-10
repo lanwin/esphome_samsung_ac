@@ -31,14 +31,14 @@ namespace esphome
             Fan = 3,
             Heat = 4,
         };
-		
-		enum class WaterHeaterMode
+        
+        enum class WaterHeaterMode
         {
             Unknown = -1,
-			Eco = 0,
-			Standard = 1,
-			Power = 2,
-			Force = 3,
+            Eco = 0,
+            Standard = 1,
+            Power = 2,
+            Force = 3,
         };
 
         enum class FanMode
@@ -83,7 +83,7 @@ namespace esphome
             virtual void set_outdoor_temperature(const std::string address, float value) = 0;
             virtual void set_target_water_temperature(const std::string address, float value) = 0;
             virtual void set_mode(const std::string address, Mode mode) = 0;
-			virtual void set_mode(const std::string address, WaterHeaterMode waterheatermode) = 0;
+            virtual void set_mode(const std::string address, WaterHeaterMode waterheatermode) = 0;
             virtual void set_fanmode(const std::string address, FanMode fanmode) = 0;
             virtual void set_altmode(const std::string address, AltMode altmode) = 0;
             virtual void set_swing_vertical(const std::string address, bool vertical) = 0;
@@ -98,7 +98,7 @@ namespace esphome
             optional<bool> power;
             optional<bool> water_heater_power;
             optional<Mode> mode;
-			optional<WaterHeaterMode> waterheatermode;
+            optional<WaterHeaterMode> waterheatermode;
             optional<float> target_temp;
             optional<float> water_outlet_target;
             optional<float> target_water_temp;

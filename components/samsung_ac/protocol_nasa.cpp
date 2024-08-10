@@ -379,8 +379,8 @@ namespace esphome
                 mode.value = (int)request.mode.value();
                 packet.messages.push_back(mode);
             }
-			
-			if (request.waterheatermode)
+            
+            if (request.waterheatermode)
             {
                 request.water_heater_power = true; // ensure system turns on when mode is set
 
@@ -480,8 +480,8 @@ namespace esphome
                 return Mode::Unknown;
             }
         }
-		
-		WaterHeaterMode water_heater_mode_to_waterheatermode(int value)
+        
+        WaterHeaterMode water_heater_mode_to_waterheatermode(int value)
         {
             switch (value)
             {
@@ -606,7 +606,7 @@ namespace esphome
                 target->set_mode(source, operation_mode_to_mode(message.value));
                 return;
             }
-			case MessageNumber::ENUM_in_water_heater_mode:
+            case MessageNumber::ENUM_in_water_heater_mode:
             {
                 ESP_LOGW(TAG, "s:%s d:%s ENUM_in_water_heater_mode %li", source.c_str(), dest.c_str(), message.value);
                 target->set_water_heater_mode(source, water_heater_mode_to_waterheatermode(message.value));
