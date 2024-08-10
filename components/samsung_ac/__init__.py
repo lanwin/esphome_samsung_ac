@@ -356,7 +356,7 @@ async def to_code(config):
             conf = device[CONF_DEVICE_WATER_HEATER_MODE]
             values = ["Eco", "Standard", "Power", "Force"]
             sel = await select.new_select(conf, options=values)
-            cg.add(var_dev.set_mode_select(sel))
+            cg.add(var_dev.set_water_heater_mode_select(sel))
 
         if CONF_DEVICE_CLIMATE in device:
             conf = device[CONF_DEVICE_CLIMATE]
