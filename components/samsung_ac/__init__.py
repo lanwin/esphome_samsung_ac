@@ -32,6 +32,8 @@ Samsung_AC_Device = samsung_ac.class_("Samsung_AC_Device")
 Samsung_AC_Switch = samsung_ac.class_("Samsung_AC_Switch", switch.Switch)
 Samsung_AC_Mode_Select = samsung_ac.class_(
     "Samsung_AC_Mode_Select", select.Select)
+Samsung_AC_Water_Heater_Mode_Select = samsung_ac.class_(
+    "Samsung_AC_Water_Heater_Mode_Select", select.Select)
 Samsung_AC_Number = samsung_ac.class_("Samsung_AC_Number", number.Number)
 Samsung_AC_Climate = samsung_ac.class_("Samsung_AC_Climate", climate.Climate)
 
