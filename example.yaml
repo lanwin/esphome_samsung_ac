@@ -118,6 +118,8 @@ samsung_ac:
         name: "Warm water"
       water_target_temperature:
         name: "Hot Water Target Temperature"
+      water_heater_mode:
+        name: "Hotwater Mode"
       outdoor_temperature: # Should be used with outdoor device address
         name: "Outdoor temperature"
 
