@@ -56,6 +56,22 @@ namespace esphome
 
       std::function<void(Mode)> write_state_;
     };
+	
+	class Samsung_AC_Water_Heater_Mode_Select : public select::Select
+    {
+    public:
+      void publish_state_(WaterHeaterMode waterheatermode)
+      {
+        this->publish_state(mode_to_str(waterheatermode));
+      }
+
+      void control(const std::string &value) override
+      {
+        write_state_(str_to_mode(value));
+      }
+
+      std::function<void(WaterHeaterMode)> write_state_;
+    };
 
     class Samsung_AC_Switch : public switch_::Switch
     {
@@ -95,7 +111,7 @@ namespace esphome
       Samsung_AC_Switch *power{nullptr};
       Samsung_AC_Switch *water_heater_power{nullptr};
       Samsung_AC_Mode_Select *mode{nullptr};
-      Samsung_AC_Mode_Select *waterheatermode{nullptr};
+      Samsung_AC_Water_Heater_Mode_Select *waterheatermode{nullptr};
       Samsung_AC_Climate *climate{nullptr};
       std::vector<Samsung_AC_Sensor> custom_sensors;
       float room_temperature_offset{0};
@@ -159,7 +175,7 @@ namespace esphome
         };
       }
       
-      void set_water_heater_mode_select(Samsung_AC_Mode_Select *select)
+      void set_water_heater_mode_select(Samsung_AC_Water_Heater_Mode_Select *select)
       {
         waterheatermode = select;
         waterheatermode->write_state_ = [this](WaterHeaterMode value)
