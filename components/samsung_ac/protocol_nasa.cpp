@@ -486,15 +486,15 @@ namespace esphome
             switch (value)
             {
             case 0:
-                return Mode::Eco;
+                return WaterHeaterMode::Eco;
             case 1:
-                return Mode::Standard;
+                return WaterHeaterMode::Standard;
             case 2:
-                return Mode::Power;
+                return WaterHeaterMode::Power;
             case 3:
-                return Mode::Force;
+                return WaterHeaterMode::Force;
             default:
-                return Mode::Unknown;
+                return WaterHeaterMode::Unknown;
             }
         }
 
