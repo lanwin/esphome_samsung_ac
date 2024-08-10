@@ -95,7 +95,7 @@ namespace esphome
       Samsung_AC_Switch *power{nullptr};
       Samsung_AC_Switch *water_heater_power{nullptr};
       Samsung_AC_Mode_Select *mode{nullptr};
-      Samsung_AC_Water_Heater_Mode_Select *waterheatermode{nullptr};
+      Samsung_AC_Mode_Select *waterheatermode{nullptr};
       Samsung_AC_Climate *climate{nullptr};
       std::vector<Samsung_AC_Sensor> custom_sensors;
       float room_temperature_offset{0};
