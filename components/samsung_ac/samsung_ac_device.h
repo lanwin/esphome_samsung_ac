@@ -62,12 +62,12 @@ namespace esphome
     public:
       void publish_state_(WaterHeaterMode waterheatermode)
       {
-        this->publish_state(mode_to_str(waterheatermode));
+        this->publish_state(water_heater_mode_to_str(waterheatermode));
       }
 
       void control(const std::string &value) override
       {
-        write_state_(str_to_mode(value));
+        write_state_(str_to_water_heater_mode(value));
       }
 
       std::function<void(WaterHeaterMode)> write_state_;
