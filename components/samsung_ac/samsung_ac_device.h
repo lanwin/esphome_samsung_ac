@@ -95,7 +95,7 @@ namespace esphome
       Samsung_AC_Switch *power{nullptr};
       Samsung_AC_Switch *water_heater_power{nullptr};
       Samsung_AC_Mode_Select *mode{nullptr};
-	  Samsung_AC_Water_Heater_Mode_Select *waterheatermode{nullptr};
+      Samsung_AC_Water_Heater_Mode_Select *waterheatermode{nullptr};
       Samsung_AC_Climate *climate{nullptr};
       std::vector<Samsung_AC_Sensor> custom_sensors;
       float room_temperature_offset{0};
@@ -158,8 +158,8 @@ namespace esphome
           publish_request(request);
         };
       }
-	  
-	  void set_water_heater_mode_select(Samsung_AC_Water_Heater_Mode_Select *select)
+      
+      void set_water_heater_mode_select(Samsung_AC_Water_Heater_Mode_Select *select)
       {
         waterheatermode = select;
         waterheatermode->write_state_ = [this](WaterHeaterMode value)
@@ -235,7 +235,7 @@ namespace esphome
       optional<bool> _cur_power;
       optional<bool> _cur_water_heater_power;
       optional<Mode> _cur_mode;
-	  optional<WaterHeaterMode> _cur_water_heater_mode;
+      optional<WaterHeaterMode> _cur_water_heater_mode;
 
       void update_power(bool value)
       {
@@ -261,8 +261,8 @@ namespace esphome
         if (climate != nullptr)
           calc_and_publish_mode();
       }
-	  
-	  void update_water_heater_mode(WaterHeaterMode value)
+      
+      void update_water_heater_mode(WaterHeaterMode value)
       {
         _cur_water_heater_mode = value;
         if (waterheatermode != nullptr)
