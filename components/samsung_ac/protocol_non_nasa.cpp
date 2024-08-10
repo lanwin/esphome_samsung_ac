@@ -582,7 +582,7 @@ namespace esphome
                    target->set_water_heater_power(nonpacket_.src, false);
                    target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(nonpacket_.command20.mode));
 				   // TODO
-				   target->set_water_heater_mode(nonpacket_.src, nonnasa_mode_to_mode(0));
+				   target->set_water_heater_mode(nonpacket_.src, false);
                    target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(nonpacket_.command20.fanspeed));
                    // TODO
                    target->set_altmode(nonpacket_.src, 0);
