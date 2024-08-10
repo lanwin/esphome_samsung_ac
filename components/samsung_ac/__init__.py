@@ -60,6 +60,7 @@ CONF_DEVICE_WATER_TARGET_TEMPERATURE = "water_target_temperature"
 CONF_DEVICE_POWER = "power"
 CONF_DEVICE_WATER_HEATER_POWER = "water_heater_power"
 CONF_DEVICE_MODE = "mode"
+CONF_DEVICE_WATER_HEATER_MODE = "water_heater_mode"
 CONF_DEVICE_CLIMATE = "climate"
 CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
 CONF_DEVICE_CUSTOM = "custom_sensor"
@@ -185,6 +186,7 @@ DEVICE_SCHEMA = (
             cv.Optional(CONF_DEVICE_POWER): switch.switch_schema(Samsung_AC_Switch),
             cv.Optional(CONF_DEVICE_WATER_HEATER_POWER): switch.switch_schema(Samsung_AC_Switch),
             cv.Optional(CONF_DEVICE_MODE): SELECT_MODE_SCHEMA,
+            cv.Optional(CONF_DEVICE_WATER_HEATER_MODE): SELECT_MODE_SCHEMA,
             cv.Optional(CONF_DEVICE_CLIMATE): CLIMATE_SCHEMA,
             cv.Optional(CONF_DEVICE_CUSTOM, default=[]): cv.ensure_list(CUSTOM_SENSOR_SCHEMA),
 
@@ -347,6 +349,12 @@ async def to_code(config):
         if CONF_DEVICE_MODE in device:
             conf = device[CONF_DEVICE_MODE]
             values = ["Auto", "Cool", "Dry", "Fan", "Heat"]
+            sel = await select.new_select(conf, options=values)
+            cg.add(var_dev.set_mode_select(sel))
+            
+        if CONF_DEVICE_WATER_HEATER_MODE in device:
+            conf = device[CONF_DEVICE_WATER_HEATER_MODE]
+            values = ["Eco", "Standard", "Power", "Force"]
             sel = await select.new_select(conf, options=values)
             cg.add(var_dev.set_mode_select(sel))
 
