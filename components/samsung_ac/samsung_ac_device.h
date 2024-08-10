@@ -159,7 +159,7 @@ namespace esphome
         };
       }
       
-      void set_water_heater_mode_select(Samsung_AC_Water_Heater_Mode_Select *select)
+      void set_water_heater_mode_select(Samsung_AC_Mode_Select *select)
       {
         waterheatermode = select;
         waterheatermode->write_state_ = [this](WaterHeaterMode value)
