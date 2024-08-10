@@ -37,6 +37,7 @@ Samsung_AC_Climate = samsung_ac.class_("Samsung_AC_Climate", climate.Climate)
 
 # not sure why select.select_schema did not work yet
 SELECT_MODE_SCHEMA = select.select_schema(Samsung_AC_Mode_Select)
+SELECT_WATER_HEATER_MODE_SCHEMA = select.select_schema(Samsung_AC_Water_Heater_Mode_Select)
 
 NUMBER_SCHEMA = (
     number.NUMBER_SCHEMA.extend(
@@ -186,7 +187,7 @@ DEVICE_SCHEMA = (
             cv.Optional(CONF_DEVICE_POWER): switch.switch_schema(Samsung_AC_Switch),
             cv.Optional(CONF_DEVICE_WATER_HEATER_POWER): switch.switch_schema(Samsung_AC_Switch),
             cv.Optional(CONF_DEVICE_MODE): SELECT_MODE_SCHEMA,
-            cv.Optional(CONF_DEVICE_WATER_HEATER_MODE): SELECT_MODE_SCHEMA,
+            cv.Optional(CONF_DEVICE_WATER_HEATER_MODE): SELECT_WATER_HEATER_MODE_SCHEMA,
             cv.Optional(CONF_DEVICE_CLIMATE): CLIMATE_SCHEMA,
             cv.Optional(CONF_DEVICE_CUSTOM, default=[]): cv.ensure_list(CUSTOM_SENSOR_SCHEMA),
 
