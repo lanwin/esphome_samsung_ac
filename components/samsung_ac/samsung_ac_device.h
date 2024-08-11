@@ -96,7 +96,7 @@ namespace esphome
     struct Samsung_AC_Binary_Sensor
     {
       uint16_t message_number;
-      binary_sensor::Binary_Sensor *sensor;
+      binary_sensor::BinarySensor *binary_sensor;
     };
 
     class Samsung_AC_Device
@@ -142,7 +142,7 @@ namespace esphome
         custom_sensors.push_back(std::move(cust_sensor));
       }
       
-      void add_custom_binary_sensor(int message_number, binary_sensor::Binary_Sensor *binary_sensor)
+      void add_custom_binary_sensor(int message_number, binary_sensor::BinarySensor *binary_sensor)
       {
         Samsung_AC_Binary_Sensor cust_binary_sensor;
         cust_binary_sensor.message_number = (uint16_t)message_number;
