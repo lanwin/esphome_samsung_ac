@@ -551,7 +551,7 @@ namespace esphome
                 target->set_custom_sensor(source, (uint16_t)message.messageNumber, (float)message.value);
             }
             
-            if (custom && type == 1 && custom_binary.value().find((uint16_t)message.messageNumber) != custom_binary.value().end())
+            if (custom && type == 1 && custom.value().find((uint16_t)message.messageNumber) != custom.value().end())
             {
                 target->set_custom_binary_sensor(source, (uint16_t)message.messageNumber, (bool)message.value);
             }
