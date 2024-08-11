@@ -96,7 +96,7 @@ namespace esphome
     struct Samsung_AC_Binary_Sensor
     {
       uint16_t message_number;
-      binary_sensor::Binary_Sensor *binary_sensor;
+      binary_sensor::Binary_Sensor *sensor;
     };
 
     class Samsung_AC_Device
