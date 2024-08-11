@@ -67,6 +67,7 @@ CONF_DEVICE_WATER_HEATER_MODE = "water_heater_mode"
 CONF_DEVICE_CLIMATE = "climate"
 CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
 CONF_DEVICE_CUSTOM = "custom_sensor"
+CONF_DEVICE_CUSTOM_BINARY = "custom_binary_sensor"
 CONF_DEVICE_CUSTOM_MESSAGE = "message"
 CONF_DEVICE_CUSTOM_RAW_FILTERS = "raw_filters"
 
@@ -113,6 +114,10 @@ CAPABILITIES_SCHEMA = (
 )
 
 CUSTOM_SENSOR_SCHEMA = sensor.sensor_schema().extend({
+    cv.Required(CONF_DEVICE_CUSTOM_MESSAGE): cv.hex_int,
+})
+
+CUSTOM_BINARY_SENSOR_SCHEMA = sensor.binary_sensor_schema().extend({
     cv.Required(CONF_DEVICE_CUSTOM_MESSAGE): cv.hex_int,
 })
 
@@ -192,6 +197,7 @@ DEVICE_SCHEMA = (
             cv.Optional(CONF_DEVICE_WATER_HEATER_MODE): SELECT_WATER_HEATER_MODE_SCHEMA,
             cv.Optional(CONF_DEVICE_CLIMATE): CLIMATE_SCHEMA,
             cv.Optional(CONF_DEVICE_CUSTOM, default=[]): cv.ensure_list(CUSTOM_SENSOR_SCHEMA),
+            cv.Optional(CONF_DEVICE_CUSTOM_BINARY, default=[]): cv.ensure_list(CUSTOM_BINARY_SENSOR_SCHEMA),
 
             # keep CUSTOM_SENSOR_KEYS in sync with these
             cv.Optional(CONF_DEVICE_WATER_TEMPERATURE): temperature_sensor_schema(0x4237),
@@ -369,6 +375,12 @@ async def to_code(config):
 
         if CONF_DEVICE_CUSTOM in device:
             for cust_sens in device[CONF_DEVICE_CUSTOM]:
+                sens = await sensor.new_sensor(cust_sens)
+                cg.add(var_dev.add_custom_sensor(
+                    cust_sens[CONF_DEVICE_CUSTOM_MESSAGE], sens))
+        
+        if CONF_DEVICE_CUSTOM_BINARY in device:
+            for cust_sens in device[CONF_DEVICE_CUSTOM_BINARY]:
                 sens = await sensor.new_sensor(cust_sens)
                 cg.add(var_dev.add_custom_sensor(
                     cust_sens[CONF_DEVICE_CUSTOM_MESSAGE], sens))

@@ -170,6 +170,13 @@ namespace esphome
         if (dev != nullptr)
           dev->update_custom_sensor(message_number, value);
       }
+      
+      void /*MessageTarget::*/ set_custom_binary_sensor(const std::string address, uint16_t message_number, bool value) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->update_custom_binary_sensor(message_number, value);
+      }
 
     protected:
       Samsung_AC_Device *find_device(const std::string address)
