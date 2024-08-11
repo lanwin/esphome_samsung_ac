@@ -546,7 +546,7 @@ namespace esphome
                 }
             }
 
-            if (custom && tyoe == 0 && custom.value().find((uint16_t)message.messageNumber) != custom.value().end())
+            if (custom && type == 0 && custom.value().find((uint16_t)message.messageNumber) != custom.value().end())
             {
                 target->set_custom_sensor(source, (uint16_t)message.messageNumber, (float)message.value);
             }
