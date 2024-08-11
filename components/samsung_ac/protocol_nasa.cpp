@@ -810,11 +810,7 @@ namespace esphome
                 process_messageset(source, dest, message, custom, target);
             }
             
-            optional<std::set<uint16_t>> custom_binary = target->get_custom_binary_sensors(source);
-            for (auto &message : packet_.messages)
-            {
-                process_messageset(source, dest, message, custom_binary, target);
-            }
+            
         }
 
         void process_messageset_debug(std::string source, std::string dest, MessageSet &message, MessageTarget *target)
