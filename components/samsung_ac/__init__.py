@@ -381,7 +381,7 @@ async def to_code(config):
         
         if CONF_DEVICE_CUSTOM_BINARY in device:
             for cust_bin_sens in device[CONF_DEVICE_CUSTOM_BINARY]:
-                bin_sens = await binary_sensor.new_sensor(cust_bin_sens)
+                bin_sens = await binary_sensor.new_binary_sensor(cust_bin_sens)
                 cg.add(var_dev.add_custom_sensor(
                     cust_bin_sens[CONF_DEVICE_CUSTOM_MESSAGE], bin_sens))
 
