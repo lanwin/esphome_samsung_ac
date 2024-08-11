@@ -528,7 +528,7 @@ namespace esphome
             }
         }
 
-        void process_messageset(std::string source, std::string dest, MessageSet &message, optional<std::set<uint16_t>> &custom, MessageTarget *target, optional<std::set<uint16_t>> &custom_binary)
+        void process_messageset(std::string source, std::string dest, MessageSet &message, optional<std::set<uint16_t>> &custom, MessageTarget *target, optional<std::set<uint16_t>> &custom_binary = NULL )
         {
             if (debug_mqtt_connected())
             {
