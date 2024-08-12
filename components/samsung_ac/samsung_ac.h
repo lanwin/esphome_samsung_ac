@@ -52,6 +52,11 @@ namespace esphome
         non_nasa_keepalive = value;
       }
 
+	  void log_undefined_messages(bool value)
+      {
+        log_undefined_messages = value;
+      }
+	  
       void register_device(Samsung_AC_Device *device);
 
       void /*MessageTarget::*/ register_address(const std::string address) override
