@@ -670,7 +670,7 @@ void process_messageset(std::string source, std::string dest, MessageSet &messag
             optional<std::set<uint16_t>> custom = target->get_custom_sensors(source);
             for (auto &message : packet_.messages)
             {
-                process_messageset(source, dest, message, custom, target);
+                process_messageset(source, dest, message, custom, target,this->log_undefined_messages_);
             }
         }
 
