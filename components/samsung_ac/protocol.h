@@ -11,6 +11,7 @@ namespace esphome
         extern bool debug_log_packets;
         extern bool debug_log_raw_bytes;
         extern bool non_nasa_keepalive;
+        extern bool log_undefined_messages ;
 
         enum class DecodeResult
         {

@@ -11,7 +11,6 @@ namespace esphome
     void Samsung_AC::setup()
     {
       ESP_LOGW(TAG, "setup");
-	  this->log_undefined_messages_ = this->get_or_create("log_undefined_messages", false);
     }
 
     void Samsung_AC::update()
