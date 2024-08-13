@@ -89,6 +89,8 @@ namespace esphome
       std::string address;
       sensor::Sensor *room_temperature{nullptr};
       sensor::Sensor *outdoor_temperature{nullptr};
+	  sensor::Sensor *indoor_eva_in_temperature{nullptr};
+	  sensor::Sensor *indoor_eva_out_temperature{nullptr};
       Samsung_AC_Number *target_temperature{nullptr};
       Samsung_AC_Number *water_outlet_target{nullptr};
       Samsung_AC_Number *target_water_temperature{nullptr};
@@ -105,6 +107,16 @@ namespace esphome
       }
 
       void set_outdoor_temperature_sensor(sensor::Sensor *sensor)
+      {
+        indoor_eva_in_temperature = sensor;
+      }
+
+      void set_indoor_eva_in_temperature_sensor(sensor::Sensor *sensor)
+      {
+        indoor_eva_out_temperature = sensor;
+      }
+
+      void set_indoor_eva_out_temperature_sensor(sensor::Sensor *sensor)
       {
         outdoor_temperature = sensor;
       }
@@ -331,6 +343,18 @@ namespace esphome
       {
         if (outdoor_temperature != nullptr)
           outdoor_temperature->publish_state(value);
+      }
+
+      void update_indoor_eva_in_temperature(float value)
+      {
+        if (indoor_eva_in_temperature != nullptr)
+          indoor_eva_in_temperature->publish_state(value);
+      }
+
+      void update_indoor_eva_out_temperature(float value)
+      {
+        if (indoor_eva_out_temperature != nullptr)
+          indoor_eva_out_temperature->publish_state(value);
       }
 
       void update_custom_sensor(uint16_t message_number, float value)

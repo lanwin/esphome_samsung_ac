@@ -316,6 +316,16 @@ async def to_code(config):
             conf = device[CONF_DEVICE_OUTDOOR_TEMPERATURE]
             sens = await sensor.new_sensor(conf)
             cg.add(var_dev.set_outdoor_temperature_sensor(sens))
+            
+        if CONF_DEVICE_INDOOR_EVA_IN_TEMPERATURE in device:
+            conf = device[CONF_DEVICE_INDOOR_EVA_IN_TEMPERATURE]
+            sens = await sensor.new_sensor(conf)
+            cg.add(var_dev.set_indoor_eva_in_temperature_sensor(sens))
+            
+        if CONF_DEVICE_INDOOR_EVA_OUT_TEMPERATURE in device:
+            conf = device[CONF_DEVICE_INDOOR_EVA_OUT_TEMPERATURE]
+            sens = await sensor.new_sensor(conf)
+            cg.add(var_dev.set_indoor_eva_out_temperature_sensor(sens))
 
         if CONF_DEVICE_WATER_TARGET_TEMPERATURE in device:
             conf = device[CONF_DEVICE_WATER_TARGET_TEMPERATURE]

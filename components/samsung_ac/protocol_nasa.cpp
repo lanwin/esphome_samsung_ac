@@ -595,6 +595,18 @@ void process_messageset(std::string source, std::string dest, MessageSet &messag
             target->set_outdoor_temperature(source, temp);
             break;
         }
+        case MessageNumber::VAR_IN_TEMP_EVA_IN_F: {
+            double temp = ((int16_t)message.value) / 10.0;
+            ESP_LOGW(TAG, "s:%s d:%s VAR_IN_TEMP_EVA_IN_F %li", source.c_str(), dest.c_str(), message.value);
+            target->set_indoor_eva_in_temperature(source, temp);
+            break;
+        }
+        case MessageNumber::VAR_OUT_TEMP_EVA_IN_F: {
+            double temp = ((int16_t)message.value) / 10.0;
+            ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_TEMP_EVA_IN_F %li", source.c_str(), dest.c_str(), message.value);
+            target->set_indoor_eva_out_temperature(source, temp);
+            break;
+        }
         default:
 		if (log_undefined_messages)
                 {
