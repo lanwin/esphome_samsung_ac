@@ -128,6 +128,12 @@ void set_log_undefined_messages (bool value)
         if (dev != nullptr)
           dev->update_power(value);
       }
+      void /*MessageTarget::*/ set_automatic_cleaning(const std::string address, bool value) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->update_automatic_cleaning(value);
+      }
       void /*MessageTarget::*/ set_water_heater_power(const std::string address, bool value) override
       {
         Samsung_AC_Device *dev = find_device(address);

@@ -566,6 +566,10 @@ void process_messageset(std::string source, std::string dest, MessageSet &messag
            if(log_messages){ ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_power %s", source.c_str(), dest.c_str(), message.value == 0 ? "off" : "on");}
             target->set_power(source, message.value != 0);
             break;
+        case MessageNumber::ENUM_in_operation_automatic_cleaning:
+           if(log_messages){ ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_automatic_cleaning %s", source.c_str(), dest.c_str(), message.value == 0 ? "off" : "on");}
+            target->set_automatic_cleaning(source, message.value != 0);
+            break;
         case MessageNumber::ENUM_in_water_heater_power:
            if(log_messages){ ESP_LOGW(TAG, "s:%s d:%s ENUM_in_water_heater_power %s", source.c_str(), dest.c_str(), message.value == 0 ? "off" : "on");}
             target->set_water_heater_power(source, message.value != 0);
