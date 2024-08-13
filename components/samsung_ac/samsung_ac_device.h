@@ -56,8 +56,8 @@ namespace esphome
 
       std::function<void(Mode)> write_state_;
     };
-	
-	class Samsung_AC_Water_Heater_Mode_Select : public select::Select
+    
+    class Samsung_AC_Water_Heater_Mode_Select : public select::Select
     {
     public:
       void publish_state_(WaterHeaterMode waterheatermode)

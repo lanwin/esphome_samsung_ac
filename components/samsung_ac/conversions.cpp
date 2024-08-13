@@ -37,8 +37,8 @@ namespace esphome
         return "";
       };
     }
-	
-	WaterHeaterMode str_to_water_heater_mode(const std::string &value)
+    
+    WaterHeaterMode str_to_water_heater_mode(const std::string &value)
     {
       if (value == "Eco")
         return WaterHeaterMode::Eco;
