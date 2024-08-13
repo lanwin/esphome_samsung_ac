@@ -12,6 +12,7 @@ namespace esphome
         bool debug_log_raw_bytes = false;
         bool non_nasa_keepalive = false;
         bool log_undefined_messages = false;
+        bool log_messages = false;
         ProtocolProcessing protocol_processing = ProtocolProcessing::Auto;
 
         // This functions is designed to run after a new value was added

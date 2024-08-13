@@ -55,6 +55,10 @@ void set_log_undefined_messages (bool value)
       {
         log_undefined_messages = value;
       }
+	  void set_log_messages (bool value)
+      {
+        log_messages = value;
+      }
       void register_device(Samsung_AC_Device *device);
 
       void /*MessageTarget::*/ register_address(const std::string address) override

@@ -228,6 +228,8 @@ CONF_NON_NASA_KEEPALIVE = "non_nasa_keepalive"
 
 CONF_LOG_UNDEFINED_MESSAGES = "log_undefined_messages"
 
+CONF_LOG_MESSAGES = "log_messages"
+
 CONFIG_SCHEMA = (
     cv.Schema(
         {
@@ -241,6 +243,7 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_DEBUG_LOG_MESSAGES_RAW, default=False): cv.boolean,
             cv.Optional(CONF_NON_NASA_KEEPALIVE, default=False): cv.boolean,
             cv.Optional(CONF_LOG_UNDEFINED_MESSAGES, default=False): cv.boolean,
+            cv.Optional(CONF_LOG_MESSAGES, default=False): cv.boolean,
             cv.Optional(CONF_CAPABILITIES): CAPABILITIES_SCHEMA,
             cv.Required(CONF_DEVICES): cv.ensure_list(DEVICE_SCHEMA),
         }
@@ -417,6 +420,9 @@ async def to_code(config):
         
     if (CONF_LOG_UNDEFINED_MESSAGES in config):
         cg.add(var.set_log_undefined_messages(config[CONF_LOG_UNDEFINED_MESSAGES]))
+
+    if (CONF_LOG_MESSAGES in config):
+        cg.add(var.set_log_messages(config[CONF_LOG_MESSAGES]))
 
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
