@@ -56,6 +56,22 @@ namespace esphome
 
       std::function<void(Mode)> write_state_;
     };
+    
+    class Samsung_AC_Water_Heater_Mode_Select : public select::Select
+    {
+    public:
+      void publish_state_(WaterHeaterMode waterheatermode)
+      {
+        this->publish_state(water_heater_mode_to_str(waterheatermode));
+      }
+
+      void control(const std::string &value) override
+      {
+        write_state_(str_to_water_heater_mode(value));
+      }
+
+      std::function<void(WaterHeaterMode)> write_state_;
+    };
 
     class Samsung_AC_Switch : public switch_::Switch
     {
@@ -95,6 +111,7 @@ namespace esphome
       Samsung_AC_Switch *power{nullptr};
       Samsung_AC_Switch *water_heater_power{nullptr};
       Samsung_AC_Mode_Select *mode{nullptr};
+      Samsung_AC_Water_Heater_Mode_Select *waterheatermode{nullptr};
       Samsung_AC_Climate *climate{nullptr};
       std::vector<Samsung_AC_Sensor> custom_sensors;
       float room_temperature_offset{0};
@@ -154,6 +171,17 @@ namespace esphome
         {
           ProtocolRequest request;
           request.mode = value;
+          publish_request(request);
+        };
+      }
+      
+      void set_water_heater_mode_select(Samsung_AC_Water_Heater_Mode_Select *select)
+      {
+        waterheatermode = select;
+        waterheatermode->write_state_ = [this](WaterHeaterMode value)
+        {
+          ProtocolRequest request;
+          request.waterheatermode = value;
           publish_request(request);
         };
       }
@@ -223,6 +251,7 @@ namespace esphome
       optional<bool> _cur_power;
       optional<bool> _cur_water_heater_power;
       optional<Mode> _cur_mode;
+      optional<WaterHeaterMode> _cur_water_heater_mode;
 
       void update_power(bool value)
       {
@@ -247,6 +276,13 @@ namespace esphome
           mode->publish_state_(value);
         if (climate != nullptr)
           calc_and_publish_mode();
+      }
+      
+      void update_water_heater_mode(WaterHeaterMode value)
+      {
+        _cur_water_heater_mode = value;
+        if (waterheatermode != nullptr)
+          waterheatermode->publish_state_(value);
       }
 
       void update_fanmode(FanMode value)

@@ -10,6 +10,9 @@ namespace esphome
   {
     Mode str_to_mode(const std::string &value);
     std::string mode_to_str(Mode mode);
+    
+    WaterHeaterMode str_to_water_heater_mode(const std::string &value);
+    std::string water_heater_mode_to_str(WaterHeaterMode waterheatermode);
 
     optional<climate::ClimateMode> mode_to_climatemode(Mode mode);
     Mode climatemode_to_mode(climate::ClimateMode mode);

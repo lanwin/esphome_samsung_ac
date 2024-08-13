@@ -37,6 +37,36 @@ namespace esphome
         return "";
       };
     }
+    
+    WaterHeaterMode str_to_water_heater_mode(const std::string &value)
+    {
+      if (value == "Eco")
+        return WaterHeaterMode::Eco;
+      if (value == "Standard")
+        return WaterHeaterMode::Standard;
+      if (value == "Power")
+        return WaterHeaterMode::Power;
+      if (value == "Force")
+        return WaterHeaterMode::Force;
+      return WaterHeaterMode::Unknown;
+    }
+
+    std::string water_heater_mode_to_str(WaterHeaterMode waterheatermode)
+    {
+      switch (waterheatermode)
+      {
+      case WaterHeaterMode::Eco:
+        return "Eco";
+      case WaterHeaterMode::Standard:
+        return "Standard";
+      case WaterHeaterMode::Power:
+        return "Power";
+      case WaterHeaterMode::Force:
+        return "Force";
+      default:
+        return "";
+      };
+    }
 
     optional<climate::ClimateMode> mode_to_climatemode(Mode mode)
     {
