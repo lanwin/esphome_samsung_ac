@@ -22,18 +22,14 @@ namespace esphome
         printf((str.c_str()), ##__VA_ARGS__); \
     } while (0);
 
-#define ESP_LOGW(tag, format, ...)                            \
-    do                                                        \
-    {                                                         \
-        if (log_messages)                                     \
-        {                                                     \
-            std::string str = "";                             \
-            str += format;                                    \
-            str += "\n";                                      \
-            printf((str.c_str()), ##__VA_ARGS__);             \
-        }                                                     \
-    } while (0)
-
+#define ESP_LOGW(tag, format, ...)            \
+    do                                        \
+    {                                         \
+        std::string str = "";                 \
+        str += format;                        \
+        str += "\n";                          \
+        printf((str.c_str()), ##__VA_ARGS__); \
+    } while (0);
 
 #define ESP_LOGV(tag, format, ...)            \
     do                                        \
