@@ -108,17 +108,17 @@ namespace esphome
 
       void set_outdoor_temperature_sensor(sensor::Sensor *sensor)
       {
-        indoor_eva_in_temperature = sensor;
+		  outdoor_temperature = sensor;
       }
 
       void set_indoor_eva_in_temperature_sensor(sensor::Sensor *sensor)
       {
-        indoor_eva_out_temperature = sensor;
+		  indoor_eva_in_temperature = sensor;
       }
 
       void set_indoor_eva_out_temperature_sensor(sensor::Sensor *sensor)
       {
-        outdoor_temperature = sensor;
+        indoor_eva_out_temperature = sensor;
       }
 
       void add_custom_sensor(int message_number, sensor::Sensor *sensor)
