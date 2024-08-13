@@ -47,7 +47,7 @@ uart:
 
 # Import custom component from GitHub
 external_components:
-  - source: github://lanwin/esphome_samsung_ac@stable # use @main if you want the latest development (possibly unstable?)
+  - source: github://omerfaruk-aran/esphome_samsung_ac@new_test # use @main if you want the latest development (possibly unstable?)
     components: [samsung_ac]
 
 # Configuration of AC component
@@ -56,6 +56,12 @@ samsung_ac:
   # For NonNASA devices the following option can be enabled to prevent the device from sleeping when idle. This allows
   # values like internal and external temperature to continue to be tracked when the device isn't in use.
   non_nasa_keepalive: true
+  
+  #When enabled (set to true), this option will log the messages associated with undefined codes on the device. This is useful for debugging and identifying any unexpected or unknown codes that the device may receive during operation.
+  log_undefined_messages: false
+  
+  #When enabled (set to true), this option logs messages associated with defined codes on the device. This helps in monitoring the behavior of the device by recording the activity related to known, expected codes.
+  log_messages: false
 
   # Capabilities configure the features alle devices of your AC system have (all parts of this section are optional). 
   # All capabilities are off by default, you need to enable only those your devices have.
@@ -104,6 +110,8 @@ samsung_ac:
         name: "Kitchen power"
       mode:
         name: "Kitchen mode"
+      automatic_cleaning:
+        name: "Kitchen automatic clean"
 
       # If your AC sits near or inside the ceiling, the reported room temperature is often a little bit heigher then whats 
       # measured below. This property can be used to correct that value.
