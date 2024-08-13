@@ -386,6 +386,13 @@ namespace esphome
                 power.value = request.power.value() ? 1 : 0;
                 packet.messages.push_back(power);
             }
+			
+			if (request.automatic_cleaning)
+            {
+                MessageSet automatic_cleaning(MessageNumber::ENUM_in_operation_automatic_cleaning);
+                automatic_cleaning.value = request.automatic_cleaning.value() ? 1 : 0;
+                packet.messages.push_back(automatic_cleaning);
+            }
 
             if (request.water_heater_power)
             {
