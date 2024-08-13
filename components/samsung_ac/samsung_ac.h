@@ -83,6 +83,20 @@ void set_log_undefined_messages (bool value)
           dev->update_outdoor_temperature(value);
       }
 
+      void /*MessageTarget::*/ set_indoor_eva_in_temperature(const std::string address, float value) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->update_indoor_eva_in_temperature(value);
+      }
+
+      void /*MessageTarget::*/ set_indoor_eva_out_temperature(const std::string address, float value) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->update_indoor_eva_out_temperature(value);
+      }
+
       void /*MessageTarget::*/ set_target_temperature(const std::string address, float value) override
       {
         Samsung_AC_Device *dev = find_device(address);
