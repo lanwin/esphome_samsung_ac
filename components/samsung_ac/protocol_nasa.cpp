@@ -1063,12 +1063,21 @@ void process_messageset(std::string source, std::string dest, MessageSet &messag
             case 0x602:  // STR_ad_option_install_2
             case 0x600:  // STR_ad_option_basic
             case 0x202:  // VAR_ad_error_code1
+			
             case 0x42d1: // VAR_IN_DUST_SENSOR_PM10_0_VALUE
+			{
+               ESP_LOGW(TAG, "s:%s d:%s VAR_IN_DUST_SENSOR_PM10_0_VALUE %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
+               return; // Ingore cause not important
+            }
             case 0x42d2: // VAR_IN_DUST_SENSOR_PM2_5_VALUE
+			{
+               ESP_LOGW(TAG, "s:%s d:%s VAR_IN_DUST_SENSOR_PM2_5_VALUE %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
+               return; // Ingore cause not important
+            }
             case 0x42d3: // VAR_IN_DUST_SENSOR_PM1_0_VALUE
             {
-                // ESP_LOGW(TAG, "s:%s d:%s Ignore %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
-                return; // Ingore cause not important
+               ESP_LOGW(TAG, "s:%s d:%s VAR_IN_DUST_SENSOR_PM1_0_VALUE %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
+               return; // Ingore cause not important
             }
 
             case 0x23:
