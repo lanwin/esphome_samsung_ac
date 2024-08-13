@@ -110,6 +110,10 @@ samsung_ac:
         name: "Kitchen power"
       mode:
         name: "Kitchen mode"
+        
+        #Add automatic_cleaning mode for Samsung AC NASA
+            #- Added the "automatic_cleaning" feature to the Samsung AC integration.
+            #- This mode ensures hygienic drying of all moisture in the indoor unit after the cooling process is completed.
       automatic_cleaning:
         name: "Kitchen automatic clean"
 
