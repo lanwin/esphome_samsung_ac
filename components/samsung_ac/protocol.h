@@ -8,10 +8,11 @@ namespace esphome
 {
     namespace samsung_ac
     {
-        extern bool debug_log_packets;
+        //extern bool debug_log_packets;
         extern bool debug_log_raw_bytes;
         extern bool non_nasa_keepalive;
         extern bool debug_log_undefined_messages;
+        extern bool debug_log_messages;
 
         enum class DecodeResult
         {

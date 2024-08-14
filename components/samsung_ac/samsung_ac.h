@@ -39,7 +39,7 @@ namespace esphome
 
       void set_debug_log_messages(bool value)
       {
-        debug_log_packets = value;
+        debug_log_messages = value;
       }
 
       void set_debug_log_messages_raw(bool value)

@@ -528,7 +528,7 @@ namespace esphome
 
         void process_non_nasa_packet(MessageTarget *target)
         {
-            if (debug_log_packets)
+            if (debug_log_messages)
             {
                 ESP_LOGW(TAG, "MSG: %s", nonpacket_.to_string().c_str());
             }

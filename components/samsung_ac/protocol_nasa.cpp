@@ -685,7 +685,7 @@ namespace esphome
                 break;
             }
             default:
-                if (debug_undefined_messages)
+                if (debug_log_undefined_messages)
                 {
                     ESP_LOGW(TAG, "Undefined s:%s d:%s %s", source.c_str(), dest.c_str(), message.to_string().c_str());
                 }
@@ -706,7 +706,7 @@ namespace esphome
 
             target->register_address(source);
 
-            if (debug_log_packets)
+            if (debug_log_messages)
             {
                 ESP_LOGW(TAG, "MSG: %s", packet_.to_string().c_str());
             }
