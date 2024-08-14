@@ -770,7 +770,7 @@ namespace esphome
                     value = (double)message.value / 10.0;
                     if (debug_log_messages)
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s VAR_IN_FSV_3022 %f", source.c_str(), dest.c.str(), value);
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_IN_FSV_3022 %f", source.c_str(), dest.c_str(), value);
                     }
                     break;
 
@@ -779,7 +779,7 @@ namespace esphome
                     value = (double)message.value / 10.0;
                     if (debug_log_messages)
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s VAR_IN_FSV_3023 %f", source.c_str(), dest.c.str(), value);
+                        ESP_LOGW(TAG, "s:%s d:%s VAR_IN_FSV_3023 %f", source.c_str(), dest.c_str(), value);
                     }
                     break;
 
@@ -788,7 +788,7 @@ namespace esphome
                     value = (double)message.value / 1000.0;
                     if (debug_log_messages)
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s LVAR_OUT_CONTROL_WATTMETER_ALL_UNIT_ACCUM %fkwh", source.c.str(), dest.c.str(), value);
+                        ESP_LOGW(TAG, "s:%s d:%s LVAR_OUT_CONTROL_WATTMETER_ALL_UNIT_ACCUM %fkwh", source.c_str(), dest.c_str(), value);
                     }
                     break;
 
@@ -797,7 +797,7 @@ namespace esphome
                     value = (double)message.value;
                     if (debug_log_messages)
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s LVAR_OUT_CONTROL_WATTMETER_1W_1MIN_SUM %f", source.c.str(), dest.c.str(), value);
+                        ESP_LOGW(TAG, "s:%s d:%s LVAR_OUT_CONTROL_WATTMETER_1W_1MIN_SUM %f", source.c_str(), dest.c_str(), value);
                     }
                     break;
 
@@ -806,7 +806,7 @@ namespace esphome
                     value = (double)message.value;
                     if (debug_log_messages)
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s NASA_OUTDOOR_CONTROL_WATTMETER_1UNIT  %f", source.c.str(), dest.c.str(), value);
+                        ESP_LOGW(TAG, "s:%s d:%s NASA_OUTDOOR_CONTROL_WATTMETER_1UNIT  %f", source.c_str(), dest.c_str(), value);
                     }
                     break;
 
@@ -815,7 +815,7 @@ namespace esphome
                     value = (double)message.value;
                     if (debug_log_messages)
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s total produced energy  %f", source.c.str(), dest.c.str(), value);
+                        ESP_LOGW(TAG, "s:%s d:%s total produced energy  %f", source.c_str(), dest.c_str(), value);
                     }
                     break;
 
@@ -824,7 +824,7 @@ namespace esphome
                     value = (double)message.value;
                     if (debug_log_messages)
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s actual produced energy %f", source.c.str(), dest.c.str(), value);
+                        ESP_LOGW(TAG, "s:%s d:%s actual produced energy %f", source.c_str(), dest.c_str(), value);
                     }
                     break;
 
@@ -833,7 +833,7 @@ namespace esphome
                     value = (double)message.value;
                     if (debug_log_messages)
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s NASA_OUTDOOR_CONTROL_WATTMETER_TOTAL_SUM %f", source.c.str(), dest.c.str(), value);
+                        ESP_LOGW(TAG, "s:%s d:%s NASA_OUTDOOR_CONTROL_WATTMETER_TOTAL_SUM %f", source.c_str(), dest.c_str(), value);
                     }
                     break;
 
@@ -842,14 +842,14 @@ namespace esphome
                     value = (double)message.value;
                     if (debug_log_messages)
                     {
-                        ESP_LOGW(TAG, "s:%s d:%s NASA_OUTDOOR_CONTROL_WATTMETER_TOTAL_SUM_ACCUM %f", source.c.str(), dest.c.str(), value);
+                        ESP_LOGW(TAG, "s:%s d:%s NASA_OUTDOOR_CONTROL_WATTMETER_TOTAL_SUM_ACCUM %f", source.c_str(), dest.c_str(), value);
                     }
                     break;
 
                 default:
                     if (debug_log_undefined_messages)
                     {
-                        ESP_LOGW(TAG, "Undefined s:%s d:%s %s", source.c.str(), dest.c.str(), message.to_string().c.str());
+                        ESP_LOGW(TAG, "Undefined s:%s d:%s %s", source.c_str(), dest.c_str(), message.to_string().c_str());
                     }
                     break;
                 }
