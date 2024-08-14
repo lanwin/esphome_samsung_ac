@@ -71,6 +71,7 @@ namespace esphome
         {
             Undefiend = 0,
             ENUM_in_operation_power = 0x4000,
+            ENUM_in_operation_automatic_cleaning = 0x4111,
             ENUM_in_water_heater_power = 0x4065,
             ENUM_in_operation_mode = 0x4001,
             ENUM_in_water_heater_mode = 0x4066,
@@ -86,6 +87,8 @@ namespace esphome
             VAR_in_temp_water_tank_f = 0x4237,
             VAR_out_sensor_airout = 0x8204,
             VAR_in_temp_water_heater_target_f = 0x4235,
+            VAR_IN_TEMP_EVA_IN_F = 0x4205,
+            VAR_IN_TEMP_EVA_OUT_F = 0x4206,
         };
 
         struct Address

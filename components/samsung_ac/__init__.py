@@ -58,9 +58,12 @@ CONF_DEVICE_ROOM_TEMPERATURE_OFFSET = "room_temperature_offset"
 CONF_DEVICE_TARGET_TEMPERATURE = "target_temperature"
 CONF_DEVICE_WATER_OUTLET_TARGET = "water_outlet_target"
 CONF_DEVICE_OUTDOOR_TEMPERATURE = "outdoor_temperature"
+CONF_DEVICE_INDOOR_EVA_IN_TEMPERATURE = "indoor_eva_in_temperature"
+CONF_DEVICE_INDOOR_EVA_OUT_TEMPERATURE = "indoor_eva_out_temperature"
 CONF_DEVICE_WATER_TEMPERATURE = "water_temperature"
 CONF_DEVICE_WATER_TARGET_TEMPERATURE = "water_target_temperature"
 CONF_DEVICE_POWER = "power"
+CONF_DEVICE_AUTOMATIC_CLEANING = "automatic_cleaning"
 CONF_DEVICE_WATER_HEATER_POWER = "water_heater_power"
 CONF_DEVICE_MODE = "mode"
 CONF_DEVICE_WATER_HEATER_MODE = "water_heater_mode"
@@ -183,10 +186,23 @@ DEVICE_SCHEMA = (
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
+             cv.Optional(CONF_DEVICE_INDOOR_EVA_IN_TEMPERATURE): sensor.sensor_schema(
+                unit_of_measurement=UNIT_CELSIUS,
+                accuracy_decimals=1,
+                device_class=DEVICE_CLASS_TEMPERATURE,
+                state_class=STATE_CLASS_MEASUREMENT,
+            ),
+             cv.Optional(CONF_DEVICE_INDOOR_EVA_OUT_TEMPERATURE): sensor.sensor_schema(
+                unit_of_measurement=UNIT_CELSIUS,
+                accuracy_decimals=1,
+                device_class=DEVICE_CLASS_TEMPERATURE,
+                state_class=STATE_CLASS_MEASUREMENT,
+            ),
             cv.Optional(CONF_DEVICE_TARGET_TEMPERATURE): NUMBER_SCHEMA,
             cv.Optional(CONF_DEVICE_WATER_OUTLET_TARGET): NUMBER_SCHEMA,
             cv.Optional(CONF_DEVICE_WATER_TARGET_TEMPERATURE): NUMBER_SCHEMA,
             cv.Optional(CONF_DEVICE_POWER): switch.switch_schema(Samsung_AC_Switch),
+            cv.Optional(CONF_DEVICE_AUTOMATIC_CLEANING): switch.switch_schema(Samsung_AC_Switch),
             cv.Optional(CONF_DEVICE_WATER_HEATER_POWER): switch.switch_schema(Samsung_AC_Switch),
             cv.Optional(CONF_DEVICE_MODE): SELECT_MODE_SCHEMA,
             cv.Optional(CONF_DEVICE_WATER_HEATER_MODE): SELECT_WATER_HEATER_MODE_SCHEMA,
@@ -217,6 +233,9 @@ CONF_DEBUG_LOG_MESSAGES_RAW = "debug_log_messages_raw"
 
 CONF_NON_NASA_KEEPALIVE = "non_nasa_keepalive"
 
+CONF_DEBUG_LOG_UNDEFINED_MESSAGES = "debug_log_undefined_messages"
+
+
 CONFIG_SCHEMA = (
     cv.Schema(
         {
@@ -229,6 +248,7 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_DEBUG_LOG_MESSAGES, default=False): cv.boolean,
             cv.Optional(CONF_DEBUG_LOG_MESSAGES_RAW, default=False): cv.boolean,
             cv.Optional(CONF_NON_NASA_KEEPALIVE, default=False): cv.boolean,
+            cv.Optional(CONF_DEBUG_LOG_UNDEFINED_MESSAGES, default=False): cv.boolean,
             cv.Optional(CONF_CAPABILITIES): CAPABILITIES_SCHEMA,
             cv.Required(CONF_DEVICES): cv.ensure_list(DEVICE_SCHEMA),
         }
@@ -300,6 +320,11 @@ async def to_code(config):
             sens = await switch.new_switch(conf)
             cg.add(var_dev.set_power_switch(sens))
         
+        if CONF_DEVICE_AUTOMATIC_CLEANING in device:
+            conf = device[CONF_DEVICE_AUTOMATIC_CLEANING]
+            sens = await switch.new_switch(conf)
+            cg.add(var_dev.set_automatic_cleaning_switch(sens))
+        
         if CONF_DEVICE_WATER_HEATER_POWER in device:
             conf = device[CONF_DEVICE_WATER_HEATER_POWER]
             sens = await switch.new_switch(conf)
@@ -318,6 +343,16 @@ async def to_code(config):
             conf = device[CONF_DEVICE_OUTDOOR_TEMPERATURE]
             sens = await sensor.new_sensor(conf)
             cg.add(var_dev.set_outdoor_temperature_sensor(sens))
+            
+        if CONF_DEVICE_INDOOR_EVA_IN_TEMPERATURE in device:
+            conf = device[CONF_DEVICE_INDOOR_EVA_IN_TEMPERATURE]
+            sens = await sensor.new_sensor(conf)
+            cg.add(var_dev.set_indoor_eva_in_temperature_sensor(sens))
+            
+        if CONF_DEVICE_INDOOR_EVA_OUT_TEMPERATURE in device:
+            conf = device[CONF_DEVICE_INDOOR_EVA_OUT_TEMPERATURE]
+            sens = await sensor.new_sensor(conf)
+            cg.add(var_dev.set_indoor_eva_out_temperature_sensor(sens))
 
         if CONF_DEVICE_WATER_TARGET_TEMPERATURE in device:
             conf = device[CONF_DEVICE_WATER_TARGET_TEMPERATURE]
@@ -398,6 +433,9 @@ async def to_code(config):
             
     if (CONF_NON_NASA_KEEPALIVE in config):
         cg.add(var.set_non_nasa_keepalive(config[CONF_NON_NASA_KEEPALIVE]))
+        
+    if (CONF_DEBUG_LOG_UNDEFINED_MESSAGES in config):
+        cg.add(var.set_debug_log_undefined_messages(config[CONF_DEBUG_LOG_UNDEFINED_MESSAGES]))
 
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)

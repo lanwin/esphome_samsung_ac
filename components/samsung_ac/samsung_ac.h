@@ -39,7 +39,7 @@ namespace esphome
 
       void set_debug_log_messages(bool value)
       {
-        debug_log_packets = value;
+        debug_log_messages = value;
       }
 
       void set_debug_log_messages_raw(bool value)
@@ -51,7 +51,10 @@ namespace esphome
       {
         non_nasa_keepalive = value;
       }
-
+      void set_debug_log_undefined_messages(bool value)
+      {
+        debug_log_undefined_messages = value;
+      }
       void register_device(Samsung_AC_Device *device);
 
       void /*MessageTarget::*/ register_address(const std::string address) override
@@ -80,13 +83,27 @@ namespace esphome
           dev->update_outdoor_temperature(value);
       }
 
+      void /*MessageTarget::*/ set_indoor_eva_in_temperature(const std::string address, float value) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->update_indoor_eva_in_temperature(value);
+      }
+
+      void /*MessageTarget::*/ set_indoor_eva_out_temperature(const std::string address, float value) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->update_indoor_eva_out_temperature(value);
+      }
+
       void /*MessageTarget::*/ set_target_temperature(const std::string address, float value) override
       {
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
           dev->update_target_temperature(value);
       }
-      
+
       void /*MessageTarget::*/ set_water_outlet_target(const std::string address, float value) override
       {
         Samsung_AC_Device *dev = find_device(address);
@@ -106,6 +123,12 @@ namespace esphome
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
           dev->update_power(value);
+      }
+      void /*MessageTarget::*/ set_automatic_cleaning(const std::string address, bool value) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->update_automatic_cleaning(value);
       }
       void /*MessageTarget::*/ set_water_heater_power(const std::string address, bool value) override
       {

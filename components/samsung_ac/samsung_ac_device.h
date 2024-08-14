@@ -105,10 +105,13 @@ namespace esphome
       std::string address;
       sensor::Sensor *room_temperature{nullptr};
       sensor::Sensor *outdoor_temperature{nullptr};
+      sensor::Sensor *indoor_eva_in_temperature{nullptr};
+      sensor::Sensor *indoor_eva_out_temperature{nullptr};
       Samsung_AC_Number *target_temperature{nullptr};
       Samsung_AC_Number *water_outlet_target{nullptr};
       Samsung_AC_Number *target_water_temperature{nullptr};
       Samsung_AC_Switch *power{nullptr};
+      Samsung_AC_Switch *automatic_cleaning{nullptr};
       Samsung_AC_Switch *water_heater_power{nullptr};
       Samsung_AC_Mode_Select *mode{nullptr};
       Samsung_AC_Water_Heater_Mode_Select *waterheatermode{nullptr};
@@ -124,6 +127,16 @@ namespace esphome
       void set_outdoor_temperature_sensor(sensor::Sensor *sensor)
       {
         outdoor_temperature = sensor;
+      }
+
+      void set_indoor_eva_in_temperature_sensor(sensor::Sensor *sensor)
+      {
+        indoor_eva_in_temperature = sensor;
+      }
+
+      void set_indoor_eva_out_temperature_sensor(sensor::Sensor *sensor)
+      {
+        indoor_eva_out_temperature = sensor;
       }
 
       void add_custom_sensor(int message_number, sensor::Sensor *sensor)
@@ -149,6 +162,17 @@ namespace esphome
         {
           ProtocolRequest request;
           request.power = value;
+          publish_request(request);
+        };
+      }
+
+      void set_automatic_cleaning_switch(Samsung_AC_Switch *switch_)
+      {
+        automatic_cleaning = switch_;
+        automatic_cleaning->write_state_ = [this](bool value)
+        {
+          ProtocolRequest request;
+          request.automatic_cleaning = value;
           publish_request(request);
         };
       }
@@ -196,7 +220,7 @@ namespace esphome
           publish_request(request);
         };
       };
-      
+
       void set_water_outlet_target_number(Samsung_AC_Number *number)
       {
         water_outlet_target = number;
@@ -235,7 +259,7 @@ namespace esphome
           climate->publish_state();
         }
       }
-      
+
       void update_water_outlet_target(float value)
       {
         if (water_outlet_target != nullptr)
@@ -249,6 +273,7 @@ namespace esphome
       }
 
       optional<bool> _cur_power;
+      optional<bool> _cur_automatic_cleaning;
       optional<bool> _cur_water_heater_power;
       optional<Mode> _cur_mode;
       optional<WaterHeaterMode> _cur_water_heater_mode;
@@ -258,6 +283,15 @@ namespace esphome
         _cur_power = value;
         if (power != nullptr)
           power->publish_state(value);
+        if (climate != nullptr)
+          calc_and_publish_mode();
+      }
+
+      void update_automatic_cleaning(bool value)
+      {
+        _cur_automatic_cleaning = value;
+        if (automatic_cleaning != nullptr)
+          automatic_cleaning->publish_state(value);
         if (climate != nullptr)
           calc_and_publish_mode();
       }
@@ -367,6 +401,18 @@ namespace esphome
       {
         if (outdoor_temperature != nullptr)
           outdoor_temperature->publish_state(value);
+      }
+
+      void update_indoor_eva_in_temperature(float value)
+      {
+        if (indoor_eva_in_temperature != nullptr)
+          indoor_eva_in_temperature->publish_state(value);
+      }
+
+      void update_indoor_eva_out_temperature(float value)
+      {
+        if (indoor_eva_out_temperature != nullptr)
+          indoor_eva_out_temperature->publish_state(value);
       }
 
       void update_custom_sensor(uint16_t message_number, float value)

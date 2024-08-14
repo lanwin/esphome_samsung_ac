@@ -8,9 +8,11 @@ namespace esphome
 {
     namespace samsung_ac
     {
-        bool debug_log_packets = false;
+        //bool debug_log_packets = false;
         bool debug_log_raw_bytes = false;
         bool non_nasa_keepalive = false;
+        bool debug_log_undefined_messages = false;
+		bool debug_log_messages = false;
         ProtocolProcessing protocol_processing = ProtocolProcessing::Auto;
 
         // This functions is designed to run after a new value was added
