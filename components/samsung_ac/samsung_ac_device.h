@@ -89,8 +89,8 @@ namespace esphome
       std::string address;
       sensor::Sensor *room_temperature{nullptr};
       sensor::Sensor *outdoor_temperature{nullptr};
-	  sensor::Sensor *indoor_eva_in_temperature{nullptr};
-	  sensor::Sensor *indoor_eva_out_temperature{nullptr};
+      sensor::Sensor *indoor_eva_in_temperature{nullptr};
+      sensor::Sensor *indoor_eva_out_temperature{nullptr};
       Samsung_AC_Number *target_temperature{nullptr};
       Samsung_AC_Number *water_outlet_target{nullptr};
       Samsung_AC_Number *target_water_temperature{nullptr};
@@ -109,12 +109,12 @@ namespace esphome
 
       void set_outdoor_temperature_sensor(sensor::Sensor *sensor)
       {
-		  outdoor_temperature = sensor;
+        outdoor_temperature = sensor;
       }
 
       void set_indoor_eva_in_temperature_sensor(sensor::Sensor *sensor)
       {
-		  indoor_eva_in_temperature = sensor;
+        indoor_eva_in_temperature = sensor;
       }
 
       void set_indoor_eva_out_temperature_sensor(sensor::Sensor *sensor)
@@ -148,8 +148,8 @@ namespace esphome
           publish_request(request);
         };
       }
-	  
-void set_automatic_cleaning_switch(Samsung_AC_Switch *switch_)
+
+      void set_automatic_cleaning_switch(Samsung_AC_Switch *switch_)
       {
         automatic_cleaning = switch_;
         automatic_cleaning->write_state_ = [this](bool value)
@@ -192,7 +192,7 @@ void set_automatic_cleaning_switch(Samsung_AC_Switch *switch_)
           publish_request(request);
         };
       };
-      
+
       void set_water_outlet_target_number(Samsung_AC_Number *number)
       {
         water_outlet_target = number;
@@ -231,7 +231,7 @@ void set_automatic_cleaning_switch(Samsung_AC_Switch *switch_)
           climate->publish_state();
         }
       }
-      
+
       void update_water_outlet_target(float value)
       {
         if (water_outlet_target != nullptr)
@@ -257,8 +257,8 @@ void set_automatic_cleaning_switch(Samsung_AC_Switch *switch_)
         if (climate != nullptr)
           calc_and_publish_mode();
       }
-	  
-void update_automatic_cleaning(bool value)
+
+      void update_automatic_cleaning(bool value)
       {
         _cur_automatic_cleaning = value;
         if (automatic_cleaning != nullptr)

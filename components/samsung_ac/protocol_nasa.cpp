@@ -386,8 +386,8 @@ namespace esphome
                 power.value = request.power.value() ? 1 : 0;
                 packet.messages.push_back(power);
             }
-			
-			if (request.automatic_cleaning)
+
+            if (request.automatic_cleaning)
             {
                 MessageSet automatic_cleaning(MessageNumber::ENUM_in_operation_automatic_cleaning);
                 automatic_cleaning.value = request.automatic_cleaning.value() ? 1 : 0;
@@ -407,14 +407,14 @@ namespace esphome
                 targettemp.value = request.target_temp.value() * 10.0;
                 packet.messages.push_back(targettemp);
             }
-            
+
             if (request.water_outlet_target)
             {
                 MessageSet wateroutlettarget(MessageNumber::VAR_in_temp_water_outlet_target_f);
                 wateroutlettarget.value = request.water_outlet_target.value() * 10.0;
                 packet.messages.push_back(wateroutlettarget);
             }
-            
+
             if (request.target_water_temp)
             {
                 MessageSet targetwatertemp(MessageNumber::VAR_in_temp_water_heater_target_f);
@@ -509,125 +509,190 @@ namespace esphome
             }
         }
 
-void process_messageset(std::string source, std::string dest, MessageSet &message, optional<std::set<uint16_t>> &custom, MessageTarget *target) {
-    if (debug_mqtt_connected()) {
-        std::string topic_prefix = "samsung_ac/nasa/";
-        std::string topic_suffix = long_to_hex((uint16_t)message.messageNumber);
-        std::string payload = std::to_string(message.value);
+        void process_messageset(std::string source, std::string dest, MessageSet &message, optional<std::set<uint16_t>> &custom, MessageTarget *target)
+        {
+            if (debug_mqtt_connected())
+            {
+                std::string topic_prefix = "samsung_ac/nasa/";
+                std::string topic_suffix = long_to_hex((uint16_t)message.messageNumber);
+                std::string payload = std::to_string(message.value);
 
-        switch (message.type) {
-            case MessageSetType::Enum:
-                debug_mqtt_publish(topic_prefix + "enum/" + topic_suffix, payload);
+                switch (message.type)
+                {
+                case MessageSetType::Enum:
+                    debug_mqtt_publish(topic_prefix + "enum/" + topic_suffix, payload);
+                    break;
+                case MessageSetType::Variable:
+                    debug_mqtt_publish(topic_prefix + "var/" + topic_suffix, payload);
+                    break;
+                case MessageSetType::LongVariable:
+                    debug_mqtt_publish(topic_prefix + "var_long/" + topic_suffix, payload);
+                    break;
+                default:
+                    break;
+                }
+            }
+
+            if (custom && custom.value().find((uint16_t)message.messageNumber) != custom.value().end())
+            {
+                target->set_custom_sensor(source, (uint16_t)message.messageNumber, (float)message.value);
+            }
+
+            switch (message.messageNumber)
+            {
+            case MessageNumber::VAR_in_temp_room_f:
+            {
+                double temp = message.value / 10.0;
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_room_f %f", source.c_str(), dest.c_str(), temp);
+                }
+                target->set_room_temperature(source, temp);
                 break;
-            case MessageSetType::Variable:
-                debug_mqtt_publish(topic_prefix + "var/" + topic_suffix, payload);
+            }
+            case MessageNumber::VAR_in_temp_target_f:
+            {
+                double temp = message.value / 10.0;
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_target_f %f", source.c_str(), dest.c_str(), temp);
+                }
+                target->set_target_temperature(source, temp);
                 break;
-            case MessageSetType::LongVariable:
-                debug_mqtt_publish(topic_prefix + "var_long/" + topic_suffix, payload);
+            }
+            case MessageNumber::VAR_in_temp_water_outlet_target_f:
+            {
+                double temp = message.value / 10.0;
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_water_outlet_target_f %f", source.c_str(), dest.c_str(), temp);
+                }
+                target->set_water_outlet_target(source, temp);
                 break;
+            }
+            case MessageNumber::VAR_in_temp_water_heater_target_f:
+            {
+                double temp = message.value / 10.0;
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_water_heater_target_f %f", source.c_str(), dest.c_str(), temp);
+                }
+                target->set_target_water_temperature(source, temp);
+                break;
+            }
+            case MessageNumber::ENUM_in_state_humidity_percent:
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_state_humidity_percent %li", source.c_str(), dest.c_str(), message.value);
+                }
+                break;
+            case MessageNumber::ENUM_in_operation_power:
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_power %s", source.c_str(), dest.c_str(), message.value == 0 ? "off" : "on");
+                }
+                target->set_power(source, message.value != 0);
+                break;
+            case MessageNumber::ENUM_in_operation_automatic_cleaning:
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_automatic_cleaning %s", source.c_str(), dest.c_str(), message.value == 0 ? "off" : "on");
+                }
+                target->set_automatic_cleaning(source, message.value != 0);
+                break;
+            case MessageNumber::ENUM_in_water_heater_power:
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_water_heater_power %s", source.c_str(), dest.c_str(), message.value == 0 ? "off" : "on");
+                }
+                target->set_water_heater_power(source, message.value != 0);
+                break;
+            case MessageNumber::ENUM_in_operation_mode:
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_mode %li", source.c_str(), dest.c_str(), message.value);
+                }
+                target->set_mode(source, operation_mode_to_mode(message.value));
+                break;
+            case MessageNumber::ENUM_in_fan_mode:
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_mode %li", source.c_str(), dest.c_str(), message.value);
+                }
+                target->set_fanmode(source, fan_mode_real_to_fanmode(message.value));
+                break;
+            case MessageNumber::ENUM_in_fan_mode_real:
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_mode_real %li", source.c_str(), dest.c_str(), message.value);
+                }
+                break;
+            case MessageNumber::ENUM_in_alt_mode:
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_alt_mode %li", source.c_str(), dest.c_str(), message.value);
+                }
+                target->set_altmode(source, message.value);
+                break;
+            case MessageNumber::ENUM_in_louver_hl_swing:
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_louver_hl_swing %li", source.c_str(), dest.c_str(), message.value);
+                }
+                target->set_swing_vertical(source, message.value == 1);
+                break;
+            case MessageNumber::ENUM_in_louver_lr_swing:
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_in_louver_lr_swing %li", source.c_str(), dest.c_str(), message.value);
+                }
+                target->set_swing_horizontal(source, message.value == 1);
+                break;
+            case MessageNumber::VAR_in_temp_water_tank_f:
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_water_tank_f %li", source.c_str(), dest.c_str(), message.value);
+                }
+                break;
+            case MessageNumber::VAR_out_sensor_airout:
+            {
+                double temp = ((int16_t)message.value) / 10.0;
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s VAR_out_sensor_airout %li", source.c_str(), dest.c_str(), message.value);
+                }
+                target->set_outdoor_temperature(source, temp);
+                break;
+            }
+            case MessageNumber::VAR_IN_TEMP_EVA_IN_F:
+            {
+                double temp = ((int16_t)message.value) / 10.0;
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s VAR_IN_TEMP_EVA_IN_F %li", source.c_str(), dest.c_str(), message.value);
+                }
+                target->set_indoor_eva_in_temperature(source, temp);
+                break;
+            }
+            case MessageNumber::VAR_IN_TEMP_EVA_OUT_F:
+            {
+                double temp = ((int16_t)message.value) / 10.0;
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s VAR_IN_TEMP_EVA_OUT_F %li", source.c_str(), dest.c_str(), message.value);
+                }
+                target->set_indoor_eva_out_temperature(source, temp);
+                break;
+            }
             default:
-                break;
-        }
-    }
-
-    if (custom && custom.value().find((uint16_t)message.messageNumber) != custom.value().end()) {
-        target->set_custom_sensor(source, (uint16_t)message.messageNumber, (float)message.value);
-    }
-
-    switch (message.messageNumber) {
-        case MessageNumber::VAR_in_temp_room_f: {
-            double temp = message.value / 10.0;
-			if(log_messages){ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_room_f %f", source.c_str(), dest.c_str(), temp);}
-            target->set_room_temperature(source, temp);
-            break;
-        }
-        case MessageNumber::VAR_in_temp_target_f: {
-            double temp = message.value / 10.0;
-           if(log_messages){ ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_target_f %f", source.c_str(), dest.c_str(), temp);}
-            target->set_target_temperature(source, temp);
-            break;
-        }
-        case MessageNumber::VAR_in_temp_water_outlet_target_f: {
-            double temp = message.value / 10.0;
-           if(log_messages){ ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_water_outlet_target_f %f", source.c_str(), dest.c_str(), temp);}
-            target->set_water_outlet_target(source, temp);
-            break;
-        }
-        case MessageNumber::VAR_in_temp_water_heater_target_f: {
-            double temp = message.value / 10.0;
-           if(log_messages){ ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_water_heater_target_f %f", source.c_str(), dest.c_str(), temp);}
-            target->set_target_water_temperature(source, temp);
-            break;
-        }
-        case MessageNumber::ENUM_in_state_humidity_percent:
-           if(log_messages){ ESP_LOGW(TAG, "s:%s d:%s ENUM_in_state_humidity_percent %li", source.c_str(), dest.c_str(), message.value);}
-            break;
-        case MessageNumber::ENUM_in_operation_power:
-           if(log_messages){ ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_power %s", source.c_str(), dest.c_str(), message.value == 0 ? "off" : "on");}
-            target->set_power(source, message.value != 0);
-            break;
-        case MessageNumber::ENUM_in_operation_automatic_cleaning:
-           if(log_messages){ ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_automatic_cleaning %s", source.c_str(), dest.c_str(), message.value == 0 ? "off" : "on");}
-            target->set_automatic_cleaning(source, message.value != 0);
-            break;
-        case MessageNumber::ENUM_in_water_heater_power:
-           if(log_messages){ ESP_LOGW(TAG, "s:%s d:%s ENUM_in_water_heater_power %s", source.c_str(), dest.c_str(), message.value == 0 ? "off" : "on");}
-            target->set_water_heater_power(source, message.value != 0);
-            break;
-        case MessageNumber::ENUM_in_operation_mode:
-          if(log_messages){  ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_mode %li", source.c_str(), dest.c_str(), message.value);}
-            target->set_mode(source, operation_mode_to_mode(message.value));
-            break;
-        case MessageNumber::ENUM_in_fan_mode:
-           if(log_messages){ ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_mode %li", source.c_str(), dest.c_str(), message.value);}
-            target->set_fanmode(source, fan_mode_real_to_fanmode(message.value));
-            break;
-        case MessageNumber::ENUM_in_fan_mode_real:
-           if(log_messages){ ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_mode_real %li", source.c_str(), dest.c_str(), message.value);}
-            break;
-        case MessageNumber::ENUM_in_alt_mode:
-            if(log_messages){ ESP_LOGW(TAG, "s:%s d:%s ENUM_in_alt_mode %li", source.c_str(), dest.c_str(), message.value);}
-            target->set_altmode(source, message.value);
-            break;
-        case MessageNumber::ENUM_in_louver_hl_swing:
-          if(log_messages){  ESP_LOGW(TAG, "s:%s d:%s ENUM_in_louver_hl_swing %li", source.c_str(), dest.c_str(), message.value);}
-            target->set_swing_vertical(source, message.value == 1);
-            break;
-        case MessageNumber::ENUM_in_louver_lr_swing:
-           if(log_messages){ ESP_LOGW(TAG, "s:%s d:%s ENUM_in_louver_lr_swing %li", source.c_str(), dest.c_str(), message.value);}
-            target->set_swing_horizontal(source, message.value == 1);
-            break;
-        case MessageNumber::VAR_in_temp_water_tank_f:
-           if(log_messages){ ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_water_tank_f %li", source.c_str(), dest.c_str(), message.value);}
-            break;
-        case MessageNumber::VAR_out_sensor_airout: {
-            double temp = ((int16_t)message.value) / 10.0;
-           if(log_messages){ ESP_LOGW(TAG, "s:%s d:%s VAR_out_sensor_airout %li", source.c_str(), dest.c_str(), message.value);}
-            target->set_outdoor_temperature(source, temp);
-            break;
-        }
-        case MessageNumber::VAR_IN_TEMP_EVA_IN_F: {
-            double temp = ((int16_t)message.value) / 10.0;
-           if(log_messages){ ESP_LOGW(TAG, "s:%s d:%s VAR_IN_TEMP_EVA_IN_F %li", source.c_str(), dest.c_str(), message.value);}
-            target->set_indoor_eva_in_temperature(source, temp);
-            break;
-        }
-        case MessageNumber::VAR_IN_TEMP_EVA_OUT_F: {
-            double temp = ((int16_t)message.value) / 10.0;
-           if(log_messages){ ESP_LOGW(TAG, "s:%s d:%s VAR_IN_TEMP_EVA_OUT_F %li", source.c_str(), dest.c_str(), message.value);}
-            target->set_indoor_eva_out_temperature(source, temp);
-            break;
-        }
-        default:
-		if (log_undefined_messages)
+                if (debug_undefined_messages)
                 {
                     ESP_LOGW(TAG, "Undefined s:%s d:%s %s", source.c_str(), dest.c_str(), message.to_string().c_str());
                 }
-            
-            break;
-    }
-}
 
+                break;
+            }
+        }
 
         DecodeResult try_decode_nasa_packet(std::vector<uint8_t> data)
         {
@@ -1074,21 +1139,21 @@ void process_messageset(std::string source, std::string dest, MessageSet &messag
             case 0x602:  // STR_ad_option_install_2
             case 0x600:  // STR_ad_option_basic
             case 0x202:  // VAR_ad_error_code1
-			
+
             case 0x42d1: // VAR_IN_DUST_SENSOR_PM10_0_VALUE
-			{
-               ESP_LOGW(TAG, "s:%s d:%s VAR_IN_DUST_SENSOR_PM10_0_VALUE %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
-               return; // Ingore cause not important
+            {
+                ESP_LOGW(TAG, "s:%s d:%s VAR_IN_DUST_SENSOR_PM10_0_VALUE %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
+                return; // Ingore cause not important
             }
             case 0x42d2: // VAR_IN_DUST_SENSOR_PM2_5_VALUE
-			{
-               ESP_LOGW(TAG, "s:%s d:%s VAR_IN_DUST_SENSOR_PM2_5_VALUE %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
-               return; // Ingore cause not important
+            {
+                ESP_LOGW(TAG, "s:%s d:%s VAR_IN_DUST_SENSOR_PM2_5_VALUE %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
+                return; // Ingore cause not important
             }
             case 0x42d3: // VAR_IN_DUST_SENSOR_PM1_0_VALUE
             {
-               ESP_LOGW(TAG, "s:%s d:%s VAR_IN_DUST_SENSOR_PM1_0_VALUE %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
-               return; // Ingore cause not important
+                ESP_LOGW(TAG, "s:%s d:%s VAR_IN_DUST_SENSOR_PM1_0_VALUE %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
+                return; // Ingore cause not important
             }
 
             case 0x23:

@@ -47,7 +47,7 @@ uart:
 
 # Import custom component from GitHub
 external_components:
-  - source: github://omerfaruk-aran/esphome_samsung_ac@new_test # use @main if you want the latest development (possibly unstable?)
+  - source: github://omerfaruk-aran/esphome_samsung_ac@main # use @main if you want the latest development (possibly unstable?)
     components: [samsung_ac]
 
 # Configuration of AC component
@@ -58,10 +58,10 @@ samsung_ac:
   non_nasa_keepalive: true
   
   #When enabled (set to true), this option will log the messages associated with undefined codes on the device. This is useful for debugging and identifying any unexpected or unknown codes that the device may receive during operation.
-  log_undefined_messages: false
+  debug_log_undefined_messages: false
   
   #When enabled (set to true), this option logs messages associated with defined codes on the device. This helps in monitoring the behavior of the device by recording the activity related to known, expected codes.
-  log_messages: false
+  debug_log_messages: false
 
   # Capabilities configure the features alle devices of your AC system have (all parts of this section are optional). 
   # All capabilities are off by default, you need to enable only those your devices have.

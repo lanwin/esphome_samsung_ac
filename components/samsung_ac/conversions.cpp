@@ -152,7 +152,7 @@ namespace esphome
       }
     }
 
-    optional<climate::ClimatePreset> altmodename_to_preset(const AltModeName& name)
+    optional<climate::ClimatePreset> altmodename_to_preset(const AltModeName &name)
     {
       if (str_equals_case_insensitive(name, "ECO"))
         return optional<climate::ClimatePreset>(climate::CLIMATE_PRESET_ECO);

@@ -51,13 +51,9 @@ namespace esphome
       {
         non_nasa_keepalive = value;
       }
-void set_log_undefined_messages (bool value)
+      void set_debug_log_undefined_messages(bool value)
       {
-        log_undefined_messages = value;
-      }
-	  void set_log_messages (bool value)
-      {
-        log_messages = value;
+        debug_log_undefined_messages = value;
       }
       void register_device(Samsung_AC_Device *device);
 
@@ -107,7 +103,7 @@ void set_log_undefined_messages (bool value)
         if (dev != nullptr)
           dev->update_target_temperature(value);
       }
-      
+
       void /*MessageTarget::*/ set_water_outlet_target(const std::string address, float value) override
       {
         Samsung_AC_Device *dev = find_device(address);
