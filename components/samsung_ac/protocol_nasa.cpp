@@ -791,7 +791,7 @@ namespace esphome
 
             target->register_address(source);
 
-            LOG_MESSAGE(MSG, packet_.to_string().c_str(), source.c_str(), dest.c_str());
+            LOG_MESSAGE(MSG, packet_.to_string().c_str(), source, dest);
 
             if (packet_.command.dataType == DataType::Ack)
             {
