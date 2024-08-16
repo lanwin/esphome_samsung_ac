@@ -698,17 +698,17 @@ namespace esphome
                 target->set_outdoor_temperature(source, temp);
                 break;
             }
-            case MessageNumber::VAR_IN_TEMP_EVA_IN_F:
+            case MessageNumber::VAR_in_temp_eva_in_f:
             {
                 double temp = ((int16_t)message.value) / 10.0;
-                LOG_MESSAGE(VAR_IN_TEMP_EVA_IN_F, temp, source, dest);
+                LOG_MESSAGE(VAR_in_temp_eva_in_f, temp, source, dest);
                 target->set_indoor_eva_in_temperature(source, temp);
                 break;
             }
-            case MessageNumber::VAR_IN_TEMP_EVA_OUT_F:
+            case MessageNumber::VAR_in_temp_eva_out_f:
             {
                 double temp = ((int16_t)message.value) / 10.0;
-                LOG_MESSAGE(VAR_IN_TEMP_EVA_OUT_F, temp, source, dest);
+                LOG_MESSAGE(VAR_in_temp_eva_out_f, temp, source, dest);
                 target->set_indoor_eva_out_temperature(source, temp);
                 break;
             }
