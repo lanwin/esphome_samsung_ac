@@ -889,27 +889,6 @@ namespace esphome
                 LOG_MESSAGE(ENUM_in_fan_vent_mode, message.value, source, dest);
                 // fan_vent_mode_to_fanmode();
                 break;
-            case 0x4011: // ENUM_IN_LOUVER_HL_SWING
-            {
-                // Todo Map
-                /*
-               case 0:
-    return 'Off';
-    case 1:
-    return 'On';
-    default:
-    return undefined;
-                */
-                LOG_MESSAGE(ENUM_IN_LOUVER_HL_SWING, message.value, source, dest);
-                break;
-            }
-
-            case 0x4012: // ENUM_IN_LOUVER_HL_SWING
-                // Todo Map
-
-                LOG_MESSAGE(ENUM_IN_LOUVER_HL_SWING, message.value, source, dest);
-                break;
-
             case 0x4205: // VAR_in_temp_eva_in_f unit = 'Celsius'
             {
                 double temp = (double)message.value / (double)10;
@@ -1057,7 +1036,6 @@ namespace esphome
             case 0x4047:
             case 0x4048:
             case 0x4059:
-            case 0x4060:
             case 0x4074:
             case 0x407d:
             case 0x407e:
