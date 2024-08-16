@@ -549,7 +549,7 @@ namespace esphome
                 std::string topic_suffix;
                 std::string payload;
 
-                if (message.messageNumber != 0)
+                if (static_cast<int>(message.messageNumber) != 0)
                 {
                     topic_suffix = long_to_hex((uint16_t)message.messageNumber);
                     payload = std::to_string(message.value);
@@ -791,7 +791,7 @@ namespace esphome
 
             target->register_address(source);
 
-            LOG_MESSAGE(MSG, packet_.to_string().c_str(), "", "");
+            LOG_MESSAGE(MSG, packet_.to_string().c_str(), source.c_str(), dest.c_str());
 
             if (packet_.command.dataType == DataType::Ack)
             {
