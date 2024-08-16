@@ -911,20 +911,23 @@ namespace esphome
                 break;
 
             case 0x4205: // VAR_in_temp_eva_in_f unit = 'Celsius'
+            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_in_temp_eva_in_f, temp, source, dest);
                 break;
-
+            }
             case 0x4206: // VAR_in_temp_eva_out_f unit = 'Celsius'
+            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_in_temp_eva_out_f, temp, source, dest);
                 break;
-
+            }
             case 0x4211: // VAR_in_capacity_request unit = 'kW'
+            {
                 double temp = (double)message.value / (double)8.6;
                 LOG_MESSAGE(VAR_in_capacity_request, temp, source, dest);
                 break;
-
+            }
             case 0x8001: // ENUM_out_operation_odu_mode
                 // Todo Map
                 LOG_MESSAGE(ENUM_out_operation_odu_mode, message.value, source, dest);
@@ -945,45 +948,53 @@ namespace esphome
                 break;
 
             case 0x8261: // VAR_OUT_SENSOR_PIPEIN3 unit = 'Celsius'
+            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_OUT_SENSOR_PIPEIN3, temp, source, dest);
                 break;
-
+            }
             case 0x8262: // VAR_OUT_SENSOR_PIPEIN4 unit = 'Celsius'
+            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_OUT_SENSOR_PIPEIN4, temp, source, dest);
                 break;
-
+            }
             case 0x8263: // VAR_OUT_SENSOR_PIPEIN5 unit = 'Celsius'
+            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_OUT_SENSOR_PIPEIN5, temp, source, dest);
                 break;
-
+            }
             case 0x8264: // VAR_OUT_SENSOR_PIPEOUT1 unit = 'Celsius'
+            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_OUT_SENSOR_PIPEOUT1, temp, source, dest);
                 break;
-
+            }
             case 0x8265: // VAR_OUT_SENSOR_PIPEOUT2 unit = 'Celsius'
+            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_OUT_SENSOR_PIPEOUT2, temp, source, dest);
                 break;
-
+            }
             case 0x8266: // VAR_OUT_SENSOR_PIPEOUT3 unit = 'Celsius'
+            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_OUT_SENSOR_PIPEOUT3, temp, source, dest);
                 break;
-
+            }
             case 0x8267: // VAR_OUT_SENSOR_PIPEOUT4 unit = 'Celsius'
+            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_OUT_SENSOR_PIPEOUT4, temp, source, dest);
                 break;
-
+            }
             case 0x8268: // VAR_OUT_SENSOR_PIPEOUT5 unit = 'Celsius'
+            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_OUT_SENSOR_PIPEOUT5, temp, source, dest);
                 break;
-
+            }
             case 0x8274: // VAR_out_control_order_cfreq_comp2
                 LOG_MESSAGE(VAR_out_control_order_cfreq_comp2, message.value, source, dest);
                 break;
@@ -1000,10 +1011,11 @@ namespace esphome
                 break;
 
             case 0x8280: // VAR_out_sensor_top1 unit = 'Celsius'
+            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_out_sensor_top1, temp, source, dest);
                 break;
-
+            }
             case 0x82db: // VAR_OUT_PHASE_CURRENT
                 LOG_MESSAGE(VAR_OUT_PHASE_CURRENT, message.value, source, dest);
                 break;
