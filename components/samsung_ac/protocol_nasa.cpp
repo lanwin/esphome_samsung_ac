@@ -853,65 +853,42 @@ namespace esphome
             if (source == "20.00.00" || source == "20.00.01" || source == "20.00.03")
                 return;
 
-            if (((uint16_t)message.messageNumber) == 0x4003)
-            {
-                LOG_MESSAGE(ENUM_IN_OPERATION_VENT_POWER, message.value, source, dest);
-                break;
-            }
-            if (((uint16_t)message.messageNumber) == 0x4004)
-            {
-                LOG_MESSAGE(ENUM_IN_OPERATION_VENT_MODE, message.value, source, dest);
-                break;
-            }
-            if (((uint16_t)message.messageNumber) == 0x4011)
-            {
-                LOG_MESSAGE(ENUM_IN_LOUVER_HL_SWING, message.value, source, dest);
-                break;
-            }
-            if (((uint16_t)message.messageNumber) == 0x4012)
-            {
-                LOG_MESSAGE(ENUM_in_louver_hl_part_swing, message.value, source, dest);
-                break;
-            }
-            if (((uint16_t)message.messageNumber) == 0x4060)
-            {
-                LOG_MESSAGE(ENUM_IN_ALTERNATIVE_MODE, message.value, source, dest);
-                break;
-            }
-            if (((uint16_t)message.messageNumber) == 0x406E)
-            {
-                LOG_MESSAGE(ENUM_IN_QUIET_MODE, message.value, source, dest);
-                break;
-            }
-            if (((uint16_t)message.messageNumber) == 0x4119)
-            {
-                LOG_MESSAGE(ENUM_IN_OPERATION_POWER_ZONE1, message.value, source, dest);
-                break;
-            }
-            if (((uint16_t)message.messageNumber) == 0x411E)
-            {
-                LOG_MESSAGE(ENUM_IN_OPERATION_POWER_ZONE2, message.value, source, dest);
-                break;
-            }
-
             // return; //The use of return here was breaking the code here, I didn't understand why it was breaking it, so I made a temporary comment line.
 
             switch ((uint16_t)message.messageNumber)
             {
+            case 0x4003:
+                LOG_MESSAGE(ENUM_IN_OPERATION_VENT_POWER, message.value, source, dest);
+                break;
+            case 0x4004:
+                LOG_MESSAGE(ENUM_IN_OPERATION_VENT_MODE, message.value, source, dest);
+                break;
+            case == 0x4011:
+                LOG_MESSAGE(ENUM_IN_LOUVER_HL_SWING, message.value, source, dest);
+                break;
+            case == 0x4012:
+                LOG_MESSAGE(ENUM_in_louver_hl_part_swing, message.value, source, dest);
+                break;
+            case 0x4060:
+                LOG_MESSAGE(ENUM_IN_ALTERNATIVE_MODE, message.value, source, dest);
+                break;
+            case 0x406E:
+                LOG_MESSAGE(ENUM_IN_QUIET_MODE, message.value, source, dest);
+                break;
+            case 0x4119:
+                LOG_MESSAGE(ENUM_IN_OPERATION_POWER_ZONE1, message.value, source, dest);
+                break;
+            case 0x411E:
+                LOG_MESSAGE(ENUM_IN_OPERATION_POWER_ZONE2, message.value, source, dest);
+                break;
             case 0x4002: // ENUM_in_operation_mode_real
-            {
                 // Todo Map
                 LOG_MESSAGE(ENUM_in_operation_mode_real, message.value, source, dest);
                 break;
-            }
-
             case 0x4008: // ENUM_in_fan_vent_mode
-            {
                 LOG_MESSAGE(ENUM_in_fan_vent_mode, message.value, source, dest);
                 // fan_vent_mode_to_fanmode();
                 break;
-            }
-
             case 0x4011: // ENUM_IN_LOUVER_HL_SWING
             {
                 // Todo Map
@@ -928,152 +905,108 @@ namespace esphome
             }
 
             case 0x4012: // ENUM_IN_LOUVER_HL_SWING
-            {
                 // Todo Map
 
                 LOG_MESSAGE(ENUM_IN_LOUVER_HL_SWING, message.value, source, dest);
                 break;
-            }
 
             case 0x4205: // VAR_in_temp_eva_in_f unit = 'Celsius'
-            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_in_temp_eva_in_f, temp, source, dest);
                 break;
-            }
 
             case 0x4206: // VAR_in_temp_eva_out_f unit = 'Celsius'
-            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_in_temp_eva_out_f, temp, source, dest);
                 break;
-            }
 
             case 0x4211: // VAR_in_capacity_request unit = 'kW'
-            {
                 double temp = (double)message.value / (double)8.6;
                 LOG_MESSAGE(VAR_in_capacity_request, temp, source, dest);
                 break;
-            }
 
             case 0x8001: // ENUM_out_operation_odu_mode
-            {
                 // Todo Map
                 LOG_MESSAGE(ENUM_out_operation_odu_mode, message.value, source, dest);
                 break;
-            }
 
             case 0x8003: // ENUM_out_operation_heatcool
-            {
                 //['Undefined', 'Cool', 'Heat', 'CoolMain', 'HeatMain'];
                 // Todo Map
                 LOG_MESSAGE(ENUM_out_operation_heatcool, message.value, source, dest);
                 break;
-            }
 
             case 0x801a: // ENUM_out_load_4way
-            {
                 LOG_MESSAGE(ENUM_out_load_4way, message.value, source, dest);
                 break;
-            }
 
             case 0x8235: // VAR_out_error_code
-            {
                 LOG_MESSAGE(VAR_out_error_code, message.value, source, dest);
                 break;
-            }
 
             case 0x8261: // VAR_OUT_SENSOR_PIPEIN3 unit = 'Celsius'
-            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_OUT_SENSOR_PIPEIN3, temp, source, dest);
                 break;
-            }
 
             case 0x8262: // VAR_OUT_SENSOR_PIPEIN4 unit = 'Celsius'
-            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_OUT_SENSOR_PIPEIN4, temp, source, dest);
                 break;
-            }
 
             case 0x8263: // VAR_OUT_SENSOR_PIPEIN5 unit = 'Celsius'
-            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_OUT_SENSOR_PIPEIN5, temp, source, dest);
                 break;
-            }
 
             case 0x8264: // VAR_OUT_SENSOR_PIPEOUT1 unit = 'Celsius'
-            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_OUT_SENSOR_PIPEOUT1, temp, source, dest);
                 break;
-            }
 
             case 0x8265: // VAR_OUT_SENSOR_PIPEOUT2 unit = 'Celsius'
-            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_OUT_SENSOR_PIPEOUT2, temp, source, dest);
                 break;
-            }
 
             case 0x8266: // VAR_OUT_SENSOR_PIPEOUT3 unit = 'Celsius'
-            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_OUT_SENSOR_PIPEOUT3, temp, source, dest);
                 break;
-            }
 
             case 0x8267: // VAR_OUT_SENSOR_PIPEOUT4 unit = 'Celsius'
-            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_OUT_SENSOR_PIPEOUT4, temp, source, dest);
                 break;
-            }
 
             case 0x8268: // VAR_OUT_SENSOR_PIPEOUT5 unit = 'Celsius'
-            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_OUT_SENSOR_PIPEOUT5, temp, source, dest);
                 break;
-            }
 
             case 0x8274: // VAR_out_control_order_cfreq_comp2
-            {
                 LOG_MESSAGE(VAR_out_control_order_cfreq_comp2, message.value, source, dest);
                 break;
-            }
             case 0x8275: // VAR_out_control_target_cfreq_comp2
-            {
                 LOG_MESSAGE(VAR_out_control_target_cfreq_comp2, message.value, source, dest);
                 break;
-            }
 
             case 0x82bc: // VAR_OUT_PROJECT_CODE
-            {
                 LOG_MESSAGE(VAR_OUT_PROJECT_CODE, message.value, source, dest);
                 break;
-            }
 
             case 0x82e3: // VAR_OUT_PRODUCT_OPTION_CAPA
-            {
                 LOG_MESSAGE(VAR_OUT_PRODUCT_OPTION_CAPA, message.value, source, dest);
                 break;
-            }
 
             case 0x8280: // VAR_out_sensor_top1 unit = 'Celsius'
-            {
                 double temp = (double)message.value / (double)10;
                 LOG_MESSAGE(VAR_out_sensor_top1, temp, source, dest);
                 break;
-            }
 
             case 0x82db: // VAR_OUT_PHASE_CURRENT
-            {
                 LOG_MESSAGE(VAR_OUT_PHASE_CURRENT, message.value, source, dest);
                 break;
-            }
 
             case 0x402:
             case 0x409:
