@@ -791,7 +791,10 @@ namespace esphome
 
             target->register_address(source);
 
-            LOG_MESSAGE(MSG, packet_.to_string().c_str(), source, dest);
+            if (debug_log_undefined_messages)
+            {
+                ESP_LOGW(TAG, "MSG: %s", packet_.to_string().c_str());
+            }
 
             if (packet_.command.dataType == DataType::Ack)
             {
@@ -847,67 +850,66 @@ namespace esphome
 
         void process_messageset_debug(std::string source, std::string dest, MessageSet &message, MessageTarget *target)
         {
-            if (source == "20.00.00" ||
-                source == "20.00.01" ||
-                source == "20.00.03")
+            if (source == "20.00.00" || source == "20.00.01" || source == "20.00.03")
                 return;
+
             if (((uint16_t)message.messageNumber) == 0x4003)
             {
-                ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_OPERATION_VENT_POWER %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(ENUM_IN_OPERATION_VENT_POWER, message.value, source, dest);
+                break;
             }
             if (((uint16_t)message.messageNumber) == 0x4004)
             {
-                ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_OPERATION_VENT_MODE %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(ENUM_IN_OPERATION_VENT_MODE, message.value, source, dest);
+                break;
             }
             if (((uint16_t)message.messageNumber) == 0x4011)
             {
-                ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_LOUVER_HL_SWING %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(ENUM_IN_LOUVER_HL_SWING, message.value, source, dest);
+                break;
             }
             if (((uint16_t)message.messageNumber) == 0x4012)
             {
-                ESP_LOGW(TAG, "s:%s d:%s ENUM_in_louver_hl_part_swing %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(ENUM_in_louver_hl_part_swing, message.value, source, dest);
+                break;
             }
             if (((uint16_t)message.messageNumber) == 0x4060)
             {
-                ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_ALTERNATIVE_MODE %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(ENUM_IN_ALTERNATIVE_MODE, message.value, source, dest);
+                break;
             }
             if (((uint16_t)message.messageNumber) == 0x406E)
             {
-                ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_QUIET_MODE %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(ENUM_IN_QUIET_MODE, message.value, source, dest);
+                break;
             }
             if (((uint16_t)message.messageNumber) == 0x4119)
             {
-                ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_OPERATION_POWER_ZONE1 %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(ENUM_IN_OPERATION_POWER_ZONE1, message.value, source, dest);
+                break;
             }
             if (((uint16_t)message.messageNumber) == 0x411E)
             {
-                ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_OPERATION_POWER_ZONE2 %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(ENUM_IN_OPERATION_POWER_ZONE2, message.value, source, dest);
+                break;
             }
 
-            return;
+            // return; //The use of return here was breaking the code here, I didn't understand why it was breaking it, so I made a temporary comment line.
 
             switch ((uint16_t)message.messageNumber)
             {
             case 0x4002: // ENUM_in_operation_mode_real
             {
                 // Todo Map
-                ESP_LOGW(TAG, "s:%s d:%s ENUM_in_operation_mode_real %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(ENUM_in_operation_mode_real, message.value, source, dest);
+                break;
             }
 
             case 0x4008: // ENUM_in_fan_vent_mode
             {
-                ESP_LOGW(TAG, "s:%s d:%s ENUM_in_fan_vent_mode %li", source.c_str(), dest.c_str(), message.value);
+                LOG_MESSAGE(ENUM_in_fan_vent_mode, message.value, source, dest);
                 // fan_vent_mode_to_fanmode();
-                return;
+                break;
             }
 
             case 0x4011: // ENUM_IN_LOUVER_HL_SWING
@@ -921,156 +923,156 @@ namespace esphome
     default:
     return undefined;
                 */
-                ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_LOUVER_HL_SWING %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(ENUM_IN_LOUVER_HL_SWING, message.value, source, dest);
+                break;
             }
 
             case 0x4012: // ENUM_IN_LOUVER_HL_SWING
             {
                 // Todo Map
 
-                ESP_LOGW(TAG, "s:%s d:%s ENUM_IN_LOUVER_HL_SWING %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(ENUM_IN_LOUVER_HL_SWING, message.value, source, dest);
+                break;
             }
 
             case 0x4205: // VAR_in_temp_eva_in_f unit = 'Celsius'
             {
                 double temp = (double)message.value / (double)10;
-                ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_eva_in_f %f", source.c_str(), dest.c_str(), temp);
-                return;
+                LOG_MESSAGE(VAR_in_temp_eva_in_f, temp, source, dest);
+                break;
             }
 
             case 0x4206: // VAR_in_temp_eva_out_f unit = 'Celsius'
             {
                 double temp = (double)message.value / (double)10;
-                ESP_LOGW(TAG, "s:%s d:%s VAR_in_temp_eva_out_f %f", source.c_str(), dest.c_str(), temp);
-                return;
+                LOG_MESSAGE(VAR_in_temp_eva_out_f, temp, source, dest);
+                break;
             }
 
             case 0x4211: // VAR_in_capacity_request unit = 'kW'
             {
                 double temp = (double)message.value / (double)8.6;
-                ESP_LOGW(TAG, "s:%s d:%s VAR_in_capacity_request %f", source.c_str(), dest.c_str(), temp);
-                return;
+                LOG_MESSAGE(VAR_in_capacity_request, temp, source, dest);
+                break;
             }
 
             case 0x8001: // ENUM_out_operation_odu_mode
             {
                 // Todo Map
-                ESP_LOGW(TAG, "s:%s d:%s ENUM_out_operation_odu_mode %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(ENUM_out_operation_odu_mode, message.value, source, dest);
+                break;
             }
 
             case 0x8003: // ENUM_out_operation_heatcool
             {
                 //['Undefined', 'Cool', 'Heat', 'CoolMain', 'HeatMain'];
                 // Todo Map
-                ESP_LOGW(TAG, "s:%s d:%s ENUM_out_operation_heatcool %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(ENUM_out_operation_heatcool, message.value, source, dest);
+                break;
             }
 
             case 0x801a: // ENUM_out_load_4way
             {
-                ESP_LOGW(TAG, "s:%s d:%s ENUM_out_load_4way %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(ENUM_out_load_4way, message.value, source, dest);
+                break;
             }
 
             case 0x8235: // VAR_out_error_code
             {
-                ESP_LOGW(TAG, "s:%s d:%s VAR_out_error_code %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(VAR_out_error_code, message.value, source, dest);
+                break;
             }
 
             case 0x8261: // VAR_OUT_SENSOR_PIPEIN3 unit = 'Celsius'
             {
                 double temp = (double)message.value / (double)10;
-                ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_SENSOR_PIPEIN3 %f", source.c_str(), dest.c_str(), temp);
-                return;
+                LOG_MESSAGE(VAR_OUT_SENSOR_PIPEIN3, temp, source, dest);
+                break;
             }
 
             case 0x8262: // VAR_OUT_SENSOR_PIPEIN4 unit = 'Celsius'
             {
                 double temp = (double)message.value / (double)10;
-                ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_SENSOR_PIPEIN4 %f", source.c_str(), dest.c_str(), temp);
-                return;
+                LOG_MESSAGE(VAR_OUT_SENSOR_PIPEIN4, temp, source, dest);
+                break;
             }
 
             case 0x8263: // VAR_OUT_SENSOR_PIPEIN5 unit = 'Celsius'
             {
                 double temp = (double)message.value / (double)10;
-                ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_SENSOR_PIPEIN5 %f", source.c_str(), dest.c_str(), temp);
-                return;
+                LOG_MESSAGE(VAR_OUT_SENSOR_PIPEIN5, temp, source, dest);
+                break;
             }
 
             case 0x8264: // VAR_OUT_SENSOR_PIPEOUT1 unit = 'Celsius'
             {
                 double temp = (double)message.value / (double)10;
-                ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_SENSOR_PIPEOUT1 %f", source.c_str(), dest.c_str(), temp);
-                return;
+                LOG_MESSAGE(VAR_OUT_SENSOR_PIPEOUT1, temp, source, dest);
+                break;
             }
 
             case 0x8265: // VAR_OUT_SENSOR_PIPEOUT2 unit = 'Celsius'
             {
                 double temp = (double)message.value / (double)10;
-                ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_SENSOR_PIPEOUT2 %f", source.c_str(), dest.c_str(), temp);
-                return;
+                LOG_MESSAGE(VAR_OUT_SENSOR_PIPEOUT2, temp, source, dest);
+                break;
             }
 
             case 0x8266: // VAR_OUT_SENSOR_PIPEOUT3 unit = 'Celsius'
             {
                 double temp = (double)message.value / (double)10;
-                ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_SENSOR_PIPEOUT3 %f", source.c_str(), dest.c_str(), temp);
-                return;
+                LOG_MESSAGE(VAR_OUT_SENSOR_PIPEOUT3, temp, source, dest);
+                break;
             }
 
             case 0x8267: // VAR_OUT_SENSOR_PIPEOUT4 unit = 'Celsius'
             {
                 double temp = (double)message.value / (double)10;
-                ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_SENSOR_PIPEOUT4 %f", source.c_str(), dest.c_str(), temp);
-                return;
+                LOG_MESSAGE(VAR_OUT_SENSOR_PIPEOUT4, temp, source, dest);
+                break;
             }
 
             case 0x8268: // VAR_OUT_SENSOR_PIPEOUT5 unit = 'Celsius'
             {
                 double temp = (double)message.value / (double)10;
-                ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_SENSOR_PIPEOUT5 %f", source.c_str(), dest.c_str(), temp);
-                return;
+                LOG_MESSAGE(VAR_OUT_SENSOR_PIPEOUT5, temp, source, dest);
+                break;
             }
 
             case 0x8274: // VAR_out_control_order_cfreq_comp2
             {
-                ESP_LOGW(TAG, "s:%s d:%s VAR_out_control_order_cfreq_comp2 %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(VAR_out_control_order_cfreq_comp2, message.value, source, dest);
+                break;
             }
             case 0x8275: // VAR_out_control_target_cfreq_comp2
             {
-                ESP_LOGW(TAG, "s:%s d:%s VAR_out_control_target_cfreq_comp2 %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(VAR_out_control_target_cfreq_comp2, message.value, source, dest);
+                break;
             }
 
             case 0x82bc: // VAR_OUT_PROJECT_CODE
             {
-                ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_PROJECT_CODE %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(VAR_OUT_PROJECT_CODE, message.value, source, dest);
+                break;
             }
 
             case 0x82e3: // VAR_OUT_PRODUCT_OPTION_CAPA
             {
-                ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_PRODUCT_OPTION_CAPA %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(VAR_OUT_PRODUCT_OPTION_CAPA, message.value, source, dest);
+                break;
             }
 
             case 0x8280: // VAR_out_sensor_top1 unit = 'Celsius'
             {
                 double temp = (double)message.value / (double)10;
-                ESP_LOGW(TAG, "s:%s d:%s VAR_out_sensor_top1 %f", source.c_str(), dest.c_str(), temp);
-                return;
+                LOG_MESSAGE(VAR_out_sensor_top1, temp, source, dest);
+                break;
             }
 
             case 0x82db: // VAR_OUT_PHASE_CURRENT
             {
-                ESP_LOGW(TAG, "s:%s d:%s VAR_OUT_PHASE_CURRENT %li", source.c_str(), dest.c_str(), message.value);
-                return;
+                LOG_MESSAGE(VAR_OUT_PHASE_CURRENT, message.value, source, dest);
+                break;
             }
 
             case 0x402:
@@ -1212,7 +1214,7 @@ namespace esphome
             case 0x24fc:
             {
                 // ESP_LOGW(TAG, "s:%s d:%s Todo %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
-                return; // Todo
+                break; // Todo
             }
 
             case 0x8601: // STR_out_install_inverter_and_bootloader_info
@@ -1222,20 +1224,23 @@ namespace esphome
             case 0x600:  // STR_ad_option_basic
             case 0x202:  // VAR_ad_error_code1
             case 0x42d1: // VAR_IN_DUST_SENSOR_PM10_0_VALUE
-            {
-                ESP_LOGW(TAG, "s:%s d:%s VAR_IN_DUST_SENSOR_PM10_0_VALUE %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
-                return; // Ingore cause not important
-            }
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s VAR_IN_DUST_SENSOR_PM10_0_VALUE %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
+                }
+                break;   // Ingore cause not important
             case 0x42d2: // VAR_IN_DUST_SENSOR_PM2_5_VALUE
-            {
-                ESP_LOGW(TAG, "s:%s d:%s VAR_IN_DUST_SENSOR_PM2_5_VALUE %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
-                return; // Ingore cause not important
-            }
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s VAR_IN_DUST_SENSOR_PM2_5_VALUE %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
+                }
+                break;   // Ingore cause not important
             case 0x42d3: // VAR_IN_DUST_SENSOR_PM1_0_VALUE
-            {
-                ESP_LOGW(TAG, "s:%s d:%s VAR_IN_DUST_SENSOR_PM1_0_VALUE %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
-                return; // Ingore cause not important
-            }
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s VAR_IN_DUST_SENSOR_PM1_0_VALUE %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
+                }
+                break; // Ingore cause not important
 
             case 0x23:
             case 0x61d:
@@ -1282,13 +1287,16 @@ namespace esphome
             case 0x4006:
             {
                 // ESP_LOGW(TAG, "s:%s d:%s NoMap %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
-                return; // message types witch have no mapping in xml
+                break; // message types witch have no mapping in xml
             }
 
             default:
-                ESP_LOGW(TAG, "s:%s d:%s !! unknown %s", source.c_str(), dest.c_str(), message.to_string().c_str());
+                if (debug_log_undefined_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s !! unknown %s", source.c_str(), dest.c_str(), message.to_string().c_str());
+                }
+                break;
             }
-            return;
         }
 
         void NasaProtocol::protocol_update(MessageTarget *target)
