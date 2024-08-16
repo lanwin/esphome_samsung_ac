@@ -863,10 +863,10 @@ namespace esphome
             case 0x4004:
                 LOG_MESSAGE(ENUM_IN_OPERATION_VENT_MODE, message.value, source, dest);
                 break;
-            case == 0x4011:
+            case 0x4011:
                 LOG_MESSAGE(ENUM_IN_LOUVER_HL_SWING, message.value, source, dest);
                 break;
-            case == 0x4012:
+            case 0x4012:
                 LOG_MESSAGE(ENUM_in_louver_hl_part_swing, message.value, source, dest);
                 break;
             case 0x4060:
