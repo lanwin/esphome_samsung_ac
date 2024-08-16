@@ -853,7 +853,7 @@ namespace esphome
             if (source == "20.00.00" || source == "20.00.01" || source == "20.00.03")
                 return;
 
-            // return; //The use of return here was breaking the code here, I didn't understand why it was breaking it, so I made a temporary comment line.
+            return; // :)
 
             switch ((uint16_t)message.messageNumber)
             {
