@@ -1,6 +1,6 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import uart, sensor, switch, select, number, climate
+from esphome.components import uart, sensor, switch, select, number, climate, binary_sensor
 from esphome.const import (
     CONF_ID,
     DEVICE_CLASS_TEMPERATURE,
@@ -19,7 +19,7 @@ from esphome.core import (
 
 CODEOWNERS = ["matthias882", "lanwin"]
 DEPENDENCIES = ["uart"]
-AUTO_LOAD = ["sensor", "switch", "select", "number", "climate"]
+AUTO_LOAD = ["sensor", "switch", "select", "number", "climate", "binary_sensor"]
 MULTI_CONF = False
 
 CONF_SAMSUNG_AC_ID = "samsung_ac_id"
@@ -67,6 +67,7 @@ CONF_DEVICE_WATER_HEATER_MODE = "water_heater_mode"
 CONF_DEVICE_CLIMATE = "climate"
 CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
 CONF_DEVICE_CUSTOM = "custom_sensor"
+CONF_DEVICE_CUSTOM_BINARY = "custom_binary_sensor"
 CONF_DEVICE_CUSTOM_MESSAGE = "message"
 CONF_DEVICE_CUSTOM_RAW_FILTERS = "raw_filters"
 
@@ -113,6 +114,10 @@ CAPABILITIES_SCHEMA = (
 )
 
 CUSTOM_SENSOR_SCHEMA = sensor.sensor_schema().extend({
+    cv.Required(CONF_DEVICE_CUSTOM_MESSAGE): cv.hex_int,
+})
+
+CUSTOM_BINARY_SENSOR_SCHEMA = binary_sensor.binary_sensor_schema().extend({
     cv.Required(CONF_DEVICE_CUSTOM_MESSAGE): cv.hex_int,
 })
 
@@ -192,6 +197,7 @@ DEVICE_SCHEMA = (
             cv.Optional(CONF_DEVICE_WATER_HEATER_MODE): SELECT_WATER_HEATER_MODE_SCHEMA,
             cv.Optional(CONF_DEVICE_CLIMATE): CLIMATE_SCHEMA,
             cv.Optional(CONF_DEVICE_CUSTOM, default=[]): cv.ensure_list(CUSTOM_SENSOR_SCHEMA),
+            cv.Optional(CONF_DEVICE_CUSTOM_BINARY, default=[]): cv.ensure_list(CUSTOM_BINARY_SENSOR_SCHEMA),
 
             # keep CUSTOM_SENSOR_KEYS in sync with these
             cv.Optional(CONF_DEVICE_WATER_TEMPERATURE): temperature_sensor_schema(0x4237),
@@ -372,6 +378,12 @@ async def to_code(config):
                 sens = await sensor.new_sensor(cust_sens)
                 cg.add(var_dev.add_custom_sensor(
                     cust_sens[CONF_DEVICE_CUSTOM_MESSAGE], sens))
+        
+        if CONF_DEVICE_CUSTOM_BINARY in device:
+            for cust_bin_sens in device[CONF_DEVICE_CUSTOM_BINARY]:
+                bin_sens = await binary_sensor.new_binary_sensor(cust_bin_sens)
+                cg.add(var_dev.add_custom_binary_sensor(
+                    cust_bin_sens[CONF_DEVICE_CUSTOM_MESSAGE], bin_sens))
 
         for key in CUSTOM_SENSOR_KEYS:
             if key in device:
