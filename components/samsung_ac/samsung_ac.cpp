@@ -10,12 +10,18 @@ namespace esphome
   {
     void Samsung_AC::setup()
     {
-      ESP_LOGW(TAG, "setup");
+      if (debug_log_messages)
+      {
+        ESP_LOGW(TAG, "setup");
+      }
     }
 
     void Samsung_AC::update()
     {
-      ESP_LOGW(TAG, "update");
+      if (debug_log_messages)
+      {
+        ESP_LOGW(TAG, "update");
+      }
 
       debug_mqtt_connect(debug_mqtt_host, debug_mqtt_port, debug_mqtt_username, debug_mqtt_password);
 

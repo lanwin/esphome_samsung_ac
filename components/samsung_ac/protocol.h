@@ -8,9 +8,10 @@ namespace esphome
 {
     namespace samsung_ac
     {
-        extern bool debug_log_packets;
         extern bool debug_log_raw_bytes;
         extern bool non_nasa_keepalive;
+        extern bool debug_log_undefined_messages;
+        extern bool debug_log_messages;
 
         enum class DecodeResult
         {
@@ -76,11 +77,14 @@ namespace esphome
             virtual void publish_data(std::vector<uint8_t> &data) = 0;
             virtual void register_address(const std::string address) = 0;
             virtual void set_power(const std::string address, bool value) = 0;
+            virtual void set_automatic_cleaning(const std::string address, bool value) = 0;
             virtual void set_water_heater_power(const std::string address, bool value) = 0;
             virtual void set_room_temperature(const std::string address, float value) = 0;
             virtual void set_target_temperature(const std::string address, float value) = 0;
             virtual void set_water_outlet_target(const std::string address, float value) = 0;
             virtual void set_outdoor_temperature(const std::string address, float value) = 0;
+            virtual void set_indoor_eva_in_temperature(const std::string address, float value) = 0;
+            virtual void set_indoor_eva_out_temperature(const std::string address, float value) = 0;
             virtual void set_target_water_temperature(const std::string address, float value) = 0;
             virtual void set_mode(const std::string address, Mode mode) = 0;
             virtual void set_water_heater_mode(const std::string address, WaterHeaterMode waterheatermode) = 0;
@@ -96,6 +100,7 @@ namespace esphome
         {
         public:
             optional<bool> power;
+            optional<bool> automatic_cleaning;
             optional<bool> water_heater_power;
             optional<Mode> mode;
             optional<WaterHeaterMode> waterheatermode;

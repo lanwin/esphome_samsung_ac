@@ -538,7 +538,7 @@ namespace esphome
 
         void process_non_nasa_packet(MessageTarget *target)
         {
-            if (debug_log_packets)
+            if (debug_log_undefined_messages)
             {
                 ESP_LOGW(TAG, "MSG: %s", nonpacket_.to_string().c_str());
             }
@@ -564,7 +564,7 @@ namespace esphome
                                                     item.request.fanspeed == nonpacket_.command20.fanspeed &&
                                                     item.request.mode == nonpacket_.command20.mode &&
                                                     item.request.power == nonpacket_.command20.power; });
-                                                    
+
                 // If a state update comes through after a control message has been sent, but before it
                 // has been acknowledged, it should be ignored. This prevents the UI status bouncing
                 // between states after a command has been issued.
@@ -591,7 +591,7 @@ namespace esphome
                    // TODO
                    target->set_water_heater_power(nonpacket_.src, false);
                    target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(nonpacket_.command20.mode));
-				   // TODO
+                   // TODO
 				   target->set_water_heater_mode(nonpacket_.src, nonnasa_water_heater_mode_to_mode(-0));
                    target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(nonpacket_.command20.fanspeed));
                    // TODO
