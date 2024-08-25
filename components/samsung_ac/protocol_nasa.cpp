@@ -1237,7 +1237,10 @@ namespace esphome
         {
             ESP_LOGW("ERROR", "Error code from %s: %d", source.c_str(), error_code);
         }
-
+        void NasaProtocol::publish_error_code(const std::string &source, int error_code)
+        {
+            ESP_LOGW("NasaProtocol", "Error Code from %s: %d", source.c_str(), error_code);
+        }
         void NasaProtocol::protocol_update(MessageTarget *target)
         {
             // Unused for NASA protocol

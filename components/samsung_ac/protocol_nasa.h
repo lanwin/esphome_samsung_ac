@@ -179,7 +179,7 @@ namespace esphome
 
             void publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request) override;
             void protocol_update(MessageTarget *target) override;
-            virtual void publish_error_code(const std::string &source, int error_code);
+            virtual void publish_error_code(const std::string &source, int error_code) override;
         };
 
     } // namespace samsung_ac
