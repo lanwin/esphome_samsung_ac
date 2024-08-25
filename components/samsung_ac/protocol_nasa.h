@@ -178,7 +178,7 @@ namespace esphome
             NasaProtocol() = default;
 
             void publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request) override;
-            void publish_error_code(const std::string &source, int error_code) = 0;
+            virtual void publish_error_code(const std::string &source, int error_code) = 0;
             void protocol_update(MessageTarget *target) override;
         };
 
