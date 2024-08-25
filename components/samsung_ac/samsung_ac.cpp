@@ -22,21 +22,19 @@ namespace esphome
     {
       switch (mode)
       {
-      case Mode::OFF:
-        return "OFF";
-      case Mode::AUTO:
-        return "AUTO";
-      case Mode::COOL:
-        return "COOL";
-      case Mode::HEAT:
-        return "HEAT";
-      case Mode::FAN_ONLY:
-        return "FAN_ONLY";
-      case Mode::DRY:
-        return "DRY";
-      // Diğer modlar için aynı şekilde ekleyebilirsiniz
+      case Mode::Auto:
+        return "Auto";
+      case Mode::Cool:
+        return "Cool";
+      case Mode::Dry:
+        return "Dry";
+      case Mode::Fan:
+        return "Fan";
+      case Mode::Heat:
+        return "Heat";
+      case Mode::Unknown:
       default:
-        return "UNKNOWN";
+        return "Unknown";
       }
     }
 
