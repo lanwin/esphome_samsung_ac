@@ -89,6 +89,7 @@ namespace esphome
             VAR_in_temp_water_heater_target_f = 0x4235,
             VAR_in_temp_eva_in_f = 0x4205,
             VAR_in_temp_eva_out_f = 0x4206,
+            VAR_out_error_code = 0x8235,
         };
 
         struct Address
@@ -177,6 +178,7 @@ namespace esphome
             NasaProtocol() = default;
 
             void publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request) override;
+            virtual void publish_error_code(const std::string &source, int error_code) = 0;
             void protocol_update(MessageTarget *target) override;
         };
 
