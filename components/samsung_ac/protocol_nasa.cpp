@@ -714,8 +714,9 @@ namespace esphome
             }
             case MessageNumber::VAR_out_error_code:
             {
-                LOG_MESSAGE(VAR_out_error_code, (int)message.value, source, dest);
-                target->set_error_code(source, (int)message.value);
+                int code = ((int16_t)message.value);
+                LOG_MESSAGE(VAR_out_error_code, code, source, dest);
+                target->set_error_code(source, code);
                 break;
             }
 
