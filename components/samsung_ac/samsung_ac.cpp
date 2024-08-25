@@ -17,7 +17,7 @@ namespace esphome
     }
     std::map<std::string, std::string> last_values;
     std::map<std::string, unsigned long> last_update_time;
-    const unsigned long TIMEOUT_PERIOD = 10000;
+    const unsigned long TIMEOUT_PERIOD = 1500;
     std::string mode_to_string(Mode mode)
     {
       switch (mode)
