@@ -16,6 +16,7 @@ from esphome.core import (
     CORE,
     Lambda
 )
+from .error_codes import ERROR_CODES
 
 CODEOWNERS = ["matthias882", "lanwin"]
 DEPENDENCIES = ["uart"]
@@ -72,6 +73,8 @@ CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
 CONF_DEVICE_CUSTOM = "custom_sensor"
 CONF_DEVICE_CUSTOM_MESSAGE = "message"
 CONF_DEVICE_CUSTOM_RAW_FILTERS = "raw_filters"
+CONF_DEVICE_ERROR_CODE = "error_code"
+
 
 CONF_CAPABILITIES = "capabilities"
 CONF_CAPABILITIES_HORIZONTAL_SWING = "horizontal_swing"
@@ -166,7 +169,14 @@ def humidity_sensor_schema(message: int):
         state_class=STATE_CLASS_MEASUREMENT,
     )
 
-
+def error_code_sensor_schema(message: int):
+    return custom_sensor_schema(
+        message=message,
+        unit_of_measurement="",
+        accuracy_decimals=0,
+        icon="mdi:alert",
+    )
+    
 DEVICE_SCHEMA = (
     cv.Schema(
         {
@@ -212,6 +222,7 @@ DEVICE_SCHEMA = (
             # keep CUSTOM_SENSOR_KEYS in sync with these
             cv.Optional(CONF_DEVICE_WATER_TEMPERATURE): temperature_sensor_schema(0x4237),
             cv.Optional(CONF_DEVICE_ROOM_HUMIDITY): humidity_sensor_schema(0x4038),
+            cv.Optional(CONF_DEVICE_ERROR_CODE): error_code_sensor_schema(0x8235),
         }
     )
 )
@@ -219,6 +230,7 @@ DEVICE_SCHEMA = (
 CUSTOM_SENSOR_KEYS = [
     CONF_DEVICE_WATER_TEMPERATURE,
     CONF_DEVICE_ROOM_HUMIDITY,
+    CONF_DEVICE_ERROR_CODE,
 ]
 
 CONF_DEVICES = "devices"
@@ -401,6 +413,11 @@ async def to_code(config):
             var_cli = cg.new_Pvariable(conf[CONF_ID])
             await climate.register_climate(var_cli, conf)
             cg.add(var_dev.set_climate(var_cli))
+            
+        if CONF_DEVICE_ERROR_CODE in device:
+            conf = device[CONF_DEVICE_ERROR_CODE]
+            sens = await sensor.new_sensor(conf)
+            cg.add(var_dev.set_error_code_sensor(sens))
 
         if CONF_DEVICE_CUSTOM in device:
             for cust_sens in device[CONF_DEVICE_CUSTOM]:
