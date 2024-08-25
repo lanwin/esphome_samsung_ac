@@ -27,14 +27,14 @@ namespace esphome
 
       for (const auto &pair : devices_)
       {
-        std::string current_value = pair.second->get_current_value();
+        optional<Mode> current_value = pair.second->_cur_mode;
         std::string address = pair.second->address;
         unsigned long now = millis();
 
-        if (last_values[address] != current_value)
+        if (current_value.has_value() && last_values[address] != std::to_string(current_value.value()))
         {
           // Değer değiştiyse, yeni değeri kaydedin ve işlemi başlatın
-          last_values[address] = current_value;
+          last_values[address] = std::to_string(current_value.value());
           last_update_time[address] = now;
 
           // Burada yeni değeri UI'ya yansıtma işlemi yapılabilir
@@ -55,7 +55,7 @@ namespace esphome
           continue;
         }
       }
-      
+
       debug_mqtt_connect(debug_mqtt_host, debug_mqtt_port, debug_mqtt_username, debug_mqtt_password);
 
       // Waiting for first update before beginning processing data
