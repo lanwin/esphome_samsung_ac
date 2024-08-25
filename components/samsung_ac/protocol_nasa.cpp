@@ -717,7 +717,7 @@ namespace esphome
                 int code = static_cast<int>(message.value);
                 if (debug_log_messages)
                 {
-                    ESP_LOGW(TAG, "s:%s d:%s VAR_out_error_code %f", source.c_str(), dest.c_str(), code);
+                    ESP_LOGW(TAG, "s:%s d:%s VAR_out_error_code %f", source.c_str(), dest.c_str(), message.to_string().c_str());
                 }
                 target->set_error_code(source, code);
                 break;
