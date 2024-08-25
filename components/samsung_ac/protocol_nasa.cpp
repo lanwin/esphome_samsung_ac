@@ -929,14 +929,6 @@ namespace esphome
                 LOG_MESSAGE(ENUM_out_load_4way, message.value, source, dest);
                 break;
 
-            case 0x8235: // VAR_out_error_code
-            {
-                int error_code = message.value;
-                LOG_MESSAGE(VAR_out_error_code, error_code, source, dest);
-                target->publish_error_code(source, error_code);
-                break;
-            }
-
             case 0x8261: // VAR_OUT_SENSOR_PIPEIN3 unit = 'Celsius'
             {
                 double temp = (double)message.value / (double)10;
