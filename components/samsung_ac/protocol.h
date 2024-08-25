@@ -94,7 +94,7 @@ namespace esphome
             virtual void set_swing_horizontal(const std::string address, bool horizontal) = 0;
             virtual optional<std::set<uint16_t>> get_custom_sensors(const std::string address) = 0;
             virtual void set_custom_sensor(const std::string address, uint16_t message_number, float value) = 0;
-            virtual void publish_error_code(const std::string &source, int error_code) = 0;
+            virtual void publish_error_code(const std::string &source, int error_code);
         };
 
         struct ProtocolRequest
