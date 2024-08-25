@@ -193,10 +193,11 @@ namespace esphome
         if (dev != nullptr)
           dev->update_custom_sensor(message_number, value);
       }
-
-      void publish_error_code(const std::string &source, int error_code)
+      void /*MessageTarget::*/ set_error_code(const std::string address, int value) override
       {
-        ESP_LOGW("Samsung_AC", "Error code from %s: %d", source.c_str(), error_code);
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->update_error_code(value);
       }
 
     protected:

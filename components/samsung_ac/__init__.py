@@ -365,7 +365,12 @@ async def to_code(config):
             conf = device[CONF_DEVICE_INDOOR_EVA_OUT_TEMPERATURE]
             sens = await sensor.new_sensor(conf)
             cg.add(var_dev.set_indoor_eva_out_temperature_sensor(sens))
-
+            
+        if CONF_DEVICE_ERROR_CODE in device:
+            conf = device[CONF_DEVICE_ERROR_CODE]
+            sens = await sensor.new_sensor(conf)
+            cg.add(var_dev.set_error_code_sensor(sens))
+            
         if CONF_DEVICE_WATER_TARGET_TEMPERATURE in device:
             conf = device[CONF_DEVICE_WATER_TARGET_TEMPERATURE]
             conf[CONF_UNIT_OF_MEASUREMENT] = UNIT_CELSIUS
@@ -413,11 +418,6 @@ async def to_code(config):
             var_cli = cg.new_Pvariable(conf[CONF_ID])
             await climate.register_climate(var_cli, conf)
             cg.add(var_dev.set_climate(var_cli))
-            
-        if CONF_DEVICE_ERROR_CODE in device:
-            conf = device[CONF_DEVICE_ERROR_CODE]
-            sens = await sensor.new_sensor(conf)
-            cg.add(var_dev.set_error_code_sensor(sens))
 
         if CONF_DEVICE_CUSTOM in device:
             for cust_sens in device[CONF_DEVICE_CUSTOM]:

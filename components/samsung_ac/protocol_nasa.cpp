@@ -714,8 +714,8 @@ namespace esphome
             }
             case MessageNumber::VAR_out_error_code:
             {
-                LOG_MESSAGE(VAR_out_error_code, (double)message.value, source, dest);
-                target->publish_error_code(source, message.value);
+                LOG_MESSAGE(VAR_out_error_code, (int)message.value, source, dest);
+                target->set_error_code(source, message.value);
                 break;
             }
 
@@ -1233,14 +1233,6 @@ namespace esphome
             }
         }
 
-        void MessageTarget::publish_error_code(const std::string &source, int error_code)
-        {
-            ESP_LOGW("ERROR", "Error code from %s: %d", source.c_str(), error_code);
-        }
-        void NasaProtocol::publish_error_code(const std::string &source, int error_code)
-        {
-            ESP_LOGW("ERROR", "Error code from %s: %d", source.c_str(), error_code);
-        }
         void NasaProtocol::protocol_update(MessageTarget *target)
         {
             // Unused for NASA protocol
