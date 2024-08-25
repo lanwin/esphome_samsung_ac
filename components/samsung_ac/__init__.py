@@ -16,7 +16,6 @@ from esphome.core import (
     CORE,
     Lambda
 )
-from .error_codes import ERROR_CODES
 
 CODEOWNERS = ["matthias882", "lanwin"]
 DEPENDENCIES = ["uart"]
@@ -208,6 +207,7 @@ DEVICE_SCHEMA = (
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
+            cv.Optional(CONF_DEVICE_ERROR_CODE): error_code_sensor_schema(0x8235),
             cv.Optional(CONF_DEVICE_TARGET_TEMPERATURE): NUMBER_SCHEMA,
             cv.Optional(CONF_DEVICE_WATER_OUTLET_TARGET): NUMBER_SCHEMA,
             cv.Optional(CONF_DEVICE_WATER_TARGET_TEMPERATURE): NUMBER_SCHEMA,
@@ -222,7 +222,6 @@ DEVICE_SCHEMA = (
             # keep CUSTOM_SENSOR_KEYS in sync with these
             cv.Optional(CONF_DEVICE_WATER_TEMPERATURE): temperature_sensor_schema(0x4237),
             cv.Optional(CONF_DEVICE_ROOM_HUMIDITY): humidity_sensor_schema(0x4038),
-            cv.Optional(CONF_DEVICE_ERROR_CODE): error_code_sensor_schema(0x8235),
         }
     )
 )
@@ -230,7 +229,6 @@ DEVICE_SCHEMA = (
 CUSTOM_SENSOR_KEYS = [
     CONF_DEVICE_WATER_TEMPERATURE,
     CONF_DEVICE_ROOM_HUMIDITY,
-    CONF_DEVICE_ERROR_CODE,
 ]
 
 CONF_DEVICES = "devices"
