@@ -18,6 +18,28 @@ namespace esphome
     std::map<std::string, std::string> last_values;
     std::map<std::string, unsigned long> last_update_time;
     const unsigned long TIMEOUT_PERIOD = 10000;
+    std::string mode_to_string(Mode mode)
+    {
+      switch (mode)
+      {
+      case Mode::OFF:
+        return "OFF";
+      case Mode::AUTO:
+        return "AUTO";
+      case Mode::COOL:
+        return "COOL";
+      case Mode::HEAT:
+        return "HEAT";
+      case Mode::FAN_ONLY:
+        return "FAN_ONLY";
+      case Mode::DRY:
+        return "DRY";
+      // Diğer modlar için aynı şekilde ekleyebilirsiniz
+      default:
+        return "UNKNOWN";
+      }
+    }
+
     void Samsung_AC::update()
     {
       if (debug_log_messages)
@@ -31,10 +53,10 @@ namespace esphome
         std::string address = pair.second->address;
         unsigned long now = millis();
 
-        if (current_value.has_value() && last_values[address] != std::to_string(current_value.value()))
+        if (current_value.has_value() && last_values[address] != mode_to_string(current_value.value()))
         {
           // Değer değiştiyse, yeni değeri kaydedin ve işlemi başlatın
-          last_values[address] = std::to_string(current_value.value());
+          last_values[address] = mode_to_string(current_value.value());
           last_update_time[address] = now;
 
           // Burada yeni değeri UI'ya yansıtma işlemi yapılabilir
