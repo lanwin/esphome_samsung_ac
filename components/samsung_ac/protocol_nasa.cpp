@@ -715,8 +715,11 @@ namespace esphome
             case MessageNumber::VAR_out_error_code:
             {
                 int code = static_cast<int>(message.value);
-                LOG_MESSAGE(VAR_out_error_code, code, source, dest);
-                //target->set_error_code(source, code);
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s VAR_out_error_code %f", source.c_str(), dest.c_str(), code);
+                }
+                target->set_error_code(source, code);
                 break;
             }
 
