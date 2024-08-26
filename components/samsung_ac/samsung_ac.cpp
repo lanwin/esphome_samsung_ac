@@ -17,6 +17,7 @@ namespace esphome
     }
     std::map<std::string, std::string> last_values;
     std::map<std::string, unsigned long> last_update_time;
+    std::map<std::string, Mode> pending_changes;
     const unsigned long TIMEOUT_PERIOD = 1000;
     std::string mode_to_string(Mode mode)
     {
@@ -44,6 +45,7 @@ namespace esphome
       {
         ESP_LOGW(TAG, "update");
       }
+
       for (const auto &pair : devices_)
       {
         optional<Mode> current_value = pair.second->_cur_mode;
