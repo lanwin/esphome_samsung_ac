@@ -24,7 +24,7 @@ namespace esphome
 #define LOG_MESSAGE(message_name, temp, source, dest)                                        \
     if (debug_log_messages)                                                                  \
     {                                                                                        \
-        ESP_LOGW(TAG, "s:%s d:%s " #message_name " %g", source.c_str(), dest.c_str(), temp); \
+        ESP_LOGW(TAG, "s:%s d:%s " #message_name " %g", source.c_str(), dest.c_str(), static_cast<double>(temp)); \
     }
 
         uint16_t crc16(std::vector<uint8_t> &data, int startIndex, int length)
