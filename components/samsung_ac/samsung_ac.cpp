@@ -44,37 +44,79 @@ namespace esphome
       {
         ESP_LOGW(TAG, "update");
       }
-
       for (const auto &pair : devices_)
       {
         optional<Mode> current_value = pair.second->_cur_mode;
         std::string address = pair.second->address;
         unsigned long now = millis();
 
+        if (pending_changes.find(address) != pending_changes.end())
+        {
+          if (current_value.has_value() && current_value.value() == pending_changes[address])
+          {
+            pending_changes.erase(address);
+          }
+          else
+          {
+            ESP_LOGI(TAG, "Stale value received for device: %s, ignoring.", address.c_str());
+            continue;
+          }
+        }
+
         if (current_value.has_value() && last_values[address] != mode_to_string(current_value.value()))
         {
-          // Değer değiştiyse, yeni değeri kaydedin ve işlemi başlatın
+          pending_changes[address] = current_value.value();
           last_values[address] = mode_to_string(current_value.value());
           last_update_time[address] = now;
 
-          // Burada yeni değeri UI'ya yansıtma işlemi yapılabilir
           ESP_LOGI(TAG, "Value changed for device: %s", address.c_str());
         }
         else
         {
-          // Değer aynıysa bu adımı atlayın
           ESP_LOGD(TAG, "No change in value for device: %s", address.c_str());
 
-          // Zaman aşımını kontrol edin
           if (now - last_update_time[address] > TIMEOUT_PERIOD)
           {
-            ESP_LOGW(TAG, "Timeout for device: %s", address.c_str());
-            last_values[address] = "default_value"; // Örnek varsayılan değer
-            last_update_time[address] = now;
+            if (pending_changes.find(address) != pending_changes.end())
+            {
+              ESP_LOGW(TAG, "Timeout for device: %s, forcing update.", address.c_str());
+              pending_changes.erase(address);
+            }
           }
           continue;
         }
       }
+
+      // for (const auto &pair : devices_)
+      //{
+      //   optional<Mode> current_value = pair.second->_cur_mode;
+      //   std::string address = pair.second->address;
+      //   unsigned long now = millis();
+      //
+      //  if (current_value.has_value() && last_values[address] != mode_to_string(current_value.value()))
+      //  {
+      //    // Değer değiştiyse, yeni değeri kaydedin ve işlemi başlatın
+      //    last_values[address] = mode_to_string(current_value.value());
+      //    last_update_time[address] = now;
+      //
+      //    // Burada yeni değeri UI'ya yansıtma işlemi yapılabilir
+      //    ESP_LOGI(TAG, "Value changed for device: %s", address.c_str());
+      //  }
+      //  else
+      //  {
+      //    // Değer aynıysa bu adımı atlayın
+      //    ESP_LOGD(TAG, "No change in value for device: %s", address.c_str());
+      //
+      //    // Zaman aşımını kontrol edin
+      //    if (now - last_update_time[address] > TIMEOUT_PERIOD)
+      //    {
+      //      ESP_LOGW(TAG, "Timeout for device: %s", address.c_str());
+      //      last_values[address] = "default_value"; // Örnek varsayılan değer
+      //      last_update_time[address] = now;
+      //    }
+      //    continue;
+      //  }
+      //}
 
       debug_mqtt_connect(debug_mqtt_host, debug_mqtt_port, debug_mqtt_username, debug_mqtt_password);
 
