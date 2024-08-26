@@ -21,9 +21,9 @@ namespace esphome
             return value - (int)65535 /*uint16 max*/ - 1.0;
         }
 
-#define LOG_MESSAGE(message_name, temp, source, dest)                                                             \
-    if (debug_log_messages)                                                                                       \
-    {                                                                                                             \
+#define LOG_MESSAGE(message_name, temp, source, dest)                                        \
+    if (debug_log_messages)                                                                  \
+    {                                                                                        \
         ESP_LOGW(TAG, "s:%s d:%s " #message_name " %g", source.c_str(), dest.c_str(), static_cast<double>(temp)); \
     }
 
