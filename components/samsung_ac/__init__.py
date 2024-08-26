@@ -73,7 +73,6 @@ CONF_DEVICE_CUSTOM = "custom_sensor"
 CONF_DEVICE_CUSTOM_MESSAGE = "message"
 CONF_DEVICE_CUSTOM_RAW_FILTERS = "raw_filters"
 CONF_DEVICE_ERROR_CODE = "error_code"
-CONF_DEVICE_OUTDOOR_OPERATION_MODE = "outdoor_operation_mode"
 
 
 
@@ -208,11 +207,6 @@ DEVICE_SCHEMA = (
                 accuracy_decimals=1,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
-            ),
-             cv.Optional(CONF_DEVICE_OUTDOOR_OPERATION_MODE): sensor.sensor_schema(
-                unit_of_measurement="",
-                accuracy_decimals=0,
-                icon="mdi:factory",
             ),
             cv.Optional(CONF_DEVICE_ERROR_CODE): error_code_sensor_schema(0x8235),
             cv.Optional(CONF_DEVICE_TARGET_TEMPERATURE): NUMBER_SCHEMA,
@@ -429,11 +423,6 @@ async def to_code(config):
                 sens = await sensor.new_sensor(cust_sens)
                 cg.add(var_dev.add_custom_sensor(
                     cust_sens[CONF_DEVICE_CUSTOM_MESSAGE], sens))
-
-        if CONF_DEVICE_OUTDOOR_OPERATION_MODE in device:
-            conf = device[CONF_DEVICE_OUTDOOR_OPERATION_MODE]
-            sens = await sensor.new_sensor(conf)
-            cg.add(var_dev.set_outdoor_operation_mode_sensor(sens))
 
         for key in CUSTOM_SENSOR_KEYS:
             if key in device:

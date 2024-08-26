@@ -722,16 +722,6 @@ namespace esphome
                 target->set_error_code(source, code);
                 break;
             }
-            case MessageNumber::ENUM_outdoor_operation_mode:
-            {
-                int code = static_cast<int>(message.value);
-                if (debug_log_messages)
-                {
-                    ESP_LOGW(TAG, "s:%s d:%s ENUM_outdoor_operation_mode %d", source.c_str(), dest.c_str(), code);
-                }
-                target->set_outdoor_operation_mode(source, code);
-                break;
-            }
 
             default:
             {
@@ -908,18 +898,6 @@ namespace esphome
                 LOG_MESSAGE(ENUM_in_fan_vent_mode, message.value, source, dest);
                 // fan_vent_mode_to_fanmode();
                 break;
-            case 0x4205: // VAR_in_temp_eva_in_f unit = 'Celsius'
-            {
-                double temp = (double)message.value / (double)10;
-                LOG_MESSAGE(VAR_in_temp_eva_in_f, temp, source, dest);
-                break;
-            }
-            case 0x4206: // VAR_in_temp_eva_out_f unit = 'Celsius'
-            {
-                double temp = (double)message.value / (double)10;
-                LOG_MESSAGE(VAR_in_temp_eva_out_f, temp, source, dest);
-                break;
-            }
             case 0x4211: // VAR_in_capacity_request unit = 'kW'
             {
                 double temp = (double)message.value / (double)8.6;
