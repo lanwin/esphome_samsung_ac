@@ -70,6 +70,48 @@ namespace esphome
             All = 3
         };
 
+        enum class OutdoorOperationMode
+        {
+            OP_STOP = 0,
+            OP_SAFETY = 1,
+            OP_NORMAL = 2,
+            OP_BALANCE = 3,
+            OP_RECOVERY = 4,
+            OP_DEICE = 5,
+            OP_COMPDOWN = 6,
+            OP_PROHIBIT = 7,
+            OP_LINEJIG = 8,
+            OP_PCBJIG = 9,
+            OP_TEST = 10,
+            OP_CHARGE = 11,
+            OP_PUMPDOWN = 12,
+            OP_PUMPOUT = 13,
+            OP_VACCUM = 14,
+            OP_CALORYJIG = 15,
+            OP_PUMPDOWNSTOP = 16,
+            OP_SUBSTOP = 17,
+            OP_CHECKPIPE = 18,
+            OP_CHECKREF = 19,
+            OP_FPTJIG = 20,
+            OP_NONSTOP_HEAT_COOL_CHANGE = 21,
+            OP_AUTO_INSPECT = 22,
+            OP_ELECTRIC_DISCHARGE = 23,
+            OP_SPLIT_DEICE = 24,
+            OP_INVETER_CHECK = 25,
+            OP_NONSTOP_DEICE = 26,
+            OP_REM_TEST = 27,
+            OP_RATING = 28,
+            OP_PC_TEST = 29,
+            OP_PUMPDOWN_THERMOOFF = 30,
+            OP_3PHASE_TEST = 31,
+            OP_SMARTINSTALL_TEST = 32,
+            OP_DEICE_PERFORMANCE_TEST = 33,
+            OP_INVERTER_FAN_PBA_CHECK = 34,
+            OP_AUTO_PIPE_PAIRING = 35,
+            OP_AUTO_CHARGE = 36,
+            OP_UNKNOWN = -1
+        };
+
         class MessageTarget
         {
         public:
@@ -95,6 +137,8 @@ namespace esphome
             virtual optional<std::set<uint16_t>> get_custom_sensors(const std::string address) = 0;
             virtual void set_custom_sensor(const std::string address, uint16_t message_number, float value) = 0;
             virtual void set_error_code(const std::string address, int error_code) = 0;
+            virtual void set_outdoor_operation_mode(const std::string &address, OutdoorOperationMode outdooroperationmode) = 0;
+
         };
 
         struct ProtocolRequest
@@ -152,3 +196,86 @@ namespace esphome
 
     } // namespace samsung_ac
 } // namespace esphome
+
+inline std::string outdoor_operation_mode_to_string(OutdoorOperationMode mode)
+{
+    switch (mode)
+    {
+    case OutdoorOperationMode::OP_STOP:
+        return "OP_STOP: Outdoor unit is stopped.";
+    case OutdoorOperationMode::OP_SAFETY:
+        return "OP_SAFETY: Operating in safety mode.";
+    case OutdoorOperationMode::OP_NORMAL:
+        return "OP_NORMAL: Normal operation mode.";
+    case OutdoorOperationMode::OP_BALANCE:
+        return "OP_BALANCE: Balancing mode.";
+    case OutdoorOperationMode::OP_RECOVERY:
+        return "OP_RECOVERY: Recovery mode.";
+    case OutdoorOperationMode::OP_DEICE:
+        return "OP_DEICE: Defrost mode.";
+    case OutdoorOperationMode::OP_COMPDOWN:
+        return "OP_COMPDOWN: Compressor down mode.";
+    case OutdoorOperationMode::OP_PROHIBIT:
+        return "OP_PROHIBIT: Prohibited state.";
+    case OutdoorOperationMode::OP_LINEJIG:
+        return "OP_LINEJIG: Line jig mode.";
+    case OutdoorOperationMode::OP_PCBJIG:
+        return "OP_PCBJIG: PCB jig mode.";
+    case OutdoorOperationMode::OP_TEST:
+        return "OP_TEST: Test mode.";
+    case OutdoorOperationMode::OP_CHARGE:
+        return "OP_CHARGE: Charge mode.";
+    case OutdoorOperationMode::OP_PUMPDOWN:
+        return "OP_PUMPDOWN: Pump down mode.";
+    case OutdoorOperationMode::OP_PUMPOUT:
+        return "OP_PUMPOUT: Pump out mode.";
+    case OutdoorOperationMode::OP_VACCUM:
+        return "OP_VACCUM: Vacuum mode.";
+    case OutdoorOperationMode::OP_CALORYJIG:
+        return "OP_CALORYJIG: Calory jig mode.";
+    case OutdoorOperationMode::OP_PUMPDOWNSTOP:
+        return "OP_PUMPDOWNSTOP: Pump down stop mode.";
+    case OutdoorOperationMode::OP_SUBSTOP:
+        return "OP_SUBSTOP: Sub stop mode.";
+    case OutdoorOperationMode::OP_CHECKPIPE:
+        return "OP_CHECKPIPE: Pipe check mode.";
+    case OutdoorOperationMode::OP_CHECKREF:
+        return "OP_CHECKREF: Refrigerant check mode.";
+    case OutdoorOperationMode::OP_FPTJIG:
+        return "OP_FPTJIG: FPT jig mode.";
+    case OutdoorOperationMode::OP_NONSTOP_HEAT_COOL_CHANGE:
+        return "OP_NONSTOP_HEAT_COOL_CHANGE: Non-stop heat/cool change mode.";
+    case OutdoorOperationMode::OP_AUTO_INSPECT:
+        return "OP_AUTO_INSPECT: Auto inspection mode.";
+    case OutdoorOperationMode::OP_ELECTRIC_DISCHARGE:
+        return "OP_ELECTRIC_DISCHARGE: Electric discharge mode.";
+    case OutdoorOperationMode::OP_SPLIT_DEICE:
+        return "OP_SPLIT_DEICE: Split defrost mode.";
+    case OutdoorOperationMode::OP_INVETER_CHECK:
+        return "OP_INVETER_CHECK: Inverter check mode.";
+    case OutdoorOperationMode::OP_NONSTOP_DEICE:
+        return "OP_NONSTOP_DEICE: Non-stop defrost mode.";
+    case OutdoorOperationMode::OP_REM_TEST:
+        return "OP_REM_TEST: Remote test mode.";
+    case OutdoorOperationMode::OP_RATING:
+        return "OP_RATING: Rating mode.";
+    case OutdoorOperationMode::OP_PC_TEST:
+        return "OP_PC_TEST: PC test mode.";
+    case OutdoorOperationMode::OP_PUMPDOWN_THERMOOFF:
+        return "OP_PUMPDOWN_THERMOOFF: Thermo-off pump down mode.";
+    case OutdoorOperationMode::OP_3PHASE_TEST:
+        return "OP_3PHASE_TEST: Three-phase test mode.";
+    case OutdoorOperationMode::OP_SMARTINSTALL_TEST:
+        return "OP_SMARTINSTALL_TEST: Smart install test mode.";
+    case OutdoorOperationMode::OP_DEICE_PERFORMANCE_TEST:
+        return "OP_DEICE_PERFORMANCE_TEST: Defrost performance test mode.";
+    case OutdoorOperationMode::OP_INVERTER_FAN_PBA_CHECK:
+        return "OP_INVERTER_FAN_PBA_CHECK: Inverter fan PBA check mode.";
+    case OutdoorOperationMode::OP_AUTO_PIPE_PAIRING:
+        return "OP_AUTO_PIPE_PAIRING: Auto pipe pairing mode.";
+    case OutdoorOperationMode::OP_AUTO_CHARGE:
+        return "OP_AUTO_CHARGE: Automatic charge mode.";
+    default:
+        return "OP_UNKNOWN: Unknown operation mode.";
+    }
+}

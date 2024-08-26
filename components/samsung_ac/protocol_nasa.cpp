@@ -722,6 +722,16 @@ namespace esphome
                 target->set_error_code(source, code);
                 break;
             }
+            case MessageNumber::ENUM_outdoor_operation_mode:
+            {
+                int code = static_cast<int>(message.value);
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s ENUM_outdoor_operation_mode %d", source.c_str(), dest.c_str(), code);
+                }
+                target->set_outdoor_operation_mode(source, code);
+                break;
+            }
 
             default:
             {
@@ -861,10 +871,8 @@ namespace esphome
 
         void process_messageset_debug(std::string source, std::string dest, MessageSet &message, MessageTarget *target)
         {
-            if (source == "20.00.00" || source == "20.00.01" || source == "20.00.03")
+            if (source == "20.00.00" || source == "20.00.01" || source == "20.00.02" || source == "20.00.03")
                 return;
-
-            // return; // :)
 
             switch ((uint16_t)message.messageNumber)
             {

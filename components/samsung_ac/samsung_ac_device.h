@@ -108,6 +108,7 @@ namespace esphome
       sensor::Sensor *indoor_eva_in_temperature{nullptr};
       sensor::Sensor *indoor_eva_out_temperature{nullptr};
       sensor::Sensor *error_code{nullptr};
+      sensor::Sensor *outdoor_operation_mode{nullptr};
       Samsung_AC_Number *target_temperature{nullptr};
       Samsung_AC_Number *water_outlet_target{nullptr};
       Samsung_AC_Number *target_water_temperature{nullptr};
@@ -143,6 +144,11 @@ namespace esphome
       void set_error_code_sensor(sensor::Sensor *sensor)
       {
         error_code = sensor;
+      }
+
+      void set_outdoor_operation_mode_sensor(sensor::Sensor *sensor)
+      {
+        outdoor_operation_mode = sensor;
       }
 
       void add_custom_sensor(int message_number, sensor::Sensor *sensor)
@@ -425,6 +431,12 @@ namespace esphome
       {
         if (error_code != nullptr)
           error_code->publish_state(value);
+      }
+
+      void update_outdoor_operation_mode(int value)
+      {
+        if (outdoor_operation_mode != nullptr)
+          outdoor_operation_mode->publish_state(value);
       }
 
       void update_custom_sensor(uint16_t message_number, float value)
