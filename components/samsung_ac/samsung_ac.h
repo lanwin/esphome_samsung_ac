@@ -201,13 +201,6 @@ namespace esphome
           dev->update_error_code(value);
       }
 
-      void /*MessageTarget::*/ set_outdoor_operation_mode(const std::string address, int value) override
-      {
-        Samsung_AC_Device *dev = find_device(address);
-        if (dev != nullptr)
-          dev->update_outdoor_operation_mode(value);
-      }
-
     protected:
       Samsung_AC_Device *find_device(const std::string address)
       {
