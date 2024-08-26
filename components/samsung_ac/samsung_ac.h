@@ -193,11 +193,19 @@ namespace esphome
         if (dev != nullptr)
           dev->update_custom_sensor(message_number, value);
       }
+
       void /*MessageTarget::*/ set_error_code(const std::string address, int value) override
       {
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
           dev->update_error_code(value);
+      }
+
+      void /*MessageTarget::*/ set_outdoor_operation_mode(const std::string address, int value) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->update_outdoor_operation_mode(value);
       }
 
     protected:
