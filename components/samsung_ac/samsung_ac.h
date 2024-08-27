@@ -216,8 +216,8 @@ namespace esphome
       std::set<std::string> addresses_;
 
       std::vector<uint8_t> data_;
-      uint32_t last_transmission_{0};
-      uint32_t last_protocol_update_{0};
+      uint32_t last_transmission_ = 0;
+      uint32_t last_protocol_update_ = 0;
 
       bool data_processing_init = true;
 
