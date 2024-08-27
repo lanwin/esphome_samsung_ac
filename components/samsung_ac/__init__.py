@@ -72,6 +72,8 @@ CONF_DEVICE_ROOM_HUMIDITY = "room_humidity"
 CONF_DEVICE_CUSTOM = "custom_sensor"
 CONF_DEVICE_CUSTOM_MESSAGE = "message"
 CONF_DEVICE_CUSTOM_RAW_FILTERS = "raw_filters"
+CONF_DEVICE_ERROR_CODE = "error_code"
+
 
 CONF_CAPABILITIES = "capabilities"
 CONF_CAPABILITIES_HORIZONTAL_SWING = "horizontal_swing"
@@ -166,7 +168,14 @@ def humidity_sensor_schema(message: int):
         state_class=STATE_CLASS_MEASUREMENT,
     )
 
-
+def error_code_sensor_schema(message: int):
+    return custom_sensor_schema(
+        message=message,
+        unit_of_measurement="",
+        accuracy_decimals=0,
+        icon="mdi:alert",
+    )
+    
 DEVICE_SCHEMA = (
     cv.Schema(
         {
@@ -198,6 +207,7 @@ DEVICE_SCHEMA = (
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
+            cv.Optional(CONF_DEVICE_ERROR_CODE): error_code_sensor_schema(0x8235),
             cv.Optional(CONF_DEVICE_TARGET_TEMPERATURE): NUMBER_SCHEMA,
             cv.Optional(CONF_DEVICE_WATER_OUTLET_TARGET): NUMBER_SCHEMA,
             cv.Optional(CONF_DEVICE_WATER_TARGET_TEMPERATURE): NUMBER_SCHEMA,
@@ -353,7 +363,12 @@ async def to_code(config):
             conf = device[CONF_DEVICE_INDOOR_EVA_OUT_TEMPERATURE]
             sens = await sensor.new_sensor(conf)
             cg.add(var_dev.set_indoor_eva_out_temperature_sensor(sens))
-
+            
+        if CONF_DEVICE_ERROR_CODE in device:
+            conf = device[CONF_DEVICE_ERROR_CODE]
+            sens = await sensor.new_sensor(conf)
+            cg.add(var_dev.set_error_code_sensor(sens))
+            
         if CONF_DEVICE_WATER_TARGET_TEMPERATURE in device:
             conf = device[CONF_DEVICE_WATER_TARGET_TEMPERATURE]
             conf[CONF_UNIT_OF_MEASUREMENT] = UNIT_CELSIUS

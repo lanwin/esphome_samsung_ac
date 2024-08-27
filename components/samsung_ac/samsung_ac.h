@@ -143,7 +143,7 @@ namespace esphome
         if (dev != nullptr)
           dev->update_mode(mode);
       }
-      
+
       void /*MessageTarget::*/ set_water_heater_mode(const std::string address, WaterHeaterMode waterheatermode) override
       {
         Samsung_AC_Device *dev = find_device(address);
@@ -192,6 +192,12 @@ namespace esphome
         Samsung_AC_Device *dev = find_device(address);
         if (dev != nullptr)
           dev->update_custom_sensor(message_number, value);
+      }
+      void /*MessageTarget::*/ set_error_code(const std::string address, int value) override
+      {
+        Samsung_AC_Device *dev = find_device(address);
+        if (dev != nullptr)
+          dev->update_error_code(value);
       }
 
     protected:

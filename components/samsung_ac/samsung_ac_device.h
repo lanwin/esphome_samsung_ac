@@ -56,7 +56,7 @@ namespace esphome
 
       std::function<void(Mode)> write_state_;
     };
-    
+
     class Samsung_AC_Water_Heater_Mode_Select : public select::Select
     {
     public:
@@ -107,6 +107,7 @@ namespace esphome
       sensor::Sensor *outdoor_temperature{nullptr};
       sensor::Sensor *indoor_eva_in_temperature{nullptr};
       sensor::Sensor *indoor_eva_out_temperature{nullptr};
+      sensor::Sensor *error_code{nullptr};
       Samsung_AC_Number *target_temperature{nullptr};
       Samsung_AC_Number *water_outlet_target{nullptr};
       Samsung_AC_Number *target_water_temperature{nullptr};
@@ -137,6 +138,11 @@ namespace esphome
       void set_indoor_eva_out_temperature_sensor(sensor::Sensor *sensor)
       {
         indoor_eva_out_temperature = sensor;
+      }
+
+      void set_error_code_sensor(sensor::Sensor *sensor)
+      {
+        error_code = sensor;
       }
 
       void add_custom_sensor(int message_number, sensor::Sensor *sensor)
@@ -198,7 +204,7 @@ namespace esphome
           publish_request(request);
         };
       }
-      
+
       void set_water_heater_mode_select(Samsung_AC_Water_Heater_Mode_Select *select)
       {
         waterheatermode = select;
@@ -311,7 +317,7 @@ namespace esphome
         if (climate != nullptr)
           calc_and_publish_mode();
       }
-      
+
       void update_water_heater_mode(WaterHeaterMode value)
       {
         _cur_water_heater_mode = value;
@@ -413,6 +419,12 @@ namespace esphome
       {
         if (indoor_eva_out_temperature != nullptr)
           indoor_eva_out_temperature->publish_state(value);
+      }
+
+      void update_error_code(int value)
+      {
+        if (error_code != nullptr)
+          error_code->publish_state(value);
       }
 
       void update_custom_sensor(uint16_t message_number, float value)

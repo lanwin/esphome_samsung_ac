@@ -124,6 +124,13 @@ samsung_ac:
       # Only supported on NASA devices
       room_humidity:
         name: "Kitchen humidity"
+      
+      # This sensor captures and monitors specific error codes returned by the HVAC system.
+      # When an error occurs, the sensor detects the error code and updates its value accordingly.
+      # Additionally, by using the blueprint available at https://github.com/omerfaruk-aran/esphome_samsung_ac_blueprint,
+      # you can automatically send detailed error messages to your mobile devices based on the captured error codes.
+      error_code:
+        name: "Error Code"
 
       # Only supported on NASA based heatpumps
       water_temperature:

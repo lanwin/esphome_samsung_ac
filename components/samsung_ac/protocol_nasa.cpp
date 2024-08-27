@@ -712,6 +712,17 @@ namespace esphome
                 target->set_indoor_eva_out_temperature(source, temp);
                 break;
             }
+            case MessageNumber::VAR_out_error_code:
+            {
+                int code = static_cast<int>(message.value);
+                if (debug_log_messages)
+                {
+                    ESP_LOGW(TAG, "s:%s d:%s VAR_out_error_code %d", source.c_str(), dest.c_str(), code);
+                }
+                target->set_error_code(source, code);
+                break;
+            }
+
             default:
             {
                 double value = 0;
@@ -920,10 +931,6 @@ namespace esphome
 
             case 0x801a: // ENUM_out_load_4way
                 LOG_MESSAGE(ENUM_out_load_4way, message.value, source, dest);
-                break;
-
-            case 0x8235: // VAR_out_error_code
-                LOG_MESSAGE(VAR_out_error_code, message.value, source, dest);
                 break;
 
             case 0x8261: // VAR_OUT_SENSOR_PIPEIN3 unit = 'Celsius'
