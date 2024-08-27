@@ -1,7 +1,7 @@
 #include <queue>
 #include <map>
 #include <cmath>
-#include <iostream>
+#include <string>
 #include "esphome/core/log.h"
 #include "esphome/core/hal.h"
 #include "util.h"

@@ -2,7 +2,6 @@
 
 #include <list>
 #include <vector>
-#include <iostream>
 #include <optional>
 #include "protocol.h"
 #include "util.h"
