@@ -20,6 +20,21 @@ The current implementation offers the following features:
 
 - **AC Mode Control:** The controller enables you to change the AC mode, giving you control over cooling, heating, or other operational modes.
 
+## New Feature: ESPHome Samsung AC Blueprint
+
+We are excited to introduce a new Blueprint that integrates with the esphome_samsung_ac component. This Blueprint enhances your Home Assistant setup by enabling you to monitor error codes from your Samsung AC units and receive real-time notifications directly to your selected devices.
+
+### Key Features:
+- **Error Code Monitoring:** Continuously monitors error codes from your Samsung AC unit, ensuring that you are always informed about any issues.
+- **Automated Notifications:** Sends detailed notifications with corresponding error messages to selected devices whenever an error code is detected.
+- **User-Friendly Setup:** Easily import and configure this Blueprint through Home Assistant’s Blueprint feature.
+
+For more detailed instructions on setup and usage, please refer to the [Blueprint documentation](https://github.com/omerfaruk-aran/esphome_samsung_ac_blueprint).
+
+This Blueprint adds a new layer of functionality to your Home Assistant setup, allowing for more proactive and informed management of your Samsung AC units.
+
+[![Add Blueprint to Home Assistant](https://community-assets.home-assistant.io/original/4X/d/7/6/d7625545838a4970873f3a996172212440b7e0ae.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://raw.githubusercontent.com/omerfaruk-aran/esphome_samsung_ac_blueprint/main/blueprints/automation/esphome_samsung_ac/notification_blueprint.yaml)
+
 ## Compatibility
 
 In general, all devices with dedicated communication wires (not only power) should work. If you want to be safe when buying a new AC, then just ask for NASA support.
