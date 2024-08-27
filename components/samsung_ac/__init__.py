@@ -280,41 +280,28 @@ async def to_code(config):
             device[CONF_DEVICE_ID], device[CONF_DEVICE_ADDRESS], var)
 
         # setup capabilities
-        if CONF_CAPABILITIES in device and CONF_CAPABILITIES_VERTICAL_SWING in device[CONF_CAPABILITIES]:
-            cg.add(var_dev.set_supports_vertical_swing(
-                device[CONF_CAPABILITIES][CONF_CAPABILITIES_VERTICAL_SWING]))
-        elif CONF_CAPABILITIES in config and CONF_CAPABILITIES_VERTICAL_SWING in config[CONF_CAPABILITIES]:
-            cg.add(var_dev.set_supports_vertical_swing(
-                config[CONF_CAPABILITIES][CONF_CAPABILITIES_VERTICAL_SWING]))
+        capabilities = device.get(CONF_CAPABILITIES, config.get(CONF_CAPABILITIES, {}))
 
-        if CONF_CAPABILITIES in device and CONF_CAPABILITIES_HORIZONTAL_SWING in device[CONF_CAPABILITIES]:
-            cg.add(var_dev.set_supports_horizontal_swing(
-                device[CONF_CAPABILITIES][CONF_CAPABILITIES_HORIZONTAL_SWING]))
-        elif CONF_CAPABILITIES in config and CONF_CAPABILITIES_HORIZONTAL_SWING in config[CONF_CAPABILITIES]:
-            cg.add(var_dev.set_supports_horizontal_swing(
-                config[CONF_CAPABILITIES][CONF_CAPABILITIES_HORIZONTAL_SWING]))
+        if capabilities.get(CONF_CAPABILITIES_VERTICAL_SWING):
+            cg.add(var_dev.set_supports_vertical_swing(True))
+
+        if capabilities.get(CONF_CAPABILITIES_HORIZONTAL_SWING):
+            cg.add(var_dev.set_supports_horizontal_swing(True))
 
         none_added = False
-        for preset in PRESETS:
-            device_preset_conf = device[CONF_CAPABILITIES][CONF_PRESETS][preset] if (
-                CONF_CAPABILITIES in device
-                and CONF_PRESETS in device[CONF_CAPABILITIES]
-                and preset in device[CONF_CAPABILITIES][CONF_PRESETS]) else None
-            global_preset_conf = config[CONF_CAPABILITIES][CONF_PRESETS][preset] if (
-                CONF_CAPABILITIES in config
-                and CONF_PRESETS in config[CONF_CAPABILITIES]
-                and preset in config[CONF_CAPABILITIES][CONF_PRESETS]) else None
+        presets = capabilities.get(CONF_PRESETS, {})
 
-            preset_conf = global_preset_conf if device_preset_conf is None else device_preset_conf
+        for preset, preset_info in PRESETS.items():
+            preset_conf = presets.get(preset, None)
             preset_dict = isinstance(preset_conf, dict)
-            if preset_conf == True or (preset_dict and preset_conf[CONF_PRESET_ENABLED] == True):
+            if preset_conf == True or (preset_dict and preset_conf.get(CONF_PRESET_ENABLED, False)):
                 if not none_added:
                     none_added = True
                     cg.add(var_dev.add_alt_mode("None", 0))
 
                 cg.add(var_dev.add_alt_mode(
-                    preset_conf[CONF_PRESET_NAME] if preset_dict and CONF_PRESET_NAME in preset_conf else PRESETS[preset]["displayName"],
-                    preset_conf[CONF_PRESET_VALUE] if preset_dict and CONF_PRESET_VALUE in preset_conf else PRESETS[preset]["value"]
+                    preset_conf.get(CONF_PRESET_NAME, preset_info["displayName"]),
+                    preset_conf.get(CONF_PRESET_VALUE, preset_info["value"])
                 ))
 
 #        if CONF_CAPABILITIES in device and CONF_ALT_MODES in device[CONF_CAPABILITIES]:
@@ -326,49 +313,28 @@ async def to_code(config):
 #            for alt in config[CONF_CAPABILITIES][CONF_ALT_MODES]:
 #                cg.add(var_dev.add_alt_mode(alt[CONF_ALT_MODE_NAME], alt[CONF_ALT_MODE_VALUE]))
 
-        if CONF_DEVICE_POWER in device:
-            conf = device[CONF_DEVICE_POWER]
-            sens = await switch.new_switch(conf)
-            cg.add(var_dev.set_power_switch(sens))
-        
-        if CONF_DEVICE_AUTOMATIC_CLEANING in device:
-            conf = device[CONF_DEVICE_AUTOMATIC_CLEANING]
-            sens = await switch.new_switch(conf)
-            cg.add(var_dev.set_automatic_cleaning_switch(sens))
-        
-        if CONF_DEVICE_WATER_HEATER_POWER in device:
-            conf = device[CONF_DEVICE_WATER_HEATER_POWER]
-            sens = await switch.new_switch(conf)
-            cg.add(var_dev.set_water_heater_power_switch(sens))
+        # Mapping of config keys to their corresponding methods and types
+        device_actions = {
+            CONF_DEVICE_POWER: (switch.new_switch, var_dev.set_power_switch),
+            CONF_DEVICE_AUTOMATIC_CLEANING: (switch.new_switch, var_dev.set_automatic_cleaning_switch),
+            CONF_DEVICE_WATER_HEATER_POWER: (switch.new_switch, var_dev.set_water_heater_power_switch),
+            CONF_DEVICE_ROOM_TEMPERATURE: (sensor.new_sensor, var_dev.set_room_temperature_sensor),
+            CONF_DEVICE_OUTDOOR_TEMPERATURE: (sensor.new_sensor, var_dev.set_outdoor_temperature_sensor),
+            CONF_DEVICE_INDOOR_EVA_IN_TEMPERATURE: (sensor.new_sensor, var_dev.set_indoor_eva_in_temperature_sensor),
+            CONF_DEVICE_INDOOR_EVA_OUT_TEMPERATURE: (sensor.new_sensor, var_dev.set_indoor_eva_out_temperature_sensor),
+            CONF_DEVICE_ERROR_CODE: (sensor.new_sensor, var_dev.set_error_code_sensor),
+        }
 
-        if CONF_DEVICE_ROOM_TEMPERATURE in device:
-            conf = device[CONF_DEVICE_ROOM_TEMPERATURE]
-            sens = await sensor.new_sensor(conf)
-            cg.add(var_dev.set_room_temperature_sensor(sens))
+        # Iterate over the actions
+        for key, (action, method) in device_actions.items():
+            if key in device:
+                conf = device[key]
+                sens = await action(conf)
+                cg.add(method(sens))
 
         if CONF_DEVICE_ROOM_TEMPERATURE_OFFSET in device:
             cg.add(var_dev.set_room_temperature_offset(
                 device[CONF_DEVICE_ROOM_TEMPERATURE_OFFSET]))
-
-        if CONF_DEVICE_OUTDOOR_TEMPERATURE in device:
-            conf = device[CONF_DEVICE_OUTDOOR_TEMPERATURE]
-            sens = await sensor.new_sensor(conf)
-            cg.add(var_dev.set_outdoor_temperature_sensor(sens))
-            
-        if CONF_DEVICE_INDOOR_EVA_IN_TEMPERATURE in device:
-            conf = device[CONF_DEVICE_INDOOR_EVA_IN_TEMPERATURE]
-            sens = await sensor.new_sensor(conf)
-            cg.add(var_dev.set_indoor_eva_in_temperature_sensor(sens))
-            
-        if CONF_DEVICE_INDOOR_EVA_OUT_TEMPERATURE in device:
-            conf = device[CONF_DEVICE_INDOOR_EVA_OUT_TEMPERATURE]
-            sens = await sensor.new_sensor(conf)
-            cg.add(var_dev.set_indoor_eva_out_temperature_sensor(sens))
-            
-        if CONF_DEVICE_ERROR_CODE in device:
-            conf = device[CONF_DEVICE_ERROR_CODE]
-            sens = await sensor.new_sensor(conf)
-            cg.add(var_dev.set_error_code_sensor(sens))
             
         if CONF_DEVICE_WATER_TARGET_TEMPERATURE in device:
             conf = device[CONF_DEVICE_WATER_TARGET_TEMPERATURE]
@@ -452,6 +418,19 @@ async def to_code(config):
         
     if (CONF_DEBUG_LOG_UNDEFINED_MESSAGES in config):
         cg.add(var.set_debug_log_undefined_messages(config[CONF_DEBUG_LOG_UNDEFINED_MESSAGES]))
+        
+    # Mapping of config keys to their corresponding methods
+    config_actions = {
+        CONF_DEBUG_LOG_MESSAGES: var.set_debug_log_messages,
+        CONF_DEBUG_LOG_MESSAGES_RAW: var.set_debug_log_messages_raw,
+        CONF_NON_NASA_KEEPALIVE: var.set_non_nasa_keepalive,
+        CONF_DEBUG_LOG_UNDEFINED_MESSAGES: var.set_debug_log_undefined_messages,
+    }
 
+    # Iterate over the actions
+    for key, method in config_actions.items():
+        if key in config:
+            cg.add(method(config[key]))
+            
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
