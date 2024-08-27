@@ -98,31 +98,25 @@ namespace esphome
         data_processing_init = false;
       }
 
-      std::string devices = "";
+      std::string devices;
       for (const auto &pair : devices_)
       {
-        devices += devices.length() > 0 ? ", " + pair.second->address : pair.second->address;
+        if (!devices.empty())
+          devices += ", ";
+        devices += pair.second->address;
       }
       ESP_LOGCONFIG(TAG, "Configured devices: %s", devices.c_str());
 
-      std::string knownIndoor = "";
-      std::string knownOutdoor = "";
-      std::string knownOther = "";
-      for (auto const &address : addresses_)
+      std::string knownIndoor, knownOutdoor, knownOther;
+      for (const auto &address : addresses_)
       {
-        switch (get_address_type(address))
-        {
-        case AddressType::Outdoor:
-          knownOutdoor += knownOutdoor.length() > 0 ? ", " + address : address;
-          break;
-        case AddressType::Indoor:
-          knownIndoor += knownIndoor.length() > 0 ? ", " + address : address;
-          break;
-        default:
-          knownOther += knownOther.length() > 0 ? ", " + address : address;
-          break;
-        }
+        auto &target = (get_address_type(address) == AddressType::Outdoor) ? knownOutdoor : (get_address_type(address) == AddressType::Indoor) ? knownIndoor
+                                                                                                                                               : knownOther;
+        if (!target.empty())
+          target += ", ";
+        target += address;
       }
+
       ESP_LOGCONFIG(TAG, "Discovered devices:");
       ESP_LOGCONFIG(TAG, "  Outdoor: %s", (knownOutdoor.length() == 0 ? "-" : knownOutdoor.c_str()));
       ESP_LOGCONFIG(TAG, "  Indoor:  %s", (knownIndoor.length() == 0 ? "-" : knownIndoor.c_str()));
@@ -160,31 +154,27 @@ namespace esphome
         return;
 
       const uint32_t now = millis();
-      if (data_.size() > 0 && (now - last_transmission_ >= 500))
+      if (!data_.empty() && (now - last_transmission_ >= 500))
       {
         ESP_LOGW(TAG, "Last transmission too long ago. Reset RX index.");
         data_.clear();
       }
 
-      // If there is no data we use the time to send
-      if (available())
+      while (available())
       {
         last_transmission_ = now;
-        while (available())
+        uint8_t c;
+        if (!read_byte(&c))
+          continue;
+        if (data_.empty() && c != 0x32)
+          continue; // skip until start-byte found
+
+        data_.push_back(c);
+
+        if (process_data(data_, this) == DataResult::Clear)
         {
-          uint8_t c;
-          if (!read_byte(&c))
-            continue;
-          if (data_.size() == 0 && c != 0x32)
-            continue; // skip until start-byte found
-
-          data_.push_back(c);
-
-          if (process_data(data_, this) == DataResult::Clear)
-          {
-            data_.clear();
-            break; // wait for next loop
-          }
+          data_.clear();
+          break; // wait for next loop
         }
       }
 
