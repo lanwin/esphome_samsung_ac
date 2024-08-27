@@ -1,9 +1,6 @@
-#include <queue>
-#include <iostream>
 #include <set>
 #include "esphome/core/log.h"
 #include "esphome/core/util.h"
-#include "esphome/core/hal.h"
 #include "util.h"
 #include "protocol_nasa.h"
 #include "debug_mqtt.h"
@@ -82,8 +79,8 @@ namespace esphome
         std::string Address::to_string()
         {
             char str[9];
-            sprintf(str, "%02x.%02x.%02x", (int)klass, channel, address);
-            return str;
+            sprintf(str, "%02x.%02x.%02x", klass, channel, address);
+            return std::string(str);
         }
 
         void Command::decode(std::vector<uint8_t> &data, unsigned int index)
