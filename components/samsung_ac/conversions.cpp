@@ -34,7 +34,7 @@ namespace esphome
       case Mode::Heat:
         return "Heat";
       default:
-        return "";
+        return "Unknown";
       };
     }
     
@@ -64,7 +64,7 @@ namespace esphome
       case WaterHeaterMode::Force:
         return "Force";
       default:
-        return "";
+        return "Unknown";
       };
     }
 
