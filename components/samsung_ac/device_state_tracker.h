@@ -18,7 +18,7 @@ class DeviceStateTracker {
       if (current_value == pending_changes_[address]) {
         pending_changes_.erase(address);
       } else {
-        this->ESP_LOGI("DeviceStateTracker", "Stale value received for device: %s, ignoring.", address.c_str());
+        ESP_LOGI("DeviceStateTracker", "Stale value received for device: %s, ignoring.", address.c_str());
         return;
       }
     }
@@ -28,13 +28,13 @@ class DeviceStateTracker {
       last_values_[address] = current_value;
       last_update_time_[address] = now;
 
-      this->ESP_LOGI("DeviceStateTracker", "Value changed for device: %s", address.c_str());
+      ESP_LOGI("DeviceStateTracker", "Value changed for device: %s", address.c_str());
     } else {
       ESP_LOGD("DeviceStateTracker", "No change in value for device: %s", address.c_str());
 
       if (now - last_update_time_[address] > TIMEOUT_PERIOD) {
         if (pending_changes_.find(address) != pending_changes_.end()) {
-          this->ESP_LOGW("DeviceStateTracker", "Timeout for device: %s, forcing update.", address.c_str());
+          ESP_LOGW("DeviceStateTracker", "Timeout for device: %s, forcing update.", address.c_str());
           pending_changes_.erase(address);
         }
       }
