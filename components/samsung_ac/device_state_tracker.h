@@ -5,19 +5,6 @@
 #include <map>
 #include <string>
 
-// Global log helper functions
-inline void log_info(const char* tag, const char* format, const std::string &arg) {
-    ESP_LOGI(tag, format, arg.c_str());
-}
-
-inline void log_warn(const char* tag, const char* format, const std::string &arg) {
-    ESP_LOGW(tag, format, arg.c_str());
-}
-
-inline void log_debug(const char* tag, const char* format, const std::string &arg) {
-    ESP_LOGD(tag, format, arg.c_str());
-}
-
 template <typename T>
 class DeviceStateTracker {
  public:
@@ -31,7 +18,7 @@ class DeviceStateTracker {
       if (current_value == pending_changes_[address]) {
         pending_changes_.erase(address);
       } else {
-        log_info("device_state_tracker", "Stale value received for device: %s, ignoring.", address);
+        ESP_LOGI("device_state_tracker", "Stale value received for device: %s, ignoring.", address.c_str());
         return;
       }
     }
@@ -41,13 +28,13 @@ class DeviceStateTracker {
       last_values_[address] = current_value;
       last_update_time_[address] = now;
 
-      log_info("device_state_tracker", "Value changed for device: %s", address);
+      ESP_LOGI("device_state_tracker", "Value changed for device: %s", address.c_str());
     } else {
-      log_debug("device_state_tracker", "No change in value for device: %s", address);
+      ESP_LOGD("device_state_tracker", "No change in value for device: %s", address.c_str());
 
       if (now - last_update_time_[address] > TIMEOUT_PERIOD) {
         if (pending_changes_.find(address) != pending_changes_.end()) {
-          log_warn("device_state_tracker", "Timeout for device: %s, forcing update.", address);
+          ESP_LOGW("device_state_tracker", "Timeout for device: %s, forcing update.", address.c_str());
           pending_changes_.erase(address);
         }
       }
