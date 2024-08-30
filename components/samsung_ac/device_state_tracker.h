@@ -2,6 +2,7 @@
 #define DEVICE_STATE_TRACKER_H
 
 #include "esphome/core/log.h"
+#include "util.h"
 #include <map>
 #include <string>
 
