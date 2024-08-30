@@ -8,6 +8,7 @@
 #include "esphome/components/uart/uart.h"
 #include "samsung_ac_device.h"
 #include "protocol.h"
+#include "device_state_tracker.h"
 
 namespace esphome
 {
@@ -213,6 +214,7 @@ namespace esphome
       }
 
       std::map<std::string, Samsung_AC_Device *> devices_;
+      DeviceStateTracker<Mode> state_tracker_{1000};
       std::set<std::string> addresses_;
 
       std::vector<uint8_t> data_;

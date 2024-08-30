@@ -15,10 +15,6 @@ namespace esphome
         ESP_LOGW(TAG, "setup");
       }
     }
-    std::map<std::string, std::string> last_values;
-    std::map<std::string, unsigned long> last_update_time;
-    std::map<std::string, Mode> pending_changes;
-    const unsigned long TIMEOUT_PERIOD = 1000;
 
     void Samsung_AC::update()
     {
@@ -31,42 +27,10 @@ namespace esphome
       {
         optional<Mode> current_value = pair.second->_cur_mode;
         std::string address = pair.second->address;
-        unsigned long now = millis();
 
-        if (pending_changes.find(address) != pending_changes.end())
+        if (current_value.has_value())
         {
-          if (current_value.has_value() && current_value.value() == pending_changes[address])
-          {
-            pending_changes.erase(address);
-          }
-          else
-          {
-            ESP_LOGI(TAG, "Stale value received for device: %s, ignoring.", address.c_str());
-            continue;
-          }
-        }
-
-        if (current_value.has_value() && last_values[address] != mode_to_str(current_value.value()))
-        {
-          pending_changes[address] = current_value.value();
-          last_values[address] = mode_to_str(current_value.value());
-          last_update_time[address] = now;
-
-          ESP_LOGI(TAG, "Value changed for device: %s", address.c_str());
-        }
-        else
-        {
-          ESP_LOGD(TAG, "No change in value for device: %s", address.c_str());
-
-          if (now - last_update_time[address] > TIMEOUT_PERIOD)
-          {
-            if (pending_changes.find(address) != pending_changes.end())
-            {
-              ESP_LOGW(TAG, "Timeout for device: %s, forcing update.", address.c_str());
-              pending_changes.erase(address);
-            }
-          }
-          continue;
+          state_tracker_.update(address, current_value.value());
         }
       }
 
