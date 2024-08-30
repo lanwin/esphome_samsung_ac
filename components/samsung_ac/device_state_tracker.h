@@ -2,7 +2,7 @@
 #define DEVICE_STATE_TRACKER_H
 
 #include "esphome/core/log.h"
-#include "esphome/core/helpers.h" // millis() fonksiyonu için gerekli
+#include "esphome/core/helpers.h"
 #include <map>
 #include <string>
 
