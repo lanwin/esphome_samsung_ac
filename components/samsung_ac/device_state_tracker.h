@@ -3,6 +3,7 @@
 
 #include "esphome/core/log.h"
 #include "util.h"
+#include <vector>
 #include <map>
 #include <string>
 
