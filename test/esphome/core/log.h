@@ -39,7 +39,7 @@ namespace esphome
         str += "\n";                          \
         printf((str.c_str()), ##__VA_ARGS__); \
     } while (0);
-
+    
 #define ESP_LOGI(tag, format, ...)            \
     do                                        \
     {                                         \
@@ -48,5 +48,4 @@ namespace esphome
         str += "\n";                          \
         printf((str.c_str()), ##__VA_ARGS__); \
     } while (0);
-    
 } // namespace esphome
