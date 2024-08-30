@@ -19,25 +19,6 @@ namespace esphome
     std::map<std::string, unsigned long> last_update_time;
     std::map<std::string, Mode> pending_changes;
     const unsigned long TIMEOUT_PERIOD = 1000;
-    std::string mode_to_string(Mode mode)
-    {
-      switch (mode)
-      {
-      case Mode::Auto:
-        return "Auto";
-      case Mode::Cool:
-        return "Cool";
-      case Mode::Dry:
-        return "Dry";
-      case Mode::Fan:
-        return "Fan";
-      case Mode::Heat:
-        return "Heat";
-      case Mode::Unknown:
-      default:
-        return "Unknown";
-      }
-    }
 
     void Samsung_AC::update()
     {
@@ -65,10 +46,10 @@ namespace esphome
           }
         }
 
-        if (current_value.has_value() && last_values[address] != mode_to_string(current_value.value()))
+        if (current_value.has_value() && last_values[address] != mode_to_str(current_value.value()))
         {
           pending_changes[address] = current_value.value();
-          last_values[address] = mode_to_string(current_value.value());
+          last_values[address] = mode_to_str(current_value.value());
           last_update_time[address] = now;
 
           ESP_LOGI(TAG, "Value changed for device: %s", address.c_str());
