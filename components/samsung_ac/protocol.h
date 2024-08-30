@@ -70,7 +70,7 @@ namespace esphome
             All = 3
         };
 
-                class MessageTarget
+        class MessageTarget
         {
         public:
             virtual uint32_t get_miliseconds() = 0;
