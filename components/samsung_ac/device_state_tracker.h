@@ -18,7 +18,7 @@ class DeviceStateTracker {
       if (current_value == pending_changes_[address]) {
         pending_changes_.erase(address);
       } else {
-        ESP_LOGI(TAG, "Stale value received for device: %s, ignoring.", address.c_str());
+        ESP_LOGI("device_state_tracker", "Stale value received for device: %s, ignoring.", address.c_str());
         return;
       }
     }
@@ -28,13 +28,13 @@ class DeviceStateTracker {
       last_values_[address] = current_value;
       last_update_time_[address] = now;
 
-      ESP_LOGI(TAG, "Value changed for device: %s", address.c_str());
+      ESP_LOGI("device_state_tracker", "Value changed for device: %s", address.c_str());
     } else {
-      ESP_LOGD(TAG, "No change in value for device: %s", address.c_str());
+      ESP_LOGD("device_state_tracker", "No change in value for device: %s", address.c_str());
 
       if (now - last_update_time_[address] > TIMEOUT_PERIOD) {
         if (pending_changes_.find(address) != pending_changes_.end()) {
-          ESP_LOGW(TAG, "Timeout for device: %s, forcing update.", address.c_str());
+          ESP_LOGW("device_state_tracker", "Timeout for device: %s, forcing update.", address.c_str());
           pending_changes_.erase(address);
         }
       }
@@ -46,8 +46,6 @@ class DeviceStateTracker {
   std::map<std::string, unsigned long> last_update_time_;
   std::map<std::string, T> pending_changes_;
   const unsigned long TIMEOUT_PERIOD;
-
-  static constexpr const char *TAG = "device_state_tracker";
 };
 
 #endif // DEVICE_STATE_TRACKER_H
