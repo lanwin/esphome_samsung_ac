@@ -104,6 +104,7 @@ PRESETS = {
     "quiet": {"value": 2, "displayName": "Quiet"},
     "fast": {"value": 3, "displayName": "Fast"},
     "longreach": {"value": 6, "displayName": "LongReach"},
+    "eco": {"value": 7, "displayName": "Eco"},
     "windfree": {"value": 9, "displayName": "WindFree"},
 }
 
