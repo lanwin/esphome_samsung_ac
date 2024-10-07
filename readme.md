@@ -2,7 +2,7 @@
 
 This project offers a [ESPHome](https://esphome.io/index.html) component for integrating Samsung air conditioners into your home automation system. It provides the ability to monitor and control your AC units effortlessly.
 
-This component is designed to connect to the F1 and F2 communication bus between the indoor and the outdoor devices.
+This component is designed to connect to the Samsung HAVC devices with an F1/F2 communication bus (between the indoor and the outdoor devices).
 
 Samsung has employed different software protocols for their AC devices over the years. The older devices utilize the Non NASA protocol, while the newer ones utilize the NASA protocol. This ESPHome component is designed to support both protocols, ensuring compatibility with a wide range of Samsung AC units.
 
@@ -47,7 +47,7 @@ There are also two Discussion threads about confirmed [NASA]([url](https://githu
 
 #### NASA
 
-- AJ080TXJ4KG, AJ026TN1DKG, AR24TXHZAWKNEU, AR09TXFCAWKNEU, AC030KNZDCH/AA (CNH30ZDK), AE090RNYDEG, AE090RXEDEG, AE160JXYDEH/EU, AR09TXFCAWKNEU
+- AJ080TXJ4KG, AJ026TN1DKG, AR24TXHZAWKNEU, AR24TXFCAWKN, AR09TXFCAWKNEU, AC030KNZDCH/AA (CNH30ZDK), AE090RNYDEG, AE090RXEDEG, AE160JXYDEH/EU, AR09TXFCAWKNEU, AR07TXFCAWKNEU
 
 #### NonNASA
 
