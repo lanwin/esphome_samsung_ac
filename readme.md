@@ -2,7 +2,8 @@
 
 This project offers a [ESPHome](https://esphome.io/index.html) component for integrating Samsung air conditioners into your home automation system. It provides the ability to monitor and control your AC units effortlessly.
 
-This component is designed to connect to the *Samsung HAVC devices with an F1/F2 communication bus* (between the indoor and the outdoor devices). 
+This component is designed to connect to the *Samsung HAVC devices with an F1/F2 communication bus* (between the indoor and the outdoor devices).
+(may also work with R1/R2 communication bus but this has not been properly tested)
 
 Samsung has employed different software protocols for their AC devices over the years. The older devices utilize the Non NASA protocol, while the newer ones utilize the NASA protocol. This ESPHome component is designed to support both protocols, ensuring compatibility with a wide range of Samsung AC units.
 
@@ -124,7 +125,7 @@ Follow these steps to install and configure the software for your AC unit contro
 - **Does this works also with Samsung heat pumps?** Yes, while it was not desinged in the first place for them, we have reports that it also works.
 - **Do I need a ESP for each indoor device?** When all your indoor devices are connected to the same outdoor device, then you need just one. Otherwise you need one for each outdoor device.
 - **Do I need to turn off my climate devices when I connect the ESP?** No, but it's advised to do so, cause there is no garantee that it will not harm you Samsung hardware. And as you might be messing around 240V to be able to hook to those F1/F2 cables, it's safer to disconnect the power when attaching the cables and then bring the power up again. 
-- **My device has no F1/F2 connectors, how to connect?** Without F1/F2 connectors, this component can not work. Sorry!
+- **My device There are only F3/F4 connectors, how to connect?** Without F1/F2 or R1/R2 connectors, this component can not work. Sorry!
 
 ## Development
 
