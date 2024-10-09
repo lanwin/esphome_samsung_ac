@@ -79,7 +79,7 @@ namespace esphome
         std::string Address::to_string()
         {
             char str[9];
-            sprintf(str, "%02x.%02x.%02x", klass, channel, address);
+            sprintf(str, "%02x.%02x.%02x", (uint8_t)klass, (uint8_t)channel, (uint8_t)address);
             return std::string(str);
         }
 
