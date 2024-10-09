@@ -61,7 +61,14 @@
     "future": "cpp",
     "mutex": "cpp",
     "thread": "cpp",
-    "variant": "cpp"
+    "variant": "cpp",
+    "codecvt": "cpp",
+    "complex": "cpp",
+    "forward_list": "cpp",
+    "iomanip": "cpp",
+    "ranges": "cpp",
+    "span": "cpp",
+    "stop_token": "cpp"
   },
   "[python]": {
     "editor.defaultFormatter": "ms-python.autopep8"

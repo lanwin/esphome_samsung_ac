@@ -76,142 +76,135 @@ public:
         cout << "> " << address << " set_outdoor_temperature=" << to_string(value) << endl;
         last_set_outdoor_temperature_address = address;
         last_set_outdoor_temperature_value = value;
-    
-    std::string last_set_target_water_temperature_address;
-    float last_set_target_water_temperature_value;
-    void set_target_water_temperature(const std::string address, float value)
+
+        std::string last_set_target_water_temperature_address;
+        float last_set_target_water_temperature_value;
+        void set_target_water_temperature(const std::string address, float value)
+        {
+            cout << "> " << address << " set_target_water_temperature=" << to_string(value) << endl;
+            last_set_target_water_temperature_address = address;
+            last_set_target_water_temperature_value = value;
+        }
+
+        std::string last_set_room_humidity_address;
+        float last_set_room_humidity_value;
+        void set_room_humidity(const std::string address, float value)
+        {
+            cout << "> " << address << " set_room_humidity=" << to_string(value) << endl;
+            last_set_room_humidity_address = address;
+            last_set_room_humidity_value = value;
+        }
+
+        std::string last_set_mode_address;
+        Mode last_set_mode_mode;
+        void set_mode(const std::string address, Mode mode)
+        {
+            cout << "> " << address << " set_mode=" << to_string((int)mode) << endl;
+            last_set_mode_address = address;
+            last_set_mode_mode = mode;
+        }
+
+        std::string last_set_fanmode_address;
+        FanMode last_set_fanmode_mode;
+        void set_fanmode(const std::string address, FanMode fanmode)
+        {
+            cout << "> " << address << " set_fanmode=" << to_string((int)fanmode) << endl;
+            last_set_fanmode_address = address;
+            last_set_fanmode_mode = fanmode;
+        }
+
+        void set_altmode(const std::string address, AltMode altmode)
+        {
+            cout << "> " << address << " set_altmode=" << to_string((int)altmode) << endl;
+        }
+
+        void set_swing_vertical(const std::string address, bool vertical)
+        {
+            cout << "> " << address << " set_swing_vertical=" << to_string((int)vertical) << endl;
+        }
+
+        void set_swing_horizontal(const std::string address, bool horizontal)
+        {
+            cout << "> " << address << " set_swing_horizontal=" << to_string((int)horizontal) << endl;
+        }
+
+        void set_custom_sensor(const std::string address, uint16_t message_number, float value)
+        {
+            last_custom_sensors.insert(message_number);
+        }
+
+        void assert_only_address(const std::string address)
+        {
+            assert(last_register_address == address);
+            assert(last_set_power_address == "");
+            assert(last_set_room_temperature_address == "");
+            assert(last_set_target_temperature_address == "");
+            assert(last_set_mode_address == "");
+            assert(last_set_fanmode_address == "");
+        }
+
+        void assert_values(const std::string address, bool power, float room_temp, float target_temp, Mode mode, FanMode fanmode)
+        {
+            assert(last_register_address == address);
+
+            assert(last_set_power_address == address);
+            assert(last_set_power_value == power);
+
+            assert(last_set_room_temperature_address == address);
+            assert(last_set_room_temperature_value == room_temp);
+
+            assert(last_set_target_temperature_address == address);
+            assert(last_set_target_temperature_value == target_temp);
+
+            assert(last_set_mode_address == address);
+            assert(last_set_mode_mode == mode);
+
+            assert(last_set_fanmode_address == address);
+            assert(last_set_fanmode_mode == fanmode);
+        }
+
+        void assert_values(const std::string address, bool power, float room_temp, float target_temp, Mode mode, FanMode fanmode, float humidity)
+        {
+            assert_values(address, power, room_temp, target_temp, mode, fanmode);
+
+            assert(last_set_room_humidity_address == address);
+            assert(last_set_room_humidity_value == humidity);
+        }
+    };
+
+    void test_process_data(const std::string &hex, DebugTarget &target)
     {
-        cout << "> " << address << " set_target_water_temperature=" << to_string(value) << endl;
-        last_set_target_water_temperature_address = address;
-        last_set_target_water_temperature_value = value;
+        cout << "test: " << hex << std::endl;
+        auto bytes = hex_to_bytes(hex);
+        assert(process_data(bytes, &target) == DataResult::Clear);
     }
 
-    std::string last_set_room_humidity_address;
-    float last_set_room_humidity_value;
-    void set_room_humidity(const std::string address, float value)
+    DebugTarget test_process_data(const std::string &hex)
     {
-        cout << "> " << address << " set_room_humidity=" << to_string(value) << endl;
-        last_set_room_humidity_address = address;
-        last_set_room_humidity_value = value;
+        DebugTarget target;
+        test_process_data(hex, target);
+        return target;
     }
 
-    std::string last_set_mode_address;
-    Mode last_set_mode_mode;
-    void set_mode(const std::string address, Mode mode)
+    void assert_str(const std::string actual, const std::string expected)
     {
-        cout << "> " << address << " set_mode=" << to_string((int)mode) << endl;
-        last_set_mode_address = address;
-        last_set_mode_mode = mode;
+        if (actual != expected)
+        {
+            cout << "actual:   " << actual << std::endl;
+            cout << "expected: " << expected << std::endl;
+        }
+        assert(actual == expected);
     }
 
-    std::string last_set_fanmode_address;
-    FanMode last_set_fanmode_mode;
-    void set_fanmode(const std::string address, FanMode fanmode)
+    namespace esphome
     {
-        cout << "> " << address << " set_fanmode=" << to_string((int)fanmode) << endl;
-        last_set_fanmode_address = address;
-        last_set_fanmode_mode = fanmode;
-    }
-
-    void set_altmode(const std::string address, AltMode altmode)
-    {
-        cout << "> " << address << " set_altmode=" << to_string((int)altmode) << endl;
-    }
-
-    void set_swing_vertical(const std::string address, bool vertical)
-    {
-        cout << "> " << address << " set_swing_vertical=" << to_string((int)vertical) << endl;
-    }
-
-    void set_swing_horizontal(const std::string address, bool horizontal)
-    {
-        cout << "> " << address << " set_swing_horizontal=" << to_string((int)horizontal) << endl;
-    }
-
-    std::set<uint16_t> last_custom_sensors;
-
-    esphome::optional<std::set<uint16_t>> get_custom_sensors(const std::string address)
-    {
-        return last_custom_sensors;
-    }
-
-    void set_custom_sensor(const std::string address, uint16_t message_number, float value)
-    {
-        last_custom_sensors.insert(message_number);
-    }
-
-    void assert_only_address(const std::string address)
-    {
-        assert(last_register_address == address);
-        assert(last_set_power_address == "");
-        assert(last_set_room_temperature_address == "");
-        assert(last_set_target_temperature_address == "");
-        assert(last_set_mode_address == "");
-        assert(last_set_fanmode_address == "");
-    }
-
-    void assert_values(const std::string address, bool power, float room_temp, float target_temp, Mode mode, FanMode fanmode)
-    {
-        assert(last_register_address == address);
-
-        assert(last_set_power_address == address);
-        assert(last_set_power_value == power);
-
-        assert(last_set_room_temperature_address == address);
-        assert(last_set_room_temperature_value == room_temp);
-
-        assert(last_set_target_temperature_address == address);
-        assert(last_set_target_temperature_value == target_temp);
-
-        assert(last_set_mode_address == address);
-        assert(last_set_mode_mode == mode);
-
-        assert(last_set_fanmode_address == address);
-        assert(last_set_fanmode_mode == fanmode);
-    }
-
-    void assert_values(const std::string address, bool power, float room_temp, float target_temp, Mode mode, FanMode fanmode, float humidity)
-    {
-        assert_values(address, power, room_temp, target_temp, mode, fanmode);
-
-        assert(last_set_room_humidity_address == address);
-        assert(last_set_room_humidity_value == humidity);
-    }
-};
-
-void test_process_data(const std::string &hex, DebugTarget &target)
-{
-    cout << "test: " << hex << std::endl;
-    auto bytes = hex_to_bytes(hex);
-    assert(process_data(bytes, &target) == DataResult::Clear);
-}
-
-DebugTarget test_process_data(const std::string &hex)
-{
-    DebugTarget target;
-    test_process_data(hex, target);
-    return target;
-}
-
-void assert_str(const std::string actual, const std::string expected)
-{
-    if (actual != expected)
-    {
-        cout << "actual:   " << actual << std::endl;
-        cout << "expected: " << expected << std::endl;
-    }
-    assert(actual == expected);
-}
-
-namespace esphome
-{
-    uint32_t millis()
-    {
-        return 0;
-    }
-    uint32_t micros()
-    {
-        return 0;
-    }
-    void delay(uint32_t ms) {}
-} // namespace esphome
+        uint32_t millis()
+        {
+            return 0;
+        }
+        uint32_t micros()
+        {
+            return 0;
+        }
+        void delay(uint32_t ms) {}
+    } // namespace esphome

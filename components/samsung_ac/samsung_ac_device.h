@@ -153,14 +153,6 @@ namespace esphome
         custom_sensors.push_back(std::move(cust_sensor));
       }
 
-      std::set<uint16_t> get_custom_sensors()
-      {
-        std::set<uint16_t> numbers;
-        for (auto &sensor : custom_sensors)
-          numbers.insert(sensor.message_number);
-        return numbers;
-      }
-
       void set_power_switch(Samsung_AC_Switch *switch_)
       {
         power = switch_;
