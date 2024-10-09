@@ -1,9 +1,6 @@
-#include <queue>
-#include <iostream>
 #include <set>
 #include "esphome/core/log.h"
 #include "esphome/core/util.h"
-#include "esphome/core/hal.h"
 #include "util.h"
 #include "protocol_nasa.h"
 #include "debug_mqtt.h"
@@ -21,9 +18,9 @@ namespace esphome
             return value - (int)65535 /*uint16 max*/ - 1.0;
         }
 
-#define LOG_MESSAGE(message_name, temp, source, dest)                                        \
-    if (debug_log_messages)                                                                  \
-    {                                                                                        \
+#define LOG_MESSAGE(message_name, temp, source, dest)                                                             \
+    if (debug_log_messages)                                                                                       \
+    {                                                                                                             \
         ESP_LOGW(TAG, "s:%s d:%s " #message_name " %g", source.c_str(), dest.c_str(), static_cast<double>(temp)); \
     }
 
@@ -82,8 +79,8 @@ namespace esphome
         std::string Address::to_string()
         {
             char str[9];
-            sprintf(str, "%02x.%02x.%02x", (int)klass, channel, address);
-            return str;
+            sprintf(str, "%02x.%02x.%02x", klass, channel, address);
+            return std::string(str);
         }
 
         void Command::decode(std::vector<uint8_t> &data, unsigned int index)
@@ -861,10 +858,8 @@ namespace esphome
 
         void process_messageset_debug(std::string source, std::string dest, MessageSet &message, MessageTarget *target)
         {
-            if (source == "20.00.00" || source == "20.00.01" || source == "20.00.03")
+            if (source == "20.00.00" || source == "20.00.01" || source == "20.00.02" || source == "20.00.03")
                 return;
-
-            // return; // :)
 
             switch ((uint16_t)message.messageNumber)
             {
@@ -900,18 +895,6 @@ namespace esphome
                 LOG_MESSAGE(ENUM_in_fan_vent_mode, message.value, source, dest);
                 // fan_vent_mode_to_fanmode();
                 break;
-            case 0x4205: // VAR_in_temp_eva_in_f unit = 'Celsius'
-            {
-                double temp = (double)message.value / (double)10;
-                LOG_MESSAGE(VAR_in_temp_eva_in_f, temp, source, dest);
-                break;
-            }
-            case 0x4206: // VAR_in_temp_eva_out_f unit = 'Celsius'
-            {
-                double temp = (double)message.value / (double)10;
-                LOG_MESSAGE(VAR_in_temp_eva_out_f, temp, source, dest);
-                break;
-            }
             case 0x4211: // VAR_in_capacity_request unit = 'kW'
             {
                 double temp = (double)message.value / (double)8.6;

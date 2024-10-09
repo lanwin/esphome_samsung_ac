@@ -8,6 +8,7 @@
 #include "esphome/components/uart/uart.h"
 #include "samsung_ac_device.h"
 #include "protocol.h"
+#include "device_state_tracker.h"
 
 namespace esphome
 {
@@ -193,6 +194,7 @@ namespace esphome
         if (dev != nullptr)
           dev->update_custom_sensor(message_number, value);
       }
+
       void /*MessageTarget::*/ set_error_code(const std::string address, int value) override
       {
         Samsung_AC_Device *dev = find_device(address);
@@ -212,11 +214,12 @@ namespace esphome
       }
 
       std::map<std::string, Samsung_AC_Device *> devices_;
+      DeviceStateTracker<Mode> state_tracker_{1000};
       std::set<std::string> addresses_;
 
       std::vector<uint8_t> data_;
-      uint32_t last_transmission_{0};
-      uint32_t last_protocol_update_{0};
+      uint32_t last_transmission_ = 0;
+      uint32_t last_protocol_update_ = 0;
 
       bool data_processing_init = true;
 
