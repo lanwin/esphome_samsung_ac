@@ -17,7 +17,6 @@ web_server:
 
 # Enable logging
 logger:
-  level: INFO
   logs:
     component: ERROR # Remove the "Your component takes to long to respond warning"
 
@@ -47,7 +46,7 @@ uart:
 
 # Import custom component from GitHub
 external_components:
-  - source: github://lanwin/esphome_samsung_ac@stable # use @main if you want the latest development (possibly unstable?)
+  - source: github://lanwin/esphome_samsung_ac@main # Use @stable if you want a more stable experience, but note a lot of this example code breaks.
     components: [samsung_ac]
 
 # Configuration of AC component
@@ -57,10 +56,10 @@ samsung_ac:
   # values like internal and external temperature to continue to be tracked when the device isn't in use.
   non_nasa_keepalive: true
   
-  #When enabled (set to true), this option will log the messages associated with undefined codes on the device. This is useful for debugging and identifying any unexpected or unknown codes that the device may receive during operation.
+  # When enabled (set to true), this option will log the messages associated with undefined codes on the device. This is useful for debugging and identifying any unexpected or unknown codes that the device may receive during operation.
   debug_log_undefined_messages: false
   
-  #When enabled (set to true), this option logs messages associated with defined codes on the device. This helps in monitoring the behavior of the device by recording the activity related to known, expected codes.
+  # When enabled (set to true), this option logs messages associated with defined codes on the device. This helps in monitoring the behavior of the device by recording the activity related to known, expected codes.
   debug_log_messages: false
 
   # Capabilities configure the features alle devices of your AC system have (all parts of this section are optional). 
@@ -81,11 +80,12 @@ samsung_ac:
 
   devices:
     # Skip everything below on the first run! Wait a minute, watch your ESPHome logs until you see the "Discovered devices:" section and you see some addresses:
-    # For NASA devices it looks like this (with 4 indoor devices): 
+    # For NASA devices it looks like this (with 1 outdoor device and 4 indoor devices): 
+    #   Outdoor: 10.00.00
     #   Indoor:  20.00.00, 20.00.01, 20.00.02, 20.00.03
     # For NonNASA devices it looks like this (with 2 indoor devices): 
     #   Indoor:  00, 01
-    # You need this addresses for the the sections below. If you see only a "-" then you should visit the troubleshooting section in the readme. 
+    # You need these addresses for the the sections below. If you see only a "-" then you should visit the troubleshooting section in the readme. 
 
     # Repeat everything below for each indoor device address you see in your logs
     - address: "20.00.00" # Indoor device address 
@@ -125,6 +125,7 @@ samsung_ac:
       room_humidity:
         name: "Kitchen humidity"
       
+    - address: "10.00.00" # Outdoor device address as the following components are dependent on an outdoor unit.
       # This sensor captures and monitors specific error codes returned by the HVAC system.
       # When an error occurs, the sensor detects the error code and updates its value accordingly.
       # Additionally, by using the blueprint available at https://github.com/omerfaruk-aran/esphome_samsung_ac_blueprint,
