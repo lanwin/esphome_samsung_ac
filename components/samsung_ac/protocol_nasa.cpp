@@ -1196,7 +1196,7 @@ namespace esphome
             case 0x4006:
             {
                 // ESP_LOGW(TAG, "s:%s d:%s NoMap %s %li", source.c_str(), dest.c_str(), long_to_hex((int)message.messageNumber).c_str(), message.value);
-                break; // message types witch have no mapping in xml
+                break; // message types which have no mapping in xml
             }
 
             default:
