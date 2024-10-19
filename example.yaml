@@ -73,12 +73,7 @@ samsung_ac:
     presets: 
       # Short version - a quick and simple way to enable presets.
       quiet: true
-      fast: true
-
       # Long version - allows customization, including localized names and control over enabling the presets.
-      quiet:
-        name: "Makes no sound"
-        enabled: true
       fast:
         name: "Fast cooling"
         enabled: true
