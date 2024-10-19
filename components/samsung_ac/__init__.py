@@ -294,17 +294,26 @@ async def to_code(config):
 
         for preset, preset_info in PRESETS.items():
             preset_conf = presets.get(preset, None)
-            preset_dict = isinstance(preset_conf, dict)
-            if preset_conf == True or (preset_dict and preset_conf.get(CONF_PRESET_ENABLED, False)):
+
+            if isinstance(preset_conf, bool) and preset_conf:
                 if not none_added:
                     none_added = True
                     cg.add(var_dev.add_alt_mode("None", 0))
 
                 cg.add(var_dev.add_alt_mode(
-                    preset_conf.get(CONF_PRESET_NAME, preset_info["displayName"]),
-                    preset_conf.get(CONF_PRESET_VALUE, preset_info["value"])
+                    preset_info["displayName"],
+                    preset_info["value"]
                 ))
+            elif isinstance(preset_conf, dict) and preset_conf.get(CONF_PRESET_ENABLED, False):
+                if not none_added:
+                    none_added = True
+                    cg.add(var_dev.add_alt_mode("None", 0))
 
+                cg.add(var_dev.add_alt_mode(
+                    preset_conf.get(CONF_PRESET_NAME, preset_info["displayName"]),  # Kullanıcı tarafından sağlanan adı kullan
+                    preset_conf.get(CONF_PRESET_VALUE, preset_info["value"])  # Kullanıcı tarafından sağlanan değeri kullan
+                ))
+                
 #        if CONF_CAPABILITIES in device and CONF_ALT_MODES in device[CONF_CAPABILITIES]:
 #            cg.add(var_dev.add_alt_mode("None", 0))
 #            for alt in device[CONF_CAPABILITIES][CONF_ALT_MODES]:
