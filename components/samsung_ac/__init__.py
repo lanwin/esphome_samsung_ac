@@ -283,11 +283,11 @@ async def to_code(config):
         # setup capabilities
         capabilities = device.get(CONF_CAPABILITIES, config.get(CONF_CAPABILITIES, {}))
 
-        if capabilities.get(CONF_CAPABILITIES_VERTICAL_SWING):
-            cg.add(var_dev.set_supports_vertical_swing(True))
+        if CONF_CAPABILITIES_VERTICAL_SWING in capabilities:
+            cg.add(var_dev.set_supports_vertical_swing(capabilities[CONF_CAPABILITIES_VERTICAL_SWING]))
 
-        if capabilities.get(CONF_CAPABILITIES_HORIZONTAL_SWING):
-            cg.add(var_dev.set_supports_horizontal_swing(True))
+        if CONF_CAPABILITIES_HORIZONTAL_SWING in capabilities:
+            cg.add(var_dev.set_supports_horizontal_swing(capabilities[CONF_CAPABILITIES_HORIZONTAL_SWING]))
 
         none_added = False
         presets = capabilities.get(CONF_PRESETS, {})
