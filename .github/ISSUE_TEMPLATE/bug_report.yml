@@ -17,7 +17,7 @@ body:
     attributes:
       label: "ESPHome Version"
       description: "Enter the ESPHome version you're using."
-      placeholder: "e.g., 2024.7.0"
+      placeholder: "e.g., 2024.10.0"
     validations:
       required: true
 
@@ -26,7 +26,7 @@ body:
     attributes:
       label: "Samsung AC Integration Version"
       description: "Enter the version of the Samsung AC integration."
-      placeholder: "e.g., 2024.7.0"
+      placeholder: "e.g., 20240213.1"
     validations:
       required: true
 
@@ -35,7 +35,7 @@ body:
     attributes:
       label: "Home Assistant Version"
       description: "Enter your Home Assistant version."
-      placeholder: "e.g., 2024.7.0"
+      placeholder: "e.g., 2024.10.0"
     validations:
       required: true
 
@@ -46,7 +46,7 @@ body:
       description: "Select the type of air conditioner you are using."
       options:
         - NASA
-        - NONNASA
+        - NON NASA
         - OTHER
     validations:
       required: true
@@ -56,7 +56,7 @@ body:
     attributes:
       label: "Indoor AC Unit Model"
       description: "Enter your AC's indoor unit model."
-      placeholder: "e.g., AR09TXFCAWKNEU"
+      placeholder: "e.g., AJ080TXJ4KG or AC030KNZDCH/AA or RJ100F5HXBA"
     validations:
       required: true
 
@@ -73,8 +73,8 @@ body:
     id: esp_device_model
     attributes:
       label: "ESP Device Model"
-      description: "Enter the model of the ESP device you're using."
-      placeholder: "e.g., ESP32"
+      description: "Enter the model of the ESP and RS-485 device you're using."
+      placeholder: "e.g., M5STACK ATOM Lite + M5STACK RS-485"
     validations:
       required: true
 
@@ -115,10 +115,28 @@ body:
       placeholder: |
         # Example YAML configuration
         samsung_ac:
+          non_nasa_keepalive: true
+          debug_log_undefined_messages: false
+          debug_log_messages: false
+          capabilities:
+            vertical_swing: true
+            horizontal_swing: true
+            presets: 
+              quiet:
+                name: "Makes no sound"
+                enabled: true
+          devices:
+            - address: "20.00.00"
           climate:
             name: "Living Room AC"
-            target_temperature: 22
-            power: true
+          room_temperature:
+            name: "Kitchen temperature"
+          target_temperature:
+            name: "Kitchen target temperature"
+          power:
+            name: "Kitchen power"
+          mode:
+            name: "Kitchen mode"
 
   - type: markdown
     attributes:
