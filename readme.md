@@ -183,3 +183,26 @@ The NonNASA protocol is specifically desined to transport AC data.
 Thanks goes to DannyDeGaspari https://github.com/DannyDeGaspari/Samsung-HVAC-buscontrol. He made the initial attempt to describe the older NonNASA protocol.
 
 Thanks goes to matthias882 https://github.com/matthias882/some_esphome_components. He made a basic ESPHome component for the older NonNASA protocol which was a perfect source to start playing and learning to communicate with the AC and use ESPHome.
+
+## Contributors
+
+This project exists thanks to all the people who contribute. We welcome contributions from everyone!
+
+### Special Thanks
+- **lanwin** (Project Owner) - [Profile](https://github.com/lanwin)
+- **omerfaruk-aran** - [Profile](https://github.com/omerfaruk-aran)
+- **north3221** - [Profile](https://github.com/north3221)
+- **matthias882** - [Profile](https://github.com/matthias882)
+
+### Other Contributors
+- See the full list of contributors [here](https://github.com/lanwin/esphome_samsung_ac/graphs/contributors).
+
+Thank you to everyone who has contributed to this project!
+
+---
+
+## Want to Contribute?
+
+We welcome new contributors! If you would like to help improve this project, please review our [CONTRIBUTING.md](https://github.com/lanwin/esphome_samsung_ac/blob/main/CONTRIBUTING.md) for guidelines on how to get started.
+
+Your contributions, whether through code, documentation, or bug reports, are all greatly appreciated!
