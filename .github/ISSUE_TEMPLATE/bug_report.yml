@@ -2,7 +2,7 @@
 name: Bug Report
 description: Report any issues with the ESPHome Samsung AC integration.
 title: "`Bug` [Samsung_AC]: "
-labels: ["bug", "question"]
+labels: ["bug"]
 body:
   - type: markdown
     attributes:
