@@ -478,8 +478,8 @@ namespace esphome
       }
 
     protected:
-      bool supports_horizontal_swing_{true};
-      bool supports_vertical_swing_{true};
+      bool supports_horizontal_swing_{false};
+      bool supports_vertical_swing_{false};
       std::vector<AltModeDesc> alt_modes;
 
       Protocol *protocol{nullptr};
