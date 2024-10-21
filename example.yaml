@@ -62,20 +62,20 @@ samsung_ac:
   # When enabled (set to true), this option logs messages associated with defined codes on the device. This helps in monitoring the behavior of the device by recording the activity related to known, expected codes.
   debug_log_messages: false
 
-  # Capabilities configure the features alle devices of your AC system have (all parts of this section are optional). 
+  # Capabilities configure the features that all devices of your AC system have (all parts of this section are optional). 
   # All capabilities are off by default, you need to enable only those your devices have.
-  # You can override or configure them also on a per devices basis (look below for that).
+  # You can override or configure them also on a per-device basis (look below for that).
   capabilities: 
     vertical_swing: true
     horizontal_swing: true
-    # Presets define special AC modes like Windfree and so on. 
-    # The following modes are available: sleep, quiet, fast, longreach, windfree, eco
+    # Presets define special AC modes like Windfree, Eco, and so on. 
+    # The following modes are available: sleep, quiet, fast, longreach, windfree, eco.
     presets: 
-      # short version
+      # Short version - a quick and simple way to enable presets.
       quiet: true
-      # long version - allows to locilize names
-      quiet:
-        name: "Makes no sound"
+      # Long version - allows customization, including localized names and control over enabling the presets.
+      fast:
+        name: "Fast cooling"
         enabled: true
 
   devices:

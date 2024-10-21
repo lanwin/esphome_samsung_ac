@@ -283,26 +283,35 @@ async def to_code(config):
         # setup capabilities
         capabilities = device.get(CONF_CAPABILITIES, config.get(CONF_CAPABILITIES, {}))
 
-        if capabilities.get(CONF_CAPABILITIES_VERTICAL_SWING):
-            cg.add(var_dev.set_supports_vertical_swing(True))
+        if CONF_CAPABILITIES_VERTICAL_SWING in capabilities:
+            cg.add(var_dev.set_supports_vertical_swing(capabilities[CONF_CAPABILITIES_VERTICAL_SWING]))
 
-        if capabilities.get(CONF_CAPABILITIES_HORIZONTAL_SWING):
-            cg.add(var_dev.set_supports_horizontal_swing(True))
+        if CONF_CAPABILITIES_HORIZONTAL_SWING in capabilities:
+            cg.add(var_dev.set_supports_horizontal_swing(capabilities[CONF_CAPABILITIES_HORIZONTAL_SWING]))
 
         none_added = False
         presets = capabilities.get(CONF_PRESETS, {})
 
         for preset, preset_info in PRESETS.items():
             preset_conf = presets.get(preset, None)
-            preset_dict = isinstance(preset_conf, dict)
-            if preset_conf == True or (preset_dict and preset_conf.get(CONF_PRESET_ENABLED, False)):
+
+            if isinstance(preset_conf, bool) and preset_conf:
                 if not none_added:
                     none_added = True
                     cg.add(var_dev.add_alt_mode("None", 0))
 
                 cg.add(var_dev.add_alt_mode(
-                    preset_conf.get(CONF_PRESET_NAME, preset_info["displayName"]),
-                    preset_conf.get(CONF_PRESET_VALUE, preset_info["value"])
+                    preset_info["displayName"],
+                    preset_info["value"]
+                ))
+            elif isinstance(preset_conf, dict) and preset_conf.get(CONF_PRESET_ENABLED, False):
+                if not none_added:
+                    none_added = True
+                    cg.add(var_dev.add_alt_mode("None", 0))
+
+                cg.add(var_dev.add_alt_mode(
+                    preset_conf.get(CONF_PRESET_NAME, preset_info["displayName"]),  # Kullanıcı tarafından sağlanan adı kullan
+                    preset_conf.get(CONF_PRESET_VALUE, preset_info["value"])  # Kullanıcı tarafından sağlanan değeri kullan
                 ))
 
 #        if CONF_CAPABILITIES in device and CONF_ALT_MODES in device[CONF_CAPABILITIES]:
