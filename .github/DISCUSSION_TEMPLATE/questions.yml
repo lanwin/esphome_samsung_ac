@@ -1,0 +1,96 @@
+labels: [question]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for your interest in the ESPHome Samsung AC integration!
+
+        Please follow these instructions and fill out each section to provide enough context for your question. 
+
+        By doing so, we can help you more effectively and quickly!
+
+        > **Note**: Before asking your question, please ensure that it hasn't already been answered in the [documentation](https://github.com/lanwin/esphome_samsung_havc_bus) or in the [discussions](https://github.com/lanwin/esphome_samsung_havc_bus/discussions) section.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Quick Checks
+      description: Please confirm that you've done the following checks.
+      options:
+        - label: I have searched the [documentation](https://github.com/lanwin/esphome_samsung_havc_bus).
+          required: true
+        - label: I have searched the [issue tracker](https://github.com/lanwin/esphome_samsung_havc_bus/issues) to ensure this question hasn't already been answered.
+          required: true
+        - label: I have searched the [discussions](https://github.com/lanwin/esphome_samsung_havc_bus/discussions).
+          required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: Describe your question or issue as clearly as possible.
+      placeholder: |
+        Describe your issue/question in detail...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: ac_type
+    attributes:
+      label: AC Type
+      description: Select the type of AC you are using.
+      options:
+        - NASA
+        - NONNASA
+        - OTHER
+    validations:
+      required: true
+
+  - type: input
+    id: ac_model
+    attributes:
+      label: AC Model
+      description: Provide the model of your AC unit (indoor and outdoor).
+      placeholder: e.g., AJ068TXJ3KH/EA (outdoor), AJ050TNAPKH/TK (indoor)
+
+  - type: input
+    id: esp_device
+    attributes:
+      label: ESP Device Model
+      description: Specify the model of your ESP device.
+      placeholder: e.g., ESP32, M5Stack ATOM
+
+  - type: input
+    id: wiring
+    attributes:
+      label: Wiring Details
+      description: Indicate where the ESP device is connected on the AC (e.g., F1/F2).
+      placeholder: e.g., F1/F2, other
+
+  - type: textarea
+    id: yaml_config
+    attributes:
+      label: YAML Configuration
+      description: Provide the relevant YAML configuration for your AC setup.
+      render: yaml
+      placeholder: |
+        # Provide your YAML configuration here.
+        samsung_ac:
+          devices:
+            - address: "10.00.00"
+              climate:
+                name: "Living Room AC"
+
+  - type: textarea
+    id: esphome_logs
+    attributes:
+      label: ESPHome Logs
+      description: Provide the ESPHome logs captured from your device (this can help identify issues).
+      placeholder: |
+        # Provide the relevant ESPHome logs here.
+
+  - type: textarea
+    id: additional_info
+    attributes:
+      label: Additional Information
+      description: Add any extra details that might help us understand your issue.
