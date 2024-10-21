@@ -1,8 +1,8 @@
-# ESPHome Samsung AC
+# ESPHome Samsung HAVC Bus
 
-This project offers an [ESPHome](https://esphome.io/index.html) component for integrating Samsung air conditioners into your home automation system. It provides the ability to monitor and control your AC units effortlessly.
+This project offers an [ESPHome](https://esphome.io/index.html) component for integrating Samsung HAVC units (Air conditioners or heatpumps) into Home Assistant. 
 
-This component focuses on Samsung HAVC units (AC or heat pumps) that communicate between the indoor and outdoor units via a hardware bus (additional cables connecting each unit, usually F1/F2, sometimes called R1/R2).
+This component focuses on Samsung HAVC units that communicate between the indoor and outdoor units via a hardware bus (additional cables connecting each unit, usually F1/F2, sometimes called R1/R2).
 
 Samsung has employed different software protocols for their AC devices over the years. The older devices utilize the NonNASA protocol, while the newer ones utilize the NASA protocol. This ESPHome component is designed to support both protocols, ensuring compatibility with a wide range of Samsung AC units.
 
