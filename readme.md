@@ -140,7 +140,7 @@ Follow these steps to install and configure the software for your AC unit contro
 - **Do I need a ESP for each indoor device?** When all your indoor devices are connected to the same outdoor device, then you need just one. Otherwise you need one for each outdoor device.
 - **Do I need to turn off my climate devices when I connect the ESP?** No, but it's advised to do so, as beside the F1/F2 connectors there is 240V AC, which can be deadly. It is safer to disconnect the unit from power while installing the ESP, then reconnect it.
 
-- **My device has no F1/F2 connectors, how do I connect it?** Without F1/F2 connectors, this will not work. Sorry!
+- **My device has no additional F1/F2 connectors, how do I connect it?** Somethimes they are called R1/R2. On some devices it seems that this connectors use only one cable (and ground) but we are not sure yet. Please follow the discussions.
 
 ## Development
 
