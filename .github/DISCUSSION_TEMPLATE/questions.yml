@@ -1,3 +1,7 @@
+---
+name: Questions
+description: Questions with the ESPHome Samsung AC integration.
+title: "`Questions` [Samsung_AC]: "
 labels: [question]
 body:
   - type: markdown
