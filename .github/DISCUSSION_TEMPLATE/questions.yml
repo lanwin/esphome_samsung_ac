@@ -10,7 +10,7 @@ body:
 
         Before submitting, please:
         1. **Search existing issues** to see if your question has already been answered.
-        2. **Check the documentation** to ensure your question is not covered there: [esphome_samsung_hvac_bus Documentation](https://github.com/lanwin/esphome_samsung_hvac_bus/wiki)
+        2. **Check the documentation** to ensure your question is not covered there: [esphome_samsung_hvac_bus Documentation](https://github.com/lanwin/esphome_samsung_hvac_bus)
         3. **Provide context and details** to help us understand your question better.
 
   - type: input
