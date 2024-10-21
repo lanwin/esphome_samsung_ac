@@ -313,7 +313,7 @@ async def to_code(config):
                     preset_conf.get(CONF_PRESET_NAME, preset_info["displayName"]),  # Kullanıcı tarafından sağlanan adı kullan
                     preset_conf.get(CONF_PRESET_VALUE, preset_info["value"])  # Kullanıcı tarafından sağlanan değeri kullan
                 ))
-
+                
 #        if CONF_CAPABILITIES in device and CONF_ALT_MODES in device[CONF_CAPABILITIES]:
 #            cg.add(var_dev.add_alt_mode("None", 0))
 #            for alt in device[CONF_CAPABILITIES][CONF_ALT_MODES]:
