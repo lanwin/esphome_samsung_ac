@@ -153,15 +153,6 @@ namespace esphome
             std::string to_string();
         };
 
-        struct OutgoingPacket
-        {
-            Packet packet;
-            uint32_t timestamp; // Timestamp in milliseconds
-            int retry_count;    // Number of retries
-        };
-
-        extern std::vector<OutgoingPacket> out; // Declaration of the out vector
-        
         struct Packet
         {
             Address sa;

@@ -1,6 +1,5 @@
 #include "esphome/core/log.h"
 #include "samsung_ac.h"
-#include "protocol_nasa.h"
 #include "debug_mqtt.h"
 #include "util.h"
 #include <vector>
@@ -100,7 +99,6 @@ namespace esphome
         return;
 
       const uint32_t now = millis();
-      
       if (!data_.empty() && (now - last_transmission_ >= 500))
       {
         ESP_LOGW(TAG, "Last transmission too long ago. Reset RX index.");
@@ -123,30 +121,6 @@ namespace esphome
           data_.clear();
           break; // wait for next loop
         }
-      }
-
-      const uint32_t resend_interval = 1000; 
-      const int max_retries = 3;
-
-      for (auto it = out.begin(); it != out.end();)
-      {
-        if (now - it->timestamp >= resend_interval)
-        {
-          if (it->retry_count >= max_retries)
-          {
-            ESP_LOGE(TAG, "Packet with PacketNumber %d failed after %d retries.", it->packet.command.packetNumber, max_retries);
-            it = out.erase(it);
-            continue;
-          }
-
-          ESP_LOGW(TAG, "Resending packet with PacketNumber %d (Retry %d)", it->packet.command.packetNumber, it->retry_count + 1);
-          auto data = it->packet.encode();
-          this->publish_data(data);
-
-          it->timestamp = now;
-          it->retry_count += 1;
-        }
-        ++it;
       }
 
       // Allow device protocols to perform recurring tasks (at most every 200ms)
