@@ -36,12 +36,13 @@ This Blueprint adds a new layer of functionality to your Home Assistant setup, a
 [![Add Blueprint to Home Assistant](https://community-assets.home-assistant.io/original/4X/d/7/6/d7625545838a4970873f3a996172212440b7e0ae.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://raw.githubusercontent.com/omerfaruk-aran/esphome_samsung_ac_blueprint/main/blueprints/automation/esphome_samsung_ac/notification_blueprint.yaml)
 
 ## Compatibility
-
 In general, all devices with dedicated communication wires (not only power) should work. If you want to be safe when buying a new AC, then just ask for NASA support.
+
+To automatically check the classification of your Samsung AC model (NASA, Non-NASA, or Other), use our [Samsung AC Model Checker](https://lanwin.github.io/esphome_samsung_hvac_bus/model-checker/index.html).
 
 [@hnykda](https://github.com/hnykda) found a way to decode Samsung's product numbers. For more info, see [this issue](https://github.com/lanwin/esphome_samsung_ac/issues/101#issuecomment-2098206070).
 
-There are also two Discussion threads about confirmed [NASA]([url](https://github.com/lanwin/esphome_samsung_ac/discussions/82)) and [NonNASA]([url](https://github.com/lanwin/esphome_samsung_ac/discussions/78)) uses. If you made this working on a model that has not been confirmed yet, please do so in there!
+There are also two Discussion threads about confirmed [NASA](https://github.com/lanwin/esphome_samsung_ac/discussions/82) and [NonNASA](https://github.com/lanwin/esphome_samsung_ac/discussions/78) uses. If you made this working on a model that has not been confirmed yet, please do so in there!
 
 ### Known to work (not exhaustive)
 
