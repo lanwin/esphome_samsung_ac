@@ -175,11 +175,11 @@ namespace esphome
             uint8_t retries;
 
             OutgoingPacket(Packet p, uint32_t timeout_duration, uint8_t max_retries)
-                : packet(p), timeout(millis() + timeout_duration), retries(max_retries) {}
+                : packet(p), timeout(esphome::millis() + timeout_duration), retries(max_retries) {}
 
             bool is_timed_out()
             {
-                return millis() > timeout;
+                return esphome::millis() > timeout;
             }
 
             bool can_retry()
@@ -190,7 +190,7 @@ namespace esphome
             void retry()
             {
                 retries--;
-                timeout = millis() + 1000; 
+                timeout = esphome::millis() + 1000; 
             }
         };
 

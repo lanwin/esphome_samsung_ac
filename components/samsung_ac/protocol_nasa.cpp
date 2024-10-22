@@ -206,7 +206,7 @@ namespace esphome
 
         static int _packetCounter = 0;
 
-        std::vector<Packet> out;
+        std::vector<OutgoingPacket> out;
 
         /*
                 class OutgoingPacket
@@ -848,16 +848,16 @@ namespace esphome
                         ESP_LOGW(TAG, "Retrying packet %d", out[i].packet.command.packetNumber);
                         auto data = out[i].packet.encode();
                         target->publish_data(data);
-                        out[i].retry(); // Yeniden deneme sayısını azalt ve timeout'u yeniden başlat
+                        out[i].retry();
                     }
                     else
                     {
                         ESP_LOGW(TAG, "Packet %d failed after retries", out[i].packet.command.packetNumber);
-                        out.erase(out.begin() + i); // Tüm denemeler başarısızsa sil
+                        out.erase(out.begin() + i);
                     }
                 }
             }
-            
+
             if (packet_.command.dataType == DataType::Read)
             {
                 ESP_LOGW(TAG, "Read %s", packet_.to_string().c_str());
