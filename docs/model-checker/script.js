@@ -23,13 +23,15 @@ function checkModel() {
     }
 
     result.innerHTML = `
-        <strong>Model:</strong> ${model} <br>
-        <strong>Classification:</strong> ${classification} <br>
-        <strong>Capacity:</strong> ${capacity} kW <br>
-        <strong>Product Type:</strong> ${productType} (${type}) <br>
-        <strong>Product Notation:</strong> ${productNotation} <br>
-        <strong>Feature:</strong> ${feature} <br>
-        <strong>Rating Voltage:</strong> ${ratingVoltage} <br>
-        <strong>Mode:</strong> ${mode}
+        <div class="result-container">
+          <p><strong>Model:</strong> ${model}</p>
+          <p><strong>Classification:</strong> ${classification}</p>
+          <p><strong>Capacity:</strong> ${capacity} kW</p>
+          <p><strong>Product Type:</strong> <span class="highlight">${productType} (${type})</span></p>
+          <p><strong>Product Notation:</strong> ${productNotation}</p>
+          <p><strong>Feature:</strong> ${feature}</p>
+          <p><strong>Rating Voltage:</strong> ${ratingVoltage}</p>
+          <p><strong>Mode:</strong> ${mode}</p>
+        </div>
     `;
 }
