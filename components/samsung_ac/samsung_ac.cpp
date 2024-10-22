@@ -1,5 +1,6 @@
 #include "esphome/core/log.h"
 #include "samsung_ac.h"
+#include "protocol_nasa.h"
 #include "debug_mqtt.h"
 #include "util.h"
 #include <vector>
@@ -99,6 +100,7 @@ namespace esphome
         return;
 
       const uint32_t now = millis();
+      
       if (!data_.empty() && (now - last_transmission_ >= 500))
       {
         ESP_LOGW(TAG, "Last transmission too long ago. Reset RX index.");

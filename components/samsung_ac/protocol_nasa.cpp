@@ -209,13 +209,6 @@ namespace esphome
 
         std::vector<OutgoingPacket> out;
 
-        struct OutgoingPacket
-        {
-            Packet packet;
-            uint32_t timestamp; // Paket gönderildiği zaman (millis())
-            int retry_count;    // Yeniden gönderme sayısı
-        };
-
         Packet Packet::create(Address da, DataType dataType, MessageNumber messageNumber, int value)
         {
             Packet packet = createa_partial(da, dataType);
@@ -456,7 +449,7 @@ namespace esphome
 
             OutgoingPacket outgoing_packet;
             outgoing_packet.packet = packet;
-            outgoing_packet.timestamp = millis();
+            outgoing_packet.timestamp = target->get_miliseconds();
             outgoing_packet.retry_count = 0;
             out.push_back(outgoing_packet);
 
