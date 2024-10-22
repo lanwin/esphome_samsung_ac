@@ -206,7 +206,7 @@ namespace esphome
 
         static int _packetCounter = 0;
 
-        std::vector<OutgoingPacket> out;
+        std::vector<Packet> out;
 
         /*
                 class OutgoingPacket
@@ -376,14 +376,6 @@ namespace esphome
 
             if (request.mode)
             {
-                request.power = true;
-                MessageSet mode(MessageNumber::ENUM_in_operation_mode);
-                mode.value = (int)request.mode.value();
-                packet.messages.push_back(mode);
-            }
-
-            if (request.mode)
-            {
                 request.power = true; // ensure system turns on when mode is set
 
                 MessageSet mode(MessageNumber::ENUM_in_operation_mode);
@@ -472,7 +464,7 @@ namespace esphome
 
             ESP_LOGW(TAG, "publish packet %s", packet.to_string().c_str());
 
-            out.push_back(OutgoingPacket(packet, 1000, 3));
+            out.push_back(packet);
 
             auto data = packet.encode();
             target->publish_data(data);
@@ -813,19 +805,26 @@ namespace esphome
             {
                 for (int i = 0; i < out.size(); i++)
                 {
-                    if (out[i].packet.command.packetNumber == packet_.command.packetNumber)
+                    if (out[i].command.packetNumber == packet_.command.packetNumber)
                     {
-                        ESP_LOGW(TAG, "found Ack for packet %d", out[i].packet.command.packetNumber);
+                        ESP_LOGW(TAG, "found %d", out[i].command.packetNumber);
                         out.erase(out.begin() + i);
                         break;
                     }
                 }
+
+                ESP_LOGW(TAG, "Ack %s s %d", packet_.to_string().c_str(), out.size());
                 return;
             }
 
-            if (packet_.command.dataType == DataType::Request || packet_.command.dataType == DataType::Response)
+            if (packet_.command.dataType == DataType::Request)
             {
-                ESP_LOGW(TAG, "Request/Response %s", packet_.to_string().c_str());
+                ESP_LOGW(TAG, "Request %s", packet_.to_string().c_str());
+                return;
+            }
+            if (packet_.command.dataType == DataType::Response)
+            {
+                ESP_LOGW(TAG, "Response %s", packet_.to_string().c_str());
                 return;
             }
             if (packet_.command.dataType == DataType::Write)
@@ -838,26 +837,6 @@ namespace esphome
                 ESP_LOGW(TAG, "Nack %s", packet_.to_string().c_str());
                 return;
             }
-
-            for (int i = 0; i < out.size(); i++)
-            {
-                if (out[i].is_timed_out())
-                {
-                    if (out[i].can_retry())
-                    {
-                        ESP_LOGW(TAG, "Retrying packet %d", out[i].packet.command.packetNumber);
-                        auto data = out[i].packet.encode();
-                        target->publish_data(data);
-                        out[i].retry();
-                    }
-                    else
-                    {
-                        ESP_LOGW(TAG, "Packet %d failed after retries", out[i].packet.command.packetNumber);
-                        out.erase(out.begin() + i);
-                    }
-                }
-            }
-
             if (packet_.command.dataType == DataType::Read)
             {
                 ESP_LOGW(TAG, "Read %s", packet_.to_string().c_str());
