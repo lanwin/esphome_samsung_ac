@@ -168,6 +168,32 @@ namespace esphome
             std::string to_string();
         };
 
+        struct OutgoingPacket
+        {
+            Packet packet;
+            uint32_t timeout;
+            uint8_t retries;
+
+            OutgoingPacket(Packet p, uint32_t timeout_duration, uint8_t max_retries)
+                : packet(p), timeout(millis() + timeout_duration), retries(max_retries) {}
+
+            bool is_timed_out()
+            {
+                return millis() > timeout;
+            }
+
+            bool can_retry()
+            {
+                return retries > 0;
+            }
+
+            void retry()
+            {
+                retries--;
+                timeout = millis() + 1000; 
+            }
+        };
+
         DecodeResult try_decode_nasa_packet(std::vector<uint8_t> data);
         void process_nasa_packet(MessageTarget *target);
 
