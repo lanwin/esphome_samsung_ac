@@ -38,7 +38,8 @@ This Blueprint adds a new layer of functionality to your Home Assistant setup, a
 ## Compatibility
 In general, all devices with dedicated communication wires (not only power) should work. If you want to be safe when buying a new AC, then just ask for NASA support.
 
-To automatically check the classification of your Samsung AC model (NASA, Non-NASA, or Other), use our [Samsung AC Model Checker](https://lanwin.github.io/esphome_samsung_hvac_bus/model-checker/index.html).
+To automatically check the classification of your Samsung AC model (NASA, Non-NASA, or Other), use our [Samsung AC Model Checker](https://lanwin.github.io/esphome_samsung_hvac_bus/model-checker/index.html).  
+[![image](https://github.com/user-attachments/assets/35ca18dc-4025-4783-bfc8-3b8112774436)](https://lanwin.github.io/esphome_samsung_hvac_bus/model-checker/index.html)
 
 [@hnykda](https://github.com/hnykda) found a way to decode Samsung's product numbers. For more info, see [this issue](https://github.com/lanwin/esphome_samsung_ac/issues/101#issuecomment-2098206070).
 
