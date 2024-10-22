@@ -123,6 +123,30 @@ namespace esphome
         }
       }
 
+      const uint32_t resend_interval = 1000; 
+      const int max_retries = 3;
+
+      for (auto it = out.begin(); it != out.end();)
+      {
+        if (now - it->timestamp >= resend_interval)
+        {
+          if (it->retry_count >= max_retries)
+          {
+            ESP_LOGE(TAG, "Packet with PacketNumber %d failed after %d retries.", it->packet.command.packetNumber, max_retries);
+            it = out.erase(it);
+            continue;
+          }
+
+          ESP_LOGW(TAG, "Resending packet with PacketNumber %d (Retry %d)", it->packet.command.packetNumber, it->retry_count + 1);
+          auto data = it->packet.encode();
+          this->publish_data(data);
+
+          it->timestamp = now;
+          it->retry_count += 1;
+        }
+        ++it;
+      }
+
       // Allow device protocols to perform recurring tasks (at most every 200ms)
       if (now - last_protocol_update_ >= 200)
       {

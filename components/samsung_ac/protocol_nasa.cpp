@@ -205,31 +205,17 @@ namespace esphome
         }
 
         static int _packetCounter = 0;
+        const int MAX_PACKET_NUMBER = 255;
 
-        std::vector<Packet> out;
+        std::vector<OutgoingPacket> out;
 
-        /*
-                class OutgoingPacket
-                {
-                public:
-                    OutgoingPacket(uint32_t timeout_seconds, Packet packet)
-                    {
-                        this->timeout_mili = millis() + (timeout_seconds * 1000);
-                        Packet = packet;
-                    }
+        struct OutgoingPacket
+        {
+            Packet packet;
+            uint32_t timestamp; // Paket gönderildiği zaman (millis())
+            int retry_count;    // Yeniden gönderme sayısı
+        };
 
-                    // std::function<void(float)> Func;
-                    Packet Packet;
-
-                    bool IsTimedout()
-                    {
-                        return timeout_mili < millis();
-                    };
-
-                private:
-                    uint32_t timeout_mili{0}; // millis();
-                };
-        */
         Packet Packet::create(Address da, DataType dataType, MessageNumber messageNumber, int value)
         {
             Packet packet = createa_partial(da, dataType);
@@ -250,6 +236,10 @@ namespace esphome
             packet.command.packetType = PacketType::Normal;
             packet.command.dataType = dataType;
             packet.command.packetNumber = _packetCounter++;
+
+            if (_packetCounter > MAX_PACKET_NUMBER)
+                _packetCounter = 0;
+
             return packet;
         }
 
@@ -464,7 +454,11 @@ namespace esphome
 
             ESP_LOGW(TAG, "publish packet %s", packet.to_string().c_str());
 
-            out.push_back(packet);
+            OutgoingPacket outgoing_packet;
+            outgoing_packet.packet = packet;
+            outgoing_packet.timestamp = millis();
+            outgoing_packet.retry_count = 0;
+            out.push_back(outgoing_packet);
 
             auto data = packet.encode();
             target->publish_data(data);
@@ -803,12 +797,12 @@ namespace esphome
 
             if (packet_.command.dataType == DataType::Ack)
             {
-                for (int i = 0; i < out.size(); i++)
+                for (auto it = out.begin(); it != out.end(); ++it)
                 {
-                    if (out[i].command.packetNumber == packet_.command.packetNumber)
+                    if (it->packet.command.packetNumber == packet_.command.packetNumber)
                     {
-                        ESP_LOGW(TAG, "found %d", out[i].command.packetNumber);
-                        out.erase(out.begin() + i);
+                        ESP_LOGW(TAG, "ACK received for PacketNumber %d. Removing from out.", it->packet.command.packetNumber);
+                        out.erase(it);
                         break;
                     }
                 }
