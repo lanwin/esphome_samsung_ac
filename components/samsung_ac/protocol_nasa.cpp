@@ -1,4 +1,5 @@
 #include <set>
+#include "esphome/core/helpers.h"
 #include "esphome/core/log.h"
 #include "esphome/core/util.h"
 #include "util.h"
