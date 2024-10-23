@@ -1,8 +1,8 @@
-# ESPHome Samsung HVAC Bus
+# ESPHome Samsung HAVC Bus
 
-This project offers an [ESPHome](https://esphome.io/index.html) component for integrating Samsung HVAC units (Air conditioners or heatpumps) into Home Assistant. 
+This project offers an [ESPHome](https://esphome.io/index.html) component for integrating Samsung HAVC units (Air conditioners or heatpumps) into Home Assistant. 
 
-This component focuses on Samsung HVAC units that communicate between the indoor and outdoor units via a hardware bus (additional cables connecting each unit, usually F1/F2, sometimes called R1/R2).
+This component focuses on Samsung HAVC units that communicate between the indoor and outdoor units via a hardware bus (additional cables connecting each unit, usually F1/F2, sometimes called R1/R2).
 
 Samsung has employed different software protocols for their AC devices over the years. The older devices utilize the NonNASA protocol, while the newer ones utilize the NASA protocol. This ESPHome component is designed to support both protocols, ensuring compatibility with a wide range of Samsung AC units.
 
@@ -33,15 +33,17 @@ For more detailed instructions on setup and usage, please refer to the [Blueprin
 
 This Blueprint adds a new layer of functionality to your Home Assistant setup, allowing for more proactive and informed management of your Samsung AC units.
 
-[![Add Blueprint to Home Assistant](https://community-assets.home-assistant.io/original/4X/d/7/6/d7625545838a4970873f3a996172212440b7e0ae.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://raw.githubusercontent.com/omerfaruk-aran/esphome_samsung_ac_blueprint/main/blueprints/automation/esphome_samsung_ac/notification_blueprint.yaml)
+[![Add Blueprint to Home Assistant](https://community-assets.home-assistant.io/original/4X/d/7/6/d7625545838a4970873f3a996172212440b7e0ae.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://raw.githubusercontent.com/omerfaruk-aran/esphome_samsung_ac_blueprint/main/blueprints/automation/esphome_samsung_hvac_bus/notification_blueprint.yaml)
 
 ## Compatibility
-
 In general, all devices with dedicated communication wires (not only power) should work. If you want to be safe when buying a new AC, then just ask for NASA support.
 
-[@hnykda](https://github.com/hnykda) found a way to decode Samsung's product numbers. For more info, see [this issue](https://github.com/lanwin/esphome_samsung_ac/issues/101#issuecomment-2098206070).
+To automatically check the classification of your Samsung AC model (NASA, Non-NASA, or Other), use our [Samsung AC Model Checker](https://lanwin.github.io/esphome_samsung_hvac_bus/model-checker/index.html).  
+[![image](https://github.com/user-attachments/assets/35ca18dc-4025-4783-bfc8-3b8112774436)](https://lanwin.github.io/esphome_samsung_hvac_bus/model-checker/index.html)
 
-There are also two Discussion threads about confirmed [NASA]([url](https://github.com/lanwin/esphome_samsung_ac/discussions/82)) and [NonNASA]([url](https://github.com/lanwin/esphome_samsung_ac/discussions/78)) uses. If you made this working on a model that has not been confirmed yet, please do so in there!
+[@hnykda](https://github.com/hnykda) found a way to decode Samsung's product numbers. For more info, see [this issue](https://github.com/lanwin/esphome_samsung_hvac_bus/issues/101#issuecomment-2098206070).
+
+There are also two Discussion threads about confirmed [NASA](https://github.com/lanwin/esphome_samsung_hvac_bus/discussions/82) and [NonNASA](https://github.com/lanwin/esphome_samsung_hvac_bus/discussions/78) uses. If you made this working on a model that has not been confirmed yet, please do so in there!
 
 ### Known to work (not exhaustive)
 
@@ -65,7 +67,7 @@ An ESPHome compatible device and an RS-485 to (TTL) serial adapter is required t
 
 It's cheap, comes with a tiny case (which can fit inside an indoor unit) and allows direct use of the 12V comming from the V1/V2 lines which some AC units provide.
 
-> If your AC did not has V1/V2 please check out this [post](https://github.com/lanwin/esphome_samsung_ac/discussions/39#discussioncomment-8383733).
+> If your AC did not has V1/V2 please check out this [post](https://github.com/lanwin/esphome_samsung_hvac_bus/discussions/39#discussioncomment-8383733).
 
 1. Purchase the following components and stack them:
 
@@ -78,7 +80,7 @@ It's cheap, comes with a tiny case (which can fit inside an indoor unit) and all
    - Connect V1 on the AC unit to DC on the M5STACK controller.
    - Connect V2 on the AC unit to G on the M5STACK controller.
 
-<img alt='M5STACK Wiring Diagram' src='https://github.com/lanwin/esphome_samsung_ac/assets/32042186/42a6757d-bfcf-4a29-be87-cf1b204e248a' width='400'>
+<img alt='M5STACK Wiring Diagram' src='https://github.com/lanwin/esphome_samsung_hvac_bus/assets/32042186/42a6757d-bfcf-4a29-be87-cf1b204e248a' width='400'>
 
 ## Software Installation
 
@@ -87,7 +89,7 @@ Follow these steps to install and configure the software for your AC unit contro
 1. **Create a New ESPHome Device:**
 
    - Begin by creating a new ESPHome device in your Home Assistant instance or ESPHome command line tool.
-   - Use the configuration from [example.yaml](https://github.com/lanwin/esphome_samsung_ac/blob/main/example.yaml) file as a template and copy over the `api` and `ota` sections from the newly created YAML.
+   - Use the configuration from [example.yaml](https://github.com/lanwin/esphome_samsung_hvac_bus/blob/main/example.yaml) file as a template and copy over the `api` and `ota` sections from the newly created YAML.
 
 1. **Deploy and Boot:**
 
@@ -140,7 +142,7 @@ Follow these steps to install and configure the software for your AC unit contro
 - **Do I need a ESP for each indoor device?** When all your indoor devices are connected to the same outdoor device, then you need just one. Otherwise you need one for each outdoor device.
 - **Do I need to turn off my climate devices when I connect the ESP?** No, but it's advised to do so, as beside the F1/F2 connectors there is 240V AC, which can be deadly. It is safer to disconnect the unit from power while installing the ESP, then reconnect it.
 
-- **My device has no additional F1/F2 connectors, how do I connect it?** Somethimes they are called R1/R2. On some devices it seems that this connectors use only one cable (and ground) but we are not sure yet. Please follow the discussions.
+- **My device has no F1/F2 connectors, how do I connect it?** Without F1/F2 connectors, this will not work. Sorry!
 
 ## Development
 
@@ -183,3 +185,26 @@ The NonNASA protocol is specifically desined to transport AC data.
 Thanks goes to DannyDeGaspari https://github.com/DannyDeGaspari/Samsung-HVAC-buscontrol. He made the initial attempt to describe the older NonNASA protocol.
 
 Thanks goes to matthias882 https://github.com/matthias882/some_esphome_components. He made a basic ESPHome component for the older NonNASA protocol which was a perfect source to start playing and learning to communicate with the AC and use ESPHome.
+
+## Contributors
+
+This project exists thanks to all the people who contribute. We welcome contributions from everyone!
+
+### Special Thanks
+- **lanwin** (Project Owner) - [Profile](https://github.com/lanwin)
+- **omerfaruk-aran** - [Profile](https://github.com/omerfaruk-aran)
+- **north3221** - [Profile](https://github.com/north3221)
+- **matthias882** - [Profile](https://github.com/matthias882)
+
+### Other Contributors
+- See the full list of contributors [here](https://github.com/lanwin/esphome_samsung_hvac_bus/graphs/contributors).
+
+Thank you to everyone who has contributed to this project!
+
+---
+
+## Want to Contribute?
+
+We welcome new contributors! If you would like to help improve this project, please review our [CONTRIBUTING.md](https://github.com/lanwin/esphome_samsung_hvac_bus/blob/main/CONTRIBUTING.md) for guidelines on how to get started.
+
+Your contributions, whether through code, documentation, or bug reports, are all greatly appreciated!
