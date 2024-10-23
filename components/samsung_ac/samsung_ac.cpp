@@ -135,10 +135,10 @@ namespace esphome
       }
       resend_timedout_packets();
     }
-    
+
     void Samsung_AC::resend_timedout_packets()
     {
-      for (auto &packet : out)
+      for (auto &packet : out_packets)
       {
         if (millis() > packet.timeout_mili)
         {

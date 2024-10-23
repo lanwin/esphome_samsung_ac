@@ -30,7 +30,7 @@ namespace esphome
       void loop() override;
       void dump_config() override;
       void resend_timedout_packets();
-      
+
       void set_debug_mqtt(std::string host, int port, std::string username, std::string password)
       {
         debug_mqtt_host = host;
@@ -209,6 +209,8 @@ namespace esphome
       std::map<std::string, Samsung_AC_Device *> devices_;
       DeviceStateTracker<Mode> state_tracker_{1000};
       std::set<std::string> addresses_;
+      
+      std::vector<Packet> out_packets;
 
       std::vector<uint8_t> data_;
       uint32_t last_transmission_ = 0;
