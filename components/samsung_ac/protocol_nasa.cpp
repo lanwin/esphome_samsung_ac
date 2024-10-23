@@ -4,7 +4,6 @@
 #include "util.h"
 #include "protocol_nasa.h"
 #include "debug_mqtt.h"
-#include <deque>
 
 esphome::samsung_ac::Packet packet_;
 
@@ -816,12 +815,6 @@ namespace esphome
 
                 ESP_LOGW(TAG, "Ack %s s %d", packet_.to_string().c_str(), out.size());
                 return;
-            }
-            else
-            {
-                ESP_LOGW(TAG, "Ack not found, packet retry: %s", packet_.to_string().c_str());
-                auto data = packet_.encode();
-                target->publish_data(data);
             }
 
             if (packet_.command.dataType == DataType::Request)
