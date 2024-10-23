@@ -135,6 +135,18 @@ namespace esphome
       }
       resend_timedout_packets();
     }
+    
+    void Samsung_AC::resend_timedout_packets()
+    {
+      for (auto &packet : out)
+      {
+        if (millis() > packet.timeout_mili)
+        {
+          auto data = packet.encode();
+          publish_data(data); // Bu fonksiyon artık doğru bağlamda
+        }
+      }
+    }
 
     float Samsung_AC::get_setup_priority() const { return setup_priority::DATA; }
   } // namespace samsung_ac

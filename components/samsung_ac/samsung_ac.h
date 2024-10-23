@@ -29,7 +29,8 @@ namespace esphome
       void update() override;
       void loop() override;
       void dump_config() override;
-
+      void resend_timedout_packets();
+      
       void set_debug_mqtt(std::string host, int port, std::string username, std::string password)
       {
         debug_mqtt_host = host;
