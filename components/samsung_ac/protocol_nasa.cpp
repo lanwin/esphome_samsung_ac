@@ -206,39 +206,38 @@ namespace esphome
 
         static int _packetCounter = 0;
 
-        //std::vector<Packet> out;
+        std::vector<Packet> out;
 
-        class OutgoingPacket
-        {
-        public:
-            OutgoingPacket(uint32_t timeout_seconds, Packet packet)
-            {
-                this->timeout_mili = millis() + (timeout_seconds * 1000);
-                Packet = packet;
-            }
+        /*
+                class OutgoingPacket
+                {
+                public:
+                    OutgoingPacket(uint32_t timeout_seconds, Packet packet)
+                    {
+                        this->timeout_mili = millis() + (timeout_seconds * 1000);
+                        Packet = packet;
+                    }
 
-            // std::function<void(float)> Func;
-            Packet Packet;
+                    // std::function<void(float)> Func;
+                    Packet Packet;
 
-            bool IsTimedout()
-            {
-                return timeout_mili < millis();
-            };
+                    bool IsTimedout()
+                    {
+                        return timeout_mili < millis();
+                    };
 
-        private:
-            uint32_t timeout_mili{0}; // millis();
-        };
-
-        std::vector<OutgoingPacket> out;
-
+                private:
+                    uint32_t timeout_mili{0}; // millis();
+                };
+        */
         Packet Packet::create(Address da, DataType dataType, MessageNumber messageNumber, int value)
         {
             Packet packet = createa_partial(da, dataType);
             MessageSet message(messageNumber);
             message.value = value;
             packet.messages.push_back(message);
+            packet.timeout_milliseconds = millis() + 1000;
             out.push_back(packet);
-
             return packet;
         }
 
@@ -251,6 +250,7 @@ namespace esphome
             packet.command.packetType = PacketType::Normal;
             packet.command.dataType = dataType;
             packet.command.packetNumber = _packetCounter++;
+            packet.timeout_milliseconds = millis() + 1000;
             return packet;
         }
 
@@ -469,6 +469,21 @@ namespace esphome
 
             auto data = packet.encode();
             target->publish_data(data);
+        }
+
+        void resend_timedout_packets()
+        {
+            const uint32_t current_time = millis();
+
+            for (auto &packet : out)
+            {
+                if (current_time > packet.timeout_milliseconds)
+                {
+                    auto data = packet.encode();
+                    publish_data(data);                                // Re-send the packet
+                    packet.timeout_milliseconds = current_time + 5000; // Reset timeout for the next resend
+                }
+            }
         }
 
         Mode operation_mode_to_mode(int value)
