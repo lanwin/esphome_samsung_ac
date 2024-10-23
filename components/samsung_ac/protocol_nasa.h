@@ -159,7 +159,6 @@ namespace esphome
             Address da;
             Command command;
             std::vector<MessageSet> messages;
-            uint32_t timeout_milliseconds = 0;
 
             static Packet create(Address da, DataType dataType, MessageNumber messageNumber, int value);
             static Packet createa_partial(Address da, DataType dataType);
