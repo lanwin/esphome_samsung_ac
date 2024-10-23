@@ -1,5 +1,8 @@
 #include <set>
-#include "esphome/core/helpers.h"
+#include <queue>
+#include <map>
+#include <cmath>
+#include <string>
 #include "esphome/core/log.h"
 #include "esphome/core/util.h"
 #include "util.h"
