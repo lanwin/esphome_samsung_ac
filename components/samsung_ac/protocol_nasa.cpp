@@ -872,7 +872,7 @@ namespace esphome
             uint32_t now = millis();
             for (auto &info : sent_packets)
             {
-                if (now - info.last_sent_time > 1000 && info.retry_count < 3) 
+                if (now - info.last_sent_time > 1000 && info.retry_count < 3)
                 {
                     info.retry_count++;
                     info.last_sent_time = now;
