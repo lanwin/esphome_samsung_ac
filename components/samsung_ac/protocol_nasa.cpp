@@ -1,6 +1,7 @@
 #include <set>
 #include "esphome/core/log.h"
 #include "esphome/core/util.h"
+#include "esphome/core/hal.h"
 #include "util.h"
 #include "protocol_nasa.h"
 #include "debug_mqtt.h"
@@ -11,6 +12,13 @@ namespace esphome
 {
     namespace samsung_ac
     {
+        struct PacketInfo
+        {
+            Packet packet;
+            int retry_count;
+            uint32_t last_sent_time;
+        };
+
         int variable_to_signed(int value)
         {
             if (value < 65535 /*uint16 max*/)
@@ -207,6 +215,7 @@ namespace esphome
         static int _packetCounter = 0;
 
         std::vector<Packet> out;
+        std::vector<PacketInfo> sent_packets;
 
         /*
                 class OutgoingPacket
@@ -468,6 +477,8 @@ namespace esphome
 
             auto data = packet.encode();
             target->publish_data(data);
+
+            sent_packets.push_back({packet, 0, millis()});
         }
 
         Mode operation_mode_to_mode(int value)
@@ -803,17 +814,24 @@ namespace esphome
 
             if (packet_.command.dataType == DataType::Ack)
             {
-                for (int i = 0; i < out.size(); i++)
+                bool ack_found = false;
+                for (auto it = sent_packets.begin(); it != sent_packets.end(); ++it)
                 {
-                    if (out[i].command.packetNumber == packet_.command.packetNumber)
+                    if (it->packet.command.packetNumber == packet_.command.packetNumber)
                     {
-                        ESP_LOGW(TAG, "found %d", out[i].command.packetNumber);
-                        out.erase(out.begin() + i);
+                        ESP_LOGW(TAG, "found Ack for packet number %d", it->packet.command.packetNumber);
+                        sent_packets.erase(it);
+                        ack_found = true;
                         break;
                     }
                 }
 
-                ESP_LOGW(TAG, "Ack %s s %d", packet_.to_string().c_str(), out.size());
+                if (!ack_found)
+                {
+                    ESP_LOGW(TAG, "Ack not found for packet number %d", packet_.command.packetNumber);
+                }
+
+                ESP_LOGW(TAG, "Ack %s sent_packets size: %d", packet_.to_string().c_str(), sent_packets.size());
                 return;
             }
 
@@ -849,6 +867,19 @@ namespace esphome
             for (auto &message : packet_.messages)
             {
                 process_messageset(source, dest, message, target);
+            }
+
+            uint32_t now = millis();
+            for (auto &info : sent_packets)
+            {
+                if (now - info.last_sent_time > 1000 && info.retry_count < 3)
+                {
+                    info.retry_count++;
+                    info.last_sent_time = now;
+                    auto data = info.packet.encode();
+                    target->publish_data(data);
+                    ESP_LOGW(TAG, "Resending packet %d number of attempts: %d", info.packet.command.packetNumber, info.retry_count);
+                }
             }
         }
 
