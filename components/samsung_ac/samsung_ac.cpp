@@ -99,6 +99,19 @@ namespace esphome
         return;
 
       const uint32_t now = millis();
+
+      // Check and retry packets in the loop
+      for (auto &packet : out)
+      {
+        if (packet.IsTimedout())
+        {
+          // Retry the packet
+          publish_data(packet.Packet.encode());
+          // Update the timeout
+          packet.timeout_mili = millis() + new_timeout_period;
+        }
+      }
+      
       if (!data_.empty() && (now - last_transmission_ >= 500))
       {
         ESP_LOGW(TAG, "Last transmission too long ago. Reset RX index.");

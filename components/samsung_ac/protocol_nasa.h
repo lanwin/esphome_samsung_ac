@@ -3,21 +3,6 @@
 #include <vector>
 #include "protocol.h"
 
-class OutgoingPacket {
-public:
-    Packet packet;
-    uint32_t timeout_time;
-
-    OutgoingPacket(Packet pkt, uint32_t timeout_seconds) {
-        this->packet = pkt;
-        this->timeout_time = millis() + timeout_seconds * 1000; // Zamanlayıcı
-    }
-
-    bool is_timed_out() {
-        return millis() > this->timeout_time;
-    }
-};
-
 namespace esphome
 {
     namespace samsung_ac

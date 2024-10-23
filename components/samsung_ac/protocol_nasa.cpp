@@ -206,30 +206,31 @@ namespace esphome
 
         static int _packetCounter = 0;
 
-        std::vector<Packet> out;
+        //std::vector<Packet> out;
 
-        /*
-                class OutgoingPacket
-                {
-                public:
-                    OutgoingPacket(uint32_t timeout_seconds, Packet packet)
-                    {
-                        this->timeout_mili = millis() + (timeout_seconds * 1000);
-                        Packet = packet;
-                    }
+        class OutgoingPacket
+        {
+        public:
+            OutgoingPacket(uint32_t timeout_seconds, Packet packet)
+            {
+                this->timeout_mili = millis() + (timeout_seconds * 1000);
+                Packet = packet;
+            }
 
-                    // std::function<void(float)> Func;
-                    Packet Packet;
+            // std::function<void(float)> Func;
+            Packet Packet;
 
-                    bool IsTimedout()
-                    {
-                        return timeout_mili < millis();
-                    };
+            bool IsTimedout()
+            {
+                return timeout_mili < millis();
+            };
 
-                private:
-                    uint32_t timeout_mili{0}; // millis();
-                };
-        */
+        private:
+            uint32_t timeout_mili{0}; // millis();
+        };
+
+        std::vector<OutgoingPacket> out;
+
         Packet Packet::create(Address da, DataType dataType, MessageNumber messageNumber, int value)
         {
             Packet packet = createa_partial(da, dataType);
@@ -464,7 +465,7 @@ namespace esphome
 
             ESP_LOGW(TAG, "publish packet %s", packet.to_string().c_str());
 
-            out.push_back(OutgoingPacket(packet, 1));
+            out.push_back(packet);
 
             auto data = packet.encode();
             target->publish_data(data);
@@ -805,9 +806,9 @@ namespace esphome
             {
                 for (int i = 0; i < out.size(); i++)
                 {
-                    if (out[i].packet.command.packetNumber == packet_.command.packetNumber)
+                    if (out[i].command.packetNumber == packet_.command.packetNumber)
                     {
-                        ESP_LOGW(TAG, "Ack received and removing packet number %d", out[i].packet.command.packetNumber);
+                        ESP_LOGW(TAG, "found %d", out[i].command.packetNumber);
                         out.erase(out.begin() + i);
                         break;
                     }
@@ -1210,33 +1211,7 @@ namespace esphome
 
         void NasaProtocol::protocol_update(MessageTarget *target)
         {
-            // Iterate through the list of outgoing packets to check for timeouts
-            for (auto it = out.begin(); it != out.end();)
-            {
-                // Check if the current packet has timed out
-                if (it->is_timed_out())
-                {
-                    // Log the timeout event for the packet
-                    ESP_LOGW(TAG, "Packet timeout detected. Resending packet number %d", it->packet.command.packetNumber);
-
-                    // Re-encode the packet data for re-sending
-                    auto data = it->packet.encode();
-
-                    // Re-send the packet to the target
-                    target->publish_data(data);
-
-                    // Update the timeout time for this packet (reset the timer)
-                    it->timeout_time = millis() + 5000; // Retry after 5 seconds
-
-                    // Keep the iterator pointing to the next element
-                    ++it;
-                }
-                else
-                {
-                    // Move to the next packet if no timeout detected
-                    ++it;
-                }
-            }
+            // Unused for NASA protocol
         }
 
     } // namespace samsung_ac
