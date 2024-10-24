@@ -1,0 +1,95 @@
+title: "[Question] "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Ask a Question
+
+        Thank you for reaching out with your question! 🚀 To help us assist you effectively, please follow the steps below and provide the necessary details.
+
+        Before submitting, please:
+        1. **Search existing issues** to see if your question has already been answered.
+        2. **Check the documentation** to ensure your question is not covered there: [esphome_samsung_hvac_bus Documentation](https://github.com/lanwin/esphome_samsung_hvac_bus)
+        3. **Provide context and details** to help us understand your question better.
+
+  - type: input
+    attributes:
+      label: Your Question
+      description: Please describe your question in detail.
+      placeholder: Write your question here...
+
+  - type: textarea
+    attributes:
+      label: Additional Context
+      description: Provide more context about your question (e.g., specific use cases, environment, or expected behavior).
+      placeholder: Add more context here...
+
+  - type: checkboxes
+    id: first_checks
+    attributes:
+      label: Pre-Submission Checklist
+      description: Please confirm the following before submitting your question.
+      options:
+        - label: I have searched for a similar question in open/closed issues.
+        - label: I have checked the project’s documentation for relevant information.
+        - label: I have provided as much detail as possible to help answer my question.
+
+  - type: dropdown
+    id: hvac_type
+    attributes:
+      label: HVAC System Type
+      description: What type of Samsung HVAC system are you using?
+      options:
+        - NASA (Bus Protocol)
+        - Non-NASA (Bus Protocol)
+        - Other
+
+  - type: input
+    id: device_model
+    attributes:
+      label: Samsung HVAC Device Model
+      description: Please provide the model of your Samsung HVAC system (e.g., AJ050TXJ2KH/EA).
+      placeholder: e.g., AJ050TXJ2KH/EA
+
+  - type: input
+    id: esp_model
+    attributes:
+      label: ESP Device Model
+      description: Provide the model of your ESP device (e.g., ESP32, ESP8266, M5STACK ATOM Lite).
+      placeholder: e.g., M5STACK ATOM Lite + M5STACK RS-485
+
+  - type: input
+    id: connection_pins
+    attributes:
+      label: Connection Pins
+      description: Indicate which connection pins (e.g., F1/F2) you are using for your ESP device.
+      placeholder: e.g., F1/F2
+
+  - type: textarea
+    id: yaml_code
+    attributes:
+      label: YAML Configuration
+      description: If you are using a custom YAML file for configuration, please provide it here.
+      placeholder: |
+        # Example YAML configuration
+        esphome:
+          name: samsung_hvac
+
+        samsung_ac:
+          ...
+      render: yaml
+
+  - type: textarea
+    id: esphome_logs
+    attributes:
+      label: ESPHome Samsung AC Logs
+      description: Please attach any relevant ESPHome logs that can help us understand your issue.
+      placeholder: Include ESPHome Samsung AC logs here...
+
+  - type: textarea
+    id: additional_info
+    attributes:
+      label: Additional Information
+      description: If there is any other relevant information that could help us answer your question, please include it here.
+      placeholder: Add more details here...
