@@ -1,0 +1,19 @@
+---
+blank_issues_enabled: false
+contact_links:
+  - name: Issue Tracker
+    url: https://github.com/lanwin/esphome_samsung_hvac_bus/issues
+    about: |
+      For bug reports, please use the dedicated issue tracker in this repository.
+  - name: Feature Request Tracker
+    url: https://github.com/lanwin/esphome_samsung_hvac_bus/issues/new?assignees=&labels=bug&template=bug_report.yml&title=
+    about: |
+      For feature requests, create an issue using the template linked here.
+  - name: Documentation
+    url: https://github.com/lanwin/esphome_samsung_hvac_bus
+    about: |
+      Refer to the project's wiki for detailed setup instructions and frequently asked questions.
+  - name: FAQ
+    url: https://esphome.io/guides/faq.html
+    about: |
+      Visit the ESPHome FAQ for common questions and general troubleshooting steps.
