@@ -1,0 +1,145 @@
+---
+name: Bug Report
+description: Report any issues with the ESPHome Samsung AC integration.
+title: "`Bug` [Samsung_AC]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Bug Report: Samsung AC Integration
+        Thank you for reporting an issue with the Samsung AC integration. Please provide the details below to help us resolve the issue efficiently.
+
+        > ⚠️ **Note:** Avoid including sensitive information as this report will be publicly visible.
+
+  - type: input
+    id: esphome_version
+    attributes:
+      label: "ESPHome Version"
+      description: "Enter the ESPHome version you're using."
+      placeholder: "e.g., 2024.10.0"
+    validations:
+      required: true
+
+  - type: input
+    id: samsung_ac_version
+    attributes:
+      label: "Samsung AC Integration Version"
+      description: "Enter the version of the Samsung AC integration."
+      placeholder: "e.g., 20240213.1"
+    validations:
+      required: true
+
+  - type: input
+    id: home_assistant_version
+    attributes:
+      label: "Home Assistant Version"
+      description: "Enter your Home Assistant version."
+      placeholder: "e.g., 2024.10.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: ac_type
+    attributes:
+      label: "AC Type"
+      description: "Select the type of air conditioner you are using."
+      options:
+        - NASA
+        - NON NASA
+        - OTHER
+    validations:
+      required: true
+
+  - type: input
+    id: ac_model
+    attributes:
+      label: "Indoor AC Unit Model"
+      description: "Enter your AC's indoor unit model."
+      placeholder: "e.g., AJ080TXJ4KG or AC030KNZDCH/AA or RJ100F5HXBA"
+    validations:
+      required: true
+
+  - type: input
+    id: outdoor_ac_model
+    attributes:
+      label: "Outdoor AC Unit Model"
+      description: "Enter your AC's outdoor unit model."
+      placeholder: "e.g., AJ050TXJ2KH"
+    validations:
+      required: true
+
+  - type: input
+    id: esp_device_model
+    attributes:
+      label: "ESP Device Model"
+      description: "Enter the model of the ESP and RS-485 device you're using."
+      placeholder: "e.g., M5STACK ATOM Lite + M5STACK RS-485"
+    validations:
+      required: true
+
+  - type: input
+    id: connection_points
+    attributes:
+      label: "Connection Points"
+      description: "Describe the connection points between the ESP device and AC (e.g., F1/F2)."
+      placeholder: "e.g., F1/F2"
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Logs & YAML Configuration
+
+  - type: textarea
+    id: esphome_logs
+    attributes:
+      label: "ESPHome Logs"
+      description: "Paste the relevant logs from ESPHome."
+      placeholder: "# Insert ESPHome logs here..."
+
+  - type: textarea
+    id: samsung_ac_logs
+    attributes:
+      label: "Samsung AC Logs"
+      description: "Paste any relevant logs from Samsung AC (if applicable)."
+      placeholder: "# Insert Samsung AC logs here..."
+
+  - type: textarea
+    id: yaml_configuration
+    attributes:
+      label: "YAML Configuration"
+      description: "Paste your YAML configuration for the panel or integration."
+      render: yaml
+      placeholder: |
+        # Example YAML configuration
+        samsung_ac:
+          non_nasa_keepalive: true
+          debug_log_undefined_messages: false
+          debug_log_messages: false
+          capabilities:
+            vertical_swing: true
+            horizontal_swing: true
+            presets: 
+              quiet:
+                name: "Makes no sound"
+                enabled: true
+          devices:
+            - address: "20.00.00"
+          climate:
+            name: "Living Room AC"
+          room_temperature:
+            name: "Kitchen temperature"
+          target_temperature:
+            name: "Kitchen target temperature"
+          power:
+            name: "Kitchen power"
+          mode:
+            name: "Kitchen mode"
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Additional Information (Optional)
+        Provide any additional details that might help with diagnosing the issue.
